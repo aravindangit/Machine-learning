@@ -1,2 +1,6 @@
 study materials
 https://likegeeks.com/python-gui-examples-tkinter-tutorial/
+
+
+to pull python functions
+for i in dir(module): print i
