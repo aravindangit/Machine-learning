@@ -1,11 +1,13 @@
 study materials
+--------------
 https://likegeeks.com/python-gui-examples-tkinter-tutorial/
 
 
 to pull python functions
 for i in dir(module): print i
 
-
+python with selenium:
+---------------------
 https://pythonspot.com/selenium-click-button/
 
 Vidya analytics
