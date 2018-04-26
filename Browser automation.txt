@@ -16,5 +16,29 @@ password = browser.find_element_by_id("password")
 user.clear()
 user.send_keys("fbd7lit")
 password.clear()
-password.send_keys("Ar@mar18#")
-driver.find_element_by_name("login").click()
+password.send_keys("xxxxx")
+#browser.find_element_by_name("login").click()
+browser.find_element_by_xpath('//*[@id="kc-login"]').click()
+
+***********************************************************************
+from selenium import webdriver
+import time
+ 
+options = webdriver.ChromeOptions()
+options.add_argument('--ignore-certificate-errors')
+options.add_argument("--test-type")
+options.binary_location = "/usr/bin/chromium"
+driver = webdriver.Chrome(chrome_options=options)
+driver.get('http://codepad.org')
+ 
+# click radio button
+python_button = driver.find_elements_by_xpath("//input[@name='lang' and @value='Python']")[0]
+python_button.click()
+ 
+# type text
+text_area = driver.find_element_by_id('textarea')
+text_area.send_keys("print('Hello World')")
+ 
+# click submit button
+submit_button = driver.find_elements_by_xpath('//*[@id="editor"]/table/tbody/tr[3]/td/table/tbody/tr/td/div/table/tbody/tr/td[3]/input')[0]
+submit_button.click()
