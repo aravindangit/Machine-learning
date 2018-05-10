@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en-US" prefix="og: http://ogp.me/ns#"> <!--<![endif]-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link rel="pingback" href="https://elitedatascience.com/xmlrpc.php" />
+<title>Day 6: Model Training - Machine Learning Crash Course</title>
+
+<!-- This site is optimized with the Yoast SEO plugin v7.3 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="description" content="How to use data splitting, cross-validation, and the right metrics to maximize performance while preventing overfitting."/>
+<link rel="canonical" href="https://elitedatascience.com/model-training" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Day 6: Model Training - Machine Learning Crash Course" />
+<meta property="og:description" content="How to use data splitting, cross-validation, and the right metrics to maximize performance while preventing overfitting." />
+<meta property="og:url" content="https://elitedatascience.com/model-training" />
+<meta property="og:site_name" content="EliteDataScience" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Day-6-Model-Training.png" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Day-6-Model-Training.png" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Model-Training-At-Least.png" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Model-Training-At-Least.png" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Train-Test-Split-Diagram.jpg" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Train-Test-Split-Diagram.jpg" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Tuning-Some-Hyperparameters.png" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Tuning-Some-Hyperparameters.png" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Cross-Validation-Diagram.jpg" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Cross-Validation-Diagram.jpg" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Cross-Validated-Score-Diagram.jpg" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Cross-Validated-Score-Diagram.jpg" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/ML-Hunger-Games.jpg" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/ML-Hunger-Games.jpg" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Evaluating-Abacus.png" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Evaluating-Abacus.png" />
+<meta property="og:image" content="https://elitedatascience.com/wp-content/uploads/2017/06/Please-Share-Crash-Course.png" />
+<meta property="og:image:secure_url" content="https://elitedatascience.com/wp-content/uploads/2017/06/Please-Share-Crash-Course.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:description" content="How to use data splitting, cross-validation, and the right metrics to maximize performance while preventing overfitting." />
+<meta name="twitter:title" content="Day 6: Model Training - Machine Learning Crash Course" />
+<meta name="twitter:image" content="http://images/wpspin_light.gif" />
+<!-- / Yoast SEO plugin. -->
+
+<link rel="alternate" type="application/rss+xml" title="EliteDataScience &raquo; Feed" href="https://elitedatascience.com/feed" />
+<link rel="alternate" type="application/rss+xml" title="EliteDataScience &raquo; Comments Feed" href="https://elitedatascience.com/comments/feed" />
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TFDKX2');</script>
+<!-- End Google Tag Manager --><link rel='stylesheet' id='crayon-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-classic-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/crayon-syntax-highlighter/themes/classic/classic.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='contact-form-7-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=5.0.1' type='text/css' media='all' />
+<link rel='stylesheet' id='font-awesome-four-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/font-awesome-4-menus/css/font-awesome.min.css?ver=4.7.0' type='text/css' media='all' />
+<link rel='stylesheet' id='mashsb-styles-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/mashsharer/assets/css/mashsb.min.css?ver=3.5.2' type='text/css' media='all' />
+<style id='mashsb-styles-inline-css' type='text/css'>
+.mashsb-count {color:#cccccc;}@media only screen and (min-width:568px){.mashsb-buttons a {min-width: 177px;}}
+</style>
+<link rel='stylesheet' id='mashnet-styles-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/mashshare-networks/assets/css/mashnet.min.css?ver=2.3.9' type='text/css' media='all' />
+<link rel='stylesheet' id='op_map_custom-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlusPack/css/elements/op_map.min.css?ver=1.1.8.2' type='text/css' media='all' />
+<link rel='stylesheet' id='optimizepress-page-style-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlugin/pages/marketing/1/style.min.css?ver=2.5.13' type='text/css' media='all' />
+<link rel='stylesheet' id='optimizepress-default-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlugin/lib/assets/default.min.css?ver=2.5.13' type='text/css' media='all' />
+<link rel='stylesheet' id='ws-plugin--optimizemember-css'  href='https://elitedatascience.com/wp-content/plugins/optimizeMember/optimizeMember-o.php?ws_plugin__optimizemember_css=1&#038;qcABC=1&#038;ver=1.2.9-1.2.9-4207065366' type='text/css' media='all' />
+<link rel='stylesheet' id='optimizepressplus-pack-css-front-all-css'  href='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlusPack/css/elements/opplus-front-all.min.css?ver=1.1.8.2' type='text/css' media='all' />
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var OptimizePress = {"ajaxurl":"https:\/\/elitedatascience.com\/wp-admin\/admin-ajax.php","SN":"optimizepress","version":"2.5.13","script_debug":".min","localStorageEnabled":"","wp_admin_page":"","op_live_editor":"1","op_page_builder":"1","op_create_new_page":"","imgurl":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/lib\/images\/","OP_URL":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/","OP_JS":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/lib\/js\/","OP_PAGE_BUILDER_URL":"","include_url":"https:\/\/elitedatascience.com\/wp-includes\/","op_autosave_interval":"300","op_autosave_enabled":"Y","paths":{"url":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/","img":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/lib\/images\/","js":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/lib\/js\/","css":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/lib\/css\/"},"social":{"twitter":"optimizepress","facebook":"optimizepress","googleplus":"111273444733787349971"},"flowplayerHTML5":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/lib\/modules\/blog\/video\/flowplayer\/flowplayer.swf","flowplayerKey":"","flowplayerLogo":"","mediaelementplayer":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlugin\/lib\/modules\/blog\/video\/mediaelement\/","pb_unload_alert":"This page is asking you to confirm that you want to leave - data you have entered may not be saved.","pb_save_alert":"Please make sure you are happy with all of your options as some options will not be able to be changed for this page later.","search_default":"Search...","optimizemember":{"enabled":true,"version":"1.2.9"},"OP_LEADS_URL":"https:\/\/my.optimizeleads.com\/","OP_LEADS_THEMES_URL":"https:\/\/my.optimizeleads.com\/build\/themes\/","map":{"gmapsApiKey":""},"oppp":{"version":"1.1.8.2","path":"https:\/\/elitedatascience.com\/wp-content\/plugins\/optimizePressPlusPack\/"}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlugin/lib/js/op-jquery-base-all.min.js?ver=2.5.13'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/elitedatascience.com\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"Press %s to Copy, %s to Paste","minimize":"Click To Expand Code"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlugin/lib/js/op-front-all.min.js?ver=2.5.13'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var _zxcvbnSettings = {"src":"https:\/\/elitedatascience.com\/wp-includes\/js\/zxcvbn.min.js"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/zxcvbn-async.min.js?ver=1.0'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var pwsL10n = {"unknown":"Password strength unknown","short":"Very weak","bad":"Weak","good":"Medium","strong":"Strong","mismatch":"Mismatch"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-admin/js/password-strength-meter.min.js?ver=4.9.5'></script>
+<script type='text/javascript' src='https://elitedatascience.com/wp-content/plugins/optimizeMember/optimizeMember-o.php?ws_plugin__optimizemember_js_w_globals=1&#038;qcABC=1&#038;ver=1.2.9-1.2.9-4207065366'></script>
+<link rel='https://api.w.org/' href='https://elitedatascience.com/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://elitedatascience.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://elitedatascience.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='shortlink' href='https://elitedatascience.com/?p=1127' />
+<link rel="alternate" type="application/json+oembed" href="https://elitedatascience.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Felitedatascience.com%2Fmodel-training" />
+<link rel="alternate" type="text/xml+oembed" href="https://elitedatascience.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Felitedatascience.com%2Fmodel-training&#038;format=xml" />
+
+        <!--[if (gte IE 6)&(lte IE 8)]>
+            <script type="text/javascript" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlugin/lib/js/selectivizr-1.0.2-min.js?ver=1.0.2"></script>
+        <![endif]-->
+        <!--[if lt IE 9]>
+            <script src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlugin/lib/js//html5shiv.min.js"></script>
+        <![endif]-->
+    
+<style id="op_custom_css">
+.banner { padding: 20px 0; }
+.banner .op-logo { padding: 0; }
+.banner .op-logo img { max-width: 225px; }
+
+body #nav-side.navigation #navigation-alongside  { margin: 0; }
+
+.op-page-header.cf { display: none !important; }
+
+.single-post-content ol li, .single-post-content ul li { margin: 2px 0px 2px 15px; 
+list-style-position: outside;}
+
+.single-post-content ol, .single-post-content ul { margin-left: 10px; }
+
+body.single-post .post-image { display: none; }
+
+.single-post-content ol li:first-child, .single-post-content ul li:first-child { margin-top: 5px; }
+
+.single-post-content h3 { padding-top: 20px; }
+.single-post-content h4 { font-weight: 500; }
+
+.latest-post h1.the-title { font-size: 30px; }
+
+
+.single-post-content .image-text-style-1 .image-text-style-img-container img { box-shadow: 0 0 8px rgba(0,0,0,.33); }
+
+.single-post-content .image-text-style-1 .image-text-align-left { padding-left: 0px; }
+
+.single-post-content .image-text-style-1 .image-text-align-center { padding-left: 0px; }
+
+.single-post-content .image-text-style-1 h3 { font-size: 16px; padding-bottom: 0px; font-weight:bold; }
+
+.single-post-content .image-text-style-1 img { height: auto; }
+
+.image-text-style-1 span { width: 49%; }
+
+@media only screen and (max-width: 767px) {
+.image-text-style-1 span {
+    width: 100%;
+} }
+
+.footer li a { font-weight: 500; }
+
+.older-post h4 a { 
+font-weight: bold;
+font-size: 25px;
+front-family: "Helvetica Neue", Helvetica, sans-serif;
+color: #222;
+}
+</style>
+
+            <meta property="fb:app_id" content="1841787069391547" />
+        <style type="text/css">.banner { padding: 20px 0; }
+.banner .op-logo { padding: 0; }
+.banner .op-logo img { max-width: 225px; }
+
+body #nav-side.navigation #navigation-alongside  { margin: 0; }
+
+.op-page-header.cf { display: none !important; }
+
+.single-post-content ol li, .single-post-content ul li { margin: 2px 0px 2px 15px; 
+list-style-position: outside;}
+
+.single-post-content ol, .single-post-content ul { margin-left: 10px; }
+
+body.single-post .post-image { display: none; }
+
+.single-post-content ol li:first-child, .single-post-content ul li:first-child { margin-top: 5px; }
+
+.single-post-content h3 { padding-top: 20px; }
+.single-post-content h4 { font-weight: 500; }
+
+.latest-post h1.the-title { font-size: 30px; }
+
+
+.single-post-content .image-text-style-1 .image-text-style-img-container img { box-shadow: 0 0 8px rgba(0,0,0,.33); }
+
+.single-post-content .image-text-style-1 .image-text-align-left { padding-left: 0px; }
+
+.single-post-content .image-text-style-1 .image-text-align-center { padding-left: 0px; }
+
+.single-post-content .image-text-style-1 h3 { font-size: 16px; padding-bottom: 0px; font-weight:bold; }
+
+.single-post-content .image-text-style-1 img { height: auto; }
+
+.image-text-style-1 span { width: 49%; }
+
+@media only screen and (max-width: 767px) {
+.image-text-style-1 span {
+    width: 100%;
+} }
+
+.footer li a { font-weight: 500; }
+
+.older-post h4 a { 
+font-weight: bold;
+font-size: 25px;
+front-family: "Helvetica Neue", Helvetica, sans-serif;
+color: #222;
+}</style><style type="text/css">.op-text-block ul li { margin-left: 20px; }
+.op-text-block { font-size: 16px; }
+.op-faq-s3-wrap .faq-item h3, .op-faq-s3-wrap .faq-item .ui-accordion-content { font-size: 16px; }
+
+div.output_subarea { max-width: 100% !important; }</style><link rel="icon" href="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2016/11/cropped-beaker-dark-full-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2016/11/cropped-beaker-dark-full-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon-precomposed" href="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2016/11/cropped-beaker-dark-full-180x180.png" />
+<meta name="msapplication-TileImage" content="https://elitedatascience.com/wp-content/uploads/2016/11/cropped-beaker-dark-full-270x270.png" />
+</head>
+<body class="page-template-default page page-id-1127 op-live-editor-page op-plugin op-navbar-fixed">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFDKX2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <div class="container main-content">
+                <div class="banner include-nav">
+            <div class="fixed-width cf">
+                                <div class="eight columns">
+                    <div class="op-logo"><a href="http://elitedatascience.com/" title="EliteDataScience" rel="home"><img src="https://datonauts.com/wp-content/uploads/2016/11/elitedatascience-dark.png" alt="EliteDataScience" /></a></div>                </div>
+                                <div class="sixteen columns">
+                                <style>
+                                    .banner .navigation a{
+                                        
+                                    }
+                                </style>
+                            
+                        <nav class="navigation fly-to-left">
+                            <ul id="navigation-alongside"><li id="menu-item-1586" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1586"><a href="https://elitedatascience.com/start-here"><i class="fa fa-bolt"></i><span class="fontawesome-text"> Start Here</span></a></li>
+<li id="menu-item-1754" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1754"><a href="https://elitedatascience.com/books"><i class="fa fa-book"></i><span class="fontawesome-text"> Books</span></a></li>
+<li id="menu-item-1577" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-has-children has_children menu-item-1577"><a href="https://elitedatascience.com"><i class="fa fa-thumb-tack"></i><span class="fontawesome-text"> Articles</span></a>
+<ul class="sub-menu">
+	<li id="menu-item-1572" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1572"><a href="https://elitedatascience.com/category/guides">Guides</a></li>
+	<li id="menu-item-1570" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1570"><a href="https://elitedatascience.com/category/explainers">Concept Explainers</a></li>
+	<li id="menu-item-1571" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1571"><a href="https://elitedatascience.com/category/tutorials">Code Tutorials</a></li>
+	<li id="menu-item-1573" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1573"><a href="https://elitedatascience.com/category/career">Career Help</a></li>
+	<li id="menu-item-1569" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1569"><a href="https://elitedatascience.com/category/resources">Tools &#038; Resources</a></li>
+</ul>
+</li>
+<li id="menu-item-1486" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has_children menu-item-1486"><a href="#"><i class="fa fa-university"></i><span class="fontawesome-text"> Products</span></a>
+<ul class="sub-menu">
+	<li id="menu-item-1429" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1429"><a href="https://elitedatascience.com/machine-learning-masterclass">ML Masterclass</a></li>
+	<li id="menu-item-1487" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1487"><a href="https://elitedatascience.com/interview-prep-kit">Interview Prep Kit</a></li>
+</ul>
+</li>
+
+                            </ul>
+                        </nav>                </div>
+                            </div>
+        </div>
+        <div id="content_area" class=""><div style='padding-top:0px;padding-bottom:0px;border-top-width:px;border-top-style:solid;border-top-color:;border-bottom-width:px;border-bottom-style:solid;border-bottom-color:;'  class="row one-column cf ui-sortable section   " id="le_body_row_1" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd18xIiwicGFkZGluZ1RvcCI6IjAiLCJwYWRkaW5nQm90dG9tIjoiMCIsImJvcmRlclRvcFdpZHRoIjoiIiwiYm9yZGVyVG9wQ29sb3IiOiIiLCJib3JkZXJCb3R0b21XaWR0aCI6IiIsImJvcmRlckJvdHRvbUNvbG9yIjoiIiwic2VjdGlvblNlcGFyYXRvclR5cGUiOiJub25lIiwic2VjdGlvblNlcGFyYXRvclN0eWxlIjoiIiwiZXh0cmFzIjp7ImFuaW1hdGlvbkVmZmVjdCI6IiIsImFuaW1hdGlvbkRlbGF5IjoiIn0sInJvd1Njcm9sbEZpeGVkUG9zaXRpb24iOiJub25lIiwiYWRkb24iOnsidmlkZW9fYmFja2dyb3VuZF90eXBlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX3dpZHRoIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX2hlaWdodCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX21wNCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX3dlYm0iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3VybF9vZ3YiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3ZlcnRpY2FsX2FsaWduIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2NvbG9yIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X29wYWNpdHkiOiIwIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2ltYWdlIjoiIiwidmlkZW9fYmFja2dyb3VuZF9pbWFnZV9wb3NpdGlvbiI6IiIsInZpZGVvX2JhY2tncm91bmRfYWx0ZXJuYXRpdmVfaW1hZ2UiOiIifX0="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_1_col_1"><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_1"><div class="element"> 
+                <div class="image-caption" style='width:940px;margin-top:0px;margin-bottom:px;margin-right:auto;margin-left:auto;'><img alt="Day 6: Model Training" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Day-6-Model-Training.png"  border="0" class="full-width" /></div>
+             </div></div><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_2"><div class="element"> <div style="height:20px"></div> </div></div><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_3"><div class="element"> <div class="op-text-block" style="width:600px;margin: 0 auto;text-align:center;"><h4>Today, we'll look at how to apply machine learning algorithms the right way.</h4>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_4"><div class="element"> <div style="height:40px"></div> </div></div><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_5"><div class="element"> <div class="op-text-block" style="width:100%;text-align: left;"><p>Yesterday, we introduced 5 effective algorithms and their underlying mechanisms.</p>
+<p>Let's review the answers to yesterday's quiz:</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_6"><div class="element"> <div class="op-faq-s3-wrap">
+    <div class="faq-item">
+    <h3>What are the two biggest flaws of linear regression?</h3>
+    <div>
+        <ul>
+<li>It&#8217;s prone to overfit with many input features.</li>
+<li>It cannot easily express non-linear relationships.</li>
+</ul>
+    </div>
+</div> <div class="faq-item">
+    <h3>How can you address the first flaw?</h3>
+    <div>
+        <ul>
+<li>Regularization: Lasso, Ridge, Elastic-Net</li>
+</ul>
+    </div>
+</div> <div class="faq-item">
+    <h3>How can you address the second flaw?</h3>
+    <div>
+        <ul>
+<li>Decision tree ensembles: Random Forest, Boosted Tree</li>
+</ul>
+    </div>
+</div> <div class="faq-item">
+    <h3>What are two types of regularization penalty, and what do they do in practice?</h3>
+    <div>
+        <ul>
+<li>One type penalizes the absolute size of coefficients. This can cause coefficients to be zero, thereby performing automatic feature selection.</li>
+<li>Another type penalizes the squared size of coefficients. This dampens coefficients, which is known as feature shrinkage.</li>
+</ul>
+    </div>
+</div> <div class="faq-item">
+    <h3>What are two methods for ensembling and how do they work?</h3>
+    <div>
+        <ul>
+<li>Bagging attempts to reduce the chance overfitting complex models. It combines many strong learners that were trained in parallel.</li>
+<li>Boosting attempts to improve the predictive flexibility of simple models. It combines many weak learners that were trained sequentially.</li>
+</ul>
+    </div>
+</div> </div> </div></div><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_7"><div class="element"> <div style="height:20px"></div> </div></div><div class="element-container cf" data-style="" id="le_body_row_1_col_1_el_8"><div class="element"> <div class="op-text-block" style="width:100%;text-align: left;"><p>Let's dive into today's lesson.</p>
+</div> </div></div></div></div></div><div style='padding-top:60px;border-top-width:px;border-top-style:solid;border-top-color:;border-bottom-width:px;border-bottom-style:solid;border-bottom-color:;'  class="row one-column cf ui-sortable   " id="le_body_row_2" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd18yIiwicGFkZGluZ1RvcCI6IjYwIiwiYm9yZGVyVG9wV2lkdGgiOiIiLCJib3JkZXJUb3BDb2xvciI6IiIsImJvcmRlckJvdHRvbVdpZHRoIjoiIiwiYm9yZGVyQm90dG9tQ29sb3IiOiIiLCJzZWN0aW9uU2VwYXJhdG9yVHlwZSI6Im5vbmUiLCJzZWN0aW9uU2VwYXJhdG9yU3R5bGUiOiIiLCJleHRyYXMiOnsiYW5pbWF0aW9uRWZmZWN0IjoiIiwiYW5pbWF0aW9uRGVsYXkiOiIifSwicm93U2Nyb2xsRml4ZWRQb3NpdGlvbiI6Im5vbmUiLCJhZGRvbiI6eyJ2aWRlb19iYWNrZ3JvdW5kX3R5cGUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfd2lkdGgiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfaGVpZ2h0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfbXA0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfd2VibSI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX29ndiI6IiIsInZpZGVvX2JhY2tncm91bmRfdmVydGljYWxfYWxpZ24iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfY29sb3IiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfb3BhY2l0eSI6IjAiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfaW1hZ2UiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX2ltYWdlX3Bvc2l0aW9uIjoiIiwidmlkZW9fYmFja2dyb3VuZF9hbHRlcm5hdGl2ZV9pbWFnZSI6IiJ9fQ=="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_2_col_1"><div class="element-container cf" data-style="" id="le_body_row_2_col_1_el_1"><div class="element"> 
+            <style type="text/css">
+            #el_ah_bf7189b98d147632d0657634420555b5.op-headline .op-words-wrapper * {color: #000000}
+            #el_ah_bf7189b98d147632d0657634420555b5.op-headline.type .op-words-wrapper::after {background-color: #000000}
+            #el_ah_bf7189b98d147632d0657634420555b5.op-headline.type_fast .op-words-wrapper::after {background-color: #000000}
+            </style>
+            <h2 class="op-headline letters type " style='text-align:center;' id="el_ah_bf7189b98d147632d0657634420555b5">
+                <span></span>
+                    <span class="op-words-wrapper waiting">
+                    <b class="is-visible">Introduction</b>
+                </span>
+            </h2> </div></div></div></div></div><div style='padding-top:20px;padding-bottom:60px;border-top-width:px;border-top-style:solid;border-top-color:;border-bottom-width:px;border-bottom-style:solid;border-bottom-color:;'  class="row two-columns cf ui-sortable section   " id="le_body_row_3" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd18zIiwicGFkZGluZ1RvcCI6IjIwIiwicGFkZGluZ0JvdHRvbSI6IjYwIiwiYm9yZGVyVG9wV2lkdGgiOiIiLCJib3JkZXJUb3BDb2xvciI6IiIsImJvcmRlckJvdHRvbVdpZHRoIjoiIiwiYm9yZGVyQm90dG9tQ29sb3IiOiIiLCJzZWN0aW9uU2VwYXJhdG9yVHlwZSI6Im5vbmUiLCJzZWN0aW9uU2VwYXJhdG9yU3R5bGUiOiIiLCJleHRyYXMiOnsiYW5pbWF0aW9uRWZmZWN0IjoiIiwiYW5pbWF0aW9uRGVsYXkiOiIifSwicm93U2Nyb2xsRml4ZWRQb3NpdGlvbiI6Im5vbmUiLCJhZGRvbiI6eyJ2aWRlb19iYWNrZ3JvdW5kX3R5cGUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfd2lkdGgiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfaGVpZ2h0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfbXA0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfd2VibSI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX29ndiI6IiIsInZpZGVvX2JhY2tncm91bmRfdmVydGljYWxfYWxpZ24iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfY29sb3IiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfb3BhY2l0eSI6IjAiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfaW1hZ2UiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX2ltYWdlX3Bvc2l0aW9uIjoiIiwidmlkZW9fYmFja2dyb3VuZF9hbHRlcm5hdGl2ZV9pbWFnZSI6IiJ9fQ=="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-half column cols" id="le_body_row_3_col_1"><div class="element-container cf" data-style="" id="le_body_row_3_col_1_el_1"><div class="element"> <div class="op-text-block" style="width:100%;text-align: left;"><p style="text-align: left;">At last, it’s time to build our models!</p>
+<p>It might seem like it took us a while to get here, but professional data scientists actually spend the bulk of their time on the steps leading up to this one:</p>
+<ol>
+<li>Exploring the data.</li>
+<li>Cleaning the data.</li>
+<li>Engineering new features.</li>
+</ol>
+<p style="text-align: left;">Again, that’s because <strong>better data beats fancier algorithms</strong>.</p>
+<p>In this lesson, you'll learn how to set up the entire modeling process to maximize performance while <strong>safeguarding against overfitting</strong>. We will swap algorithms in and out and automatically find the best parameters for each one.</p>
+</div> </div></div></div><div class="one-half column cols" id="le_body_row_3_col_2"><div class="element-container cf" data-style="" id="le_body_row_3_col_2_el_1"><div class="element"> 
+                <div class="image-caption frame-style-1" style='width:300px;margin-top:0px;margin-bottom:px;margin-right:auto;margin-left:auto;'><img alt="Model training" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Model-Training-At-Least.png"  border="0" class="full-width" /><p class="wp-caption-text">"Model training, at last!"</p></div>
+             </div></div></div></div></div><div style='background:#f1f1f1;padding-top:60px;padding-bottom:40px;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#ddd;'  class="row one-column cf ui-sortable section   " id="le_body_row_4" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd180IiwiYmFja2dyb3VuZENvbG9yU3RhcnQiOiIjZjFmMWYxIiwicGFkZGluZ1RvcCI6IjYwIiwicGFkZGluZ0JvdHRvbSI6IjQwIiwiYm9yZGVyVG9wV2lkdGgiOiIxIiwiYm9yZGVyVG9wQ29sb3IiOiIjZGRkIiwiYm9yZGVyQm90dG9tV2lkdGgiOiIxIiwiYm9yZGVyQm90dG9tQ29sb3IiOiIjZGRkIiwic2VjdGlvblNlcGFyYXRvclR5cGUiOiJub25lIiwic2VjdGlvblNlcGFyYXRvclN0eWxlIjoiIiwiZXh0cmFzIjp7ImFuaW1hdGlvbkVmZmVjdCI6IiIsImFuaW1hdGlvbkRlbGF5IjoiIn0sInJvd1Njcm9sbEZpeGVkUG9zaXRpb24iOiJub25lIiwiYWRkb24iOnsidmlkZW9fYmFja2dyb3VuZF90eXBlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX3dpZHRoIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX2hlaWdodCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX21wNCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX3dlYm0iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3VybF9vZ3YiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3ZlcnRpY2FsX2FsaWduIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2NvbG9yIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X29wYWNpdHkiOiIwIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2ltYWdlIjoiIiwidmlkZW9fYmFja2dyb3VuZF9pbWFnZV9wb3NpdGlvbiI6IiIsInZpZGVvX2JhY2tncm91bmRfYWx0ZXJuYXRpdmVfaW1hZ2UiOiIifX0="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_4_col_1"><div class="element-container cf" data-style="" id="le_body_row_4_col_1_el_1"><div class="element"> <h2 style='text-align:center;margin-bottom:30px;'>Split dataset</h2> </div></div><div class="element-container cf" data-style="" id="le_body_row_4_col_1_el_2"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">Let’s start with a crucial but sometimes overlooked step: Spending your data.</p>
+<p style="text-align: left;">Think of your data as a <strong>limited resource</strong>.</p>
+<ul style="text-align: left;">
+<li>You can spend some of it to train your model (i.e. feed it to the algorithm).</li>
+<li>You can spend some of it to evaluate (test) your model.</li>
+<li>But you can’t reuse the same data for both!</li>
+</ul>
+<p style="text-align: left;">If you evaluate your model on the same data you used to train it, your model could be very overfit and you wouldn’t even know! A model should be judged on its ability to predict <em>new, unseen data</em>.</p>
+<p style="text-align: left;">Therefore, you should have separate training and test subsets of your dataset.</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_4_col_1_el_3"><div class="element"> 
+                <div class="image-caption" style='width:480px;margin-top:20px;margin-bottom:20px;margin-right:auto;margin-left:auto;'><img alt="Train Test Split" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Train-Test-Split-Diagram.jpg"  border="0" class="full-width" /></div>
+             </div></div><div class="element-container cf" data-style="" id="le_body_row_4_col_1_el_4"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;"><strong>Training sets</strong> are used to fit and tune your models. <strong>Test sets</strong> are put aside as "unseen" data to evaluate your models.</p>
+<ul style="text-align: left;">
+<li>You should always split your data <em>before </em>doing anything else.</li>
+<li>This is the best way to get reliable estimates of your models’ performance.</li>
+<li>After splitting your data, <strong>don’t touch your test set</strong> until you’re ready to choose your final model!</li>
+</ul>
+<p style="text-align: left;">Comparing test vs. training performance allows us to avoid overfitting... <strong>If the model performs very well on the training data but poorly on the test data, then it’s overfit.</strong></p>
+</div> </div></div></div></div></div><div style='padding-top:60px;padding-bottom:20px;border-top-width:px;border-top-style:solid;border-top-color:;border-bottom-width:px;border-bottom-style:solid;border-bottom-color:;'  class="row one-column cf ui-sortable section   " id="le_body_row_5" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd181IiwicGFkZGluZ1RvcCI6IjYwIiwicGFkZGluZ0JvdHRvbSI6IjIwIiwiYm9yZGVyVG9wV2lkdGgiOiIiLCJib3JkZXJUb3BDb2xvciI6IiIsImJvcmRlckJvdHRvbVdpZHRoIjoiIiwiYm9yZGVyQm90dG9tQ29sb3IiOiIiLCJzZWN0aW9uU2VwYXJhdG9yVHlwZSI6Im5vbmUiLCJzZWN0aW9uU2VwYXJhdG9yU3R5bGUiOiIiLCJleHRyYXMiOnsiYW5pbWF0aW9uRWZmZWN0IjoiIiwiYW5pbWF0aW9uRGVsYXkiOiIifSwicm93U2Nyb2xsRml4ZWRQb3NpdGlvbiI6Im5vbmUiLCJhZGRvbiI6eyJ2aWRlb19iYWNrZ3JvdW5kX3R5cGUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfd2lkdGgiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfaGVpZ2h0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfbXA0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfd2VibSI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX29ndiI6IiIsInZpZGVvX2JhY2tncm91bmRfdmVydGljYWxfYWxpZ24iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfY29sb3IiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfb3BhY2l0eSI6IjAiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfaW1hZ2UiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX2ltYWdlX3Bvc2l0aW9uIjoiIiwidmlkZW9fYmFja2dyb3VuZF9hbHRlcm5hdGl2ZV9pbWFnZSI6IiJ9fQ=="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_5_col_1"><div class="element-container cf" data-style="" id="le_body_row_5_col_1_el_1"><div class="element"> <h2 style='text-align:center;margin-bottom:30px;'>Hyperparameters</h2> </div></div><div class="element-container cf" data-style="" id="le_body_row_5_col_1_el_2"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">So far, we’ve been casually talking about "tuning" models, but now it’s time to treat the topic more formally.</p>
+<p style="text-align: left;">When we talk of tuning models, we specifically mean tuning <strong>hyperparameters</strong>.</p>
+<p style="text-align: left;">There are two types of parameters in machine learning algorithms.</p>
+<p style="text-align: left;">The key distinction is that model parameters can be learned directly from the training data while hyperparameters cannot.</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_5_col_1_el_3"><div class="element"> 
+                <div class="image-caption frame-style-1" style='width:300px;margin-top:20px;margin-bottom:px;margin-right:auto;margin-left:auto;'><img alt="Tuning Hyperparameters" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Tuning-Some-Hyperparameters.png"  border="0" class="full-width" /><p class="wp-caption-text">"Don't mind me. Just <s>randomly pressing buttons</s> carefully tuning parameters."</p></div>
+             </div></div></div></div></div><div style='padding-top:0px;padding-bottom:40px;border-top-width:px;border-top-style:solid;border-top-color:;border-bottom-width:px;border-bottom-style:solid;border-bottom-color:;'  class="row two-columns cf ui-sortable section   " id="le_body_row_6" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd182IiwicGFkZGluZ1RvcCI6IjAiLCJwYWRkaW5nQm90dG9tIjoiNDAiLCJib3JkZXJUb3BXaWR0aCI6IiIsImJvcmRlclRvcENvbG9yIjoiIiwiYm9yZGVyQm90dG9tV2lkdGgiOiIiLCJib3JkZXJCb3R0b21Db2xvciI6IiIsInNlY3Rpb25TZXBhcmF0b3JUeXBlIjoibm9uZSIsInNlY3Rpb25TZXBhcmF0b3JTdHlsZSI6IiIsImV4dHJhcyI6eyJhbmltYXRpb25FZmZlY3QiOiIiLCJhbmltYXRpb25EZWxheSI6IiJ9LCJyb3dTY3JvbGxGaXhlZFBvc2l0aW9uIjoibm9uZSIsImFkZG9uIjp7InZpZGVvX2JhY2tncm91bmRfdHlwZSI6IiIsInZpZGVvX2JhY2tncm91bmRfeW91dHViZSI6IiIsInZpZGVvX2JhY2tncm91bmRfeW91dHViZV93aWR0aCI6IiIsInZpZGVvX2JhY2tncm91bmRfeW91dHViZV9oZWlnaHQiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3VybF9tcDQiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3VybF93ZWJtIjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfb2d2IjoiIiwidmlkZW9fYmFja2dyb3VuZF92ZXJ0aWNhbF9hbGlnbiI6IiIsInZpZGVvX2JhY2tncm91bmRfb3ZlcmxheV9jb2xvciI6IiIsInZpZGVvX2JhY2tncm91bmRfb3ZlcmxheV9vcGFjaXR5IjoiMCIsInZpZGVvX2JhY2tncm91bmRfb3ZlcmxheV9pbWFnZSI6IiIsInZpZGVvX2JhY2tncm91bmRfaW1hZ2VfcG9zaXRpb24iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX2FsdGVybmF0aXZlX2ltYWdlIjoiIn19"><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-half column cols" id="le_body_row_6_col_1"><div class="element-container cf" data-style="" id="le_body_row_6_col_1_el_1"><div class="element"> <h4 style='text-align:left;margin-bottom:20px;'><p style="text-align: center;">Model parameters</p></h4> </div></div><div class="element-container cf" data-style="" id="le_body_row_6_col_1_el_2"><div class="element"> <div class="op-text-block" style="width:100%;text-align: left;"><p>Model parameters are learned attributes that define <em>individual models</em>.</p>
+<ul>
+<li>e.g. regression coefficients</li>
+<li>e.g. decision tree split locations</li>
+<li>They can be <strong>learned directly </strong>from the training data</li>
+</ul>
+</div> </div></div></div><div class="one-half column cols" id="le_body_row_6_col_2"><div class="element-container cf" data-style="" id="le_body_row_6_col_2_el_1"><div class="element"> <h4 style='text-align:left;margin-bottom:20px;'><p style="text-align: center;">Hyperparameters</p></h4> </div></div><div class="element-container cf" data-style="" id="le_body_row_6_col_2_el_2"><div class="element"> <div class="op-text-block" style="width:100%;text-align: left;"><p>Hyperparameters express "higher-level" <em>structural settings</em> for algorithms.</p>
+<ul>
+<li>e.g. strength of the penalty used in regularized regression</li>
+<li>e.g. the number of trees to include in a random forest</li>
+<li>They are <strong>decided</strong> before fitting the model because they can't be learned from the data</li>
+</ul>
+</div> </div></div></div></div></div><div style='background:#f1f1f1;padding-top:60px;padding-bottom:40px;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#ddd;'  class="row one-column cf ui-sortable section   " id="le_body_row_7" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd183IiwiYmFja2dyb3VuZENvbG9yU3RhcnQiOiIjZjFmMWYxIiwicGFkZGluZ1RvcCI6IjYwIiwicGFkZGluZ0JvdHRvbSI6IjQwIiwiYm9yZGVyVG9wV2lkdGgiOiIxIiwiYm9yZGVyVG9wQ29sb3IiOiIjZGRkIiwiYm9yZGVyQm90dG9tV2lkdGgiOiIxIiwiYm9yZGVyQm90dG9tQ29sb3IiOiIjZGRkIiwic2VjdGlvblNlcGFyYXRvclR5cGUiOiJub25lIiwic2VjdGlvblNlcGFyYXRvclN0eWxlIjoiIiwiZXh0cmFzIjp7ImFuaW1hdGlvbkVmZmVjdCI6IiIsImFuaW1hdGlvbkRlbGF5IjoiIn0sInJvd1Njcm9sbEZpeGVkUG9zaXRpb24iOiJub25lIiwiYWRkb24iOnsidmlkZW9fYmFja2dyb3VuZF90eXBlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX3dpZHRoIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX2hlaWdodCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX21wNCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX3dlYm0iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3VybF9vZ3YiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3ZlcnRpY2FsX2FsaWduIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2NvbG9yIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X29wYWNpdHkiOiIwIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2ltYWdlIjoiIiwidmlkZW9fYmFja2dyb3VuZF9pbWFnZV9wb3NpdGlvbiI6IiIsInZpZGVvX2JhY2tncm91bmRfYWx0ZXJuYXRpdmVfaW1hZ2UiOiIifX0="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_7_col_1"><div class="element-container cf" data-style="" id="le_body_row_7_col_1_el_1"><div class="element"> <h2 style='text-align:center;margin-bottom:30px;'>Cross-validation</h2> </div></div><div class="element-container cf" data-style="" id="le_body_row_7_col_1_el_2"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">Next, it’s time to introduce a concept that will help us tune our models: cross-validation.</p>
+<p style="text-align: left;">Cross-validation is a method for getting a<em> reliable estimate of model performance using only your training data</em>.</p>
+<p style="text-align: left;">There are several ways to cross-validate. The most common one, <strong>10-fold cross-validation</strong>, breaks your training data into 10 equal parts (a.k.a. folds), essentially creating 10 miniature train/test splits.</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_7_col_1_el_3"><div class="element"> 
+                <div class="image-caption" style='width:640px;margin-top:20px;margin-bottom:20px;margin-right:auto;margin-left:auto;'><img alt="Cross-Validation" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Cross-Validation-Diagram.jpg"  border="0" class="full-width" /></div>
+             </div></div><div class="element-container cf" data-style="" id="le_body_row_7_col_1_el_4"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">These are the steps for 10-fold cross-validation:</p>
+<ol style="text-align: left;">
+<li>Split your data into 10 equal parts, or "folds".</li>
+<li>Train your model on 9 folds (e.g. the first 9 folds).</li>
+<li>Evaluate it on the 1 remaining "hold-out" fold.</li>
+<li>Perform steps (2) and (3) 10 times, each time holding out a different fold.</li>
+<li>Average the performance across all 10 hold-out folds.</li>
+</ol>
+<p style="text-align: left;">The average performance across the 10 hold-out folds is your final performance estimate, also called your <strong>cross-validated score</strong>. Because you created 10 mini train/test splits, this score is usually pretty reliable.</p>
+</div> </div></div></div></div></div><div style='padding-top:60px;padding-bottom:40px;border-top-width:px;border-top-style:solid;border-top-color:;border-bottom-width:px;border-bottom-style:solid;border-bottom-color:;'  class="row one-column cf ui-sortable section   " id="le_body_row_8" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd184IiwicGFkZGluZ1RvcCI6IjYwIiwicGFkZGluZ0JvdHRvbSI6IjQwIiwiYm9yZGVyVG9wV2lkdGgiOiIiLCJib3JkZXJUb3BDb2xvciI6IiIsImJvcmRlckJvdHRvbVdpZHRoIjoiIiwiYm9yZGVyQm90dG9tQ29sb3IiOiIiLCJzZWN0aW9uU2VwYXJhdG9yVHlwZSI6Im5vbmUiLCJzZWN0aW9uU2VwYXJhdG9yU3R5bGUiOiIiLCJleHRyYXMiOnsiYW5pbWF0aW9uRWZmZWN0IjoiIiwiYW5pbWF0aW9uRGVsYXkiOiIifSwicm93U2Nyb2xsRml4ZWRQb3NpdGlvbiI6Im5vbmUiLCJhZGRvbiI6eyJ2aWRlb19iYWNrZ3JvdW5kX3R5cGUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmUiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfd2lkdGgiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3lvdXR1YmVfaGVpZ2h0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfbXA0IjoiIiwidmlkZW9fYmFja2dyb3VuZF91cmxfd2VibSI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX29ndiI6IiIsInZpZGVvX2JhY2tncm91bmRfdmVydGljYWxfYWxpZ24iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfY29sb3IiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfb3BhY2l0eSI6IjAiLCJ2aWRlb19iYWNrZ3JvdW5kX292ZXJsYXlfaW1hZ2UiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX2ltYWdlX3Bvc2l0aW9uIjoiIiwidmlkZW9fYmFja2dyb3VuZF9hbHRlcm5hdGl2ZV9pbWFnZSI6IiJ9fQ=="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_8_col_1"><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_1"><div class="element"> <h2 style='text-align:center;margin-bottom:30px;'>Fit and tune models</h2> </div></div><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_2"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">Now that we've split our dataset into training and test sets, and we've learned about hyperparameters and cross-validation, we're ready fit and tune our models.</p>
+<p style="text-align: left;">Basically, all we need to do is perform the entire cross-validation loop detailed above on each <strong>set of hyperparameter values</strong> we'd like to try.<br />
+​<br />
+The high-level pseudo-code looks like this:</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_3"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><pre style="text-align: left; font-size:14px;">For each algorithm (i.e. regularized regression, random forest, etc.):
+  For each set of hyperparameter values to try:
+    Perform cross-validation using the training set.
+    Calculate cross-validated score.</pre>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_4"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">At the end of this process, you will have a cross-validated score for each set of hyperparameter values... for each algorithm.</p>
+<p style="text-align: left;">For example:</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_5"><div class="element"> 
+                <div class="image-caption" style='width:360px;margin-top:0px;margin-bottom:px;margin-right:auto;margin-left:auto;'><img alt="Cross-Validated Scores" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Cross-Validated-Score-Diagram.jpg"  border="0" class="full-width" /></div>
+             </div></div><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_6"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">Then, we'll pick the best set of hyperparameters <em>within each algorithm</em>.</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_7"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><pre style="text-align: left; font-size: 14px;">For each algorithm:
+  Keep the set of hyperparameter values with best cross-validated score.
+  Re-train the algorithm on the entire training set (without cross-validation).</pre>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_8_col_1_el_8"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">It's kinda like the Hunger Games... each algorithm sends its own "representatives" (i.e. model trained on the best set of hyperparameter values) to the final selection, which is coming up next...</p>
+</div> </div></div></div></div></div><div style='background:#f1f1f1;padding-top:60px;padding-bottom:40px;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#ddd;'  class="row one-column cf ui-sortable section   " id="le_body_row_9" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd185IiwiYmFja2dyb3VuZENvbG9yU3RhcnQiOiIjZjFmMWYxIiwicGFkZGluZ1RvcCI6IjYwIiwicGFkZGluZ0JvdHRvbSI6IjQwIiwiYm9yZGVyVG9wV2lkdGgiOiIxIiwiYm9yZGVyVG9wQ29sb3IiOiIjZGRkIiwiYm9yZGVyQm90dG9tV2lkdGgiOiIxIiwiYm9yZGVyQm90dG9tQ29sb3IiOiIjZGRkIiwic2VjdGlvblNlcGFyYXRvclR5cGUiOiJub25lIiwic2VjdGlvblNlcGFyYXRvclN0eWxlIjoiIiwiZXh0cmFzIjp7ImFuaW1hdGlvbkVmZmVjdCI6IiIsImFuaW1hdGlvbkRlbGF5IjoiIn0sInJvd1Njcm9sbEZpeGVkUG9zaXRpb24iOiJub25lIiwiYWRkb24iOnsidmlkZW9fYmFja2dyb3VuZF90eXBlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX3dpZHRoIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX2hlaWdodCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX21wNCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX3dlYm0iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3VybF9vZ3YiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3ZlcnRpY2FsX2FsaWduIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2NvbG9yIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X29wYWNpdHkiOiIwIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2ltYWdlIjoiIiwidmlkZW9fYmFja2dyb3VuZF9pbWFnZV9wb3NpdGlvbiI6IiIsInZpZGVvX2JhY2tncm91bmRfYWx0ZXJuYXRpdmVfaW1hZ2UiOiIifX0="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_9_col_1"><div class="element-container cf" data-style="" id="le_body_row_9_col_1_el_1"><div class="element"> <h2 style='text-align:center;margin-bottom:30px;'>Select winner</h2> </div></div><div class="element-container cf" data-style="" id="le_body_row_9_col_1_el_2"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">By now, you'll have 1 "best" model <em>for each algorithm</em> that has been tuned through cross-validation. Most importantly, you've only used the training data so far.</p>
+<p style="text-align: left;">Now it’s time to evaluate each model and pick the best one, a la Hunger Games style.</p>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_9_col_1_el_3"><div class="element"> 
+                <div class="image-caption frame-style-1" style='width:300px;margin-top:20px;margin-bottom:20px;margin-right:auto;margin-left:auto;'><img alt="ML Hunger Games" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/ML-Hunger-Games.jpg"  border="0" class="full-width" /><p class="wp-caption-text">"I volunteer as tribute!"</p></div>
+             </div></div><div class="element-container cf" data-style="" id="le_body_row_9_col_1_el_4"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">Because you've saved your <strong>test set</strong> as a truly unseen dataset, you can now use it get a reliable estimate of each models' performance.</p>
+<p style="text-align: left;">There are a variety of <strong>performance metrics</strong> you could choose from. We won't spend too much time on them here, but in general:</p>
+<ul style="text-align: left;">
+<li>For regression tasks, we recommend <strong>Mean Squared Error (MSE) </strong>or <strong>Mean Absolute Error (MAE)</strong>. <em>(Lower values are better)</em></li>
+<li>For classification tasks, we recommend <strong>Area Under ROC Curve (AUROC)</strong>. <em>(Higher values are better)</em></li>
+</ul>
+<p style="text-align: left;">The process is very straightforward:</p>
+<ol style="text-align: left;">
+<li>For each of your models, make predictions on your test set.</li>
+<li>Calculate performance metrics using those predictions and the "ground truth" target variable from the test set.</li>
+</ol>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_9_col_1_el_5"><div class="element"> 
+                <div class="image-caption frame-style-1" style='width:300px;margin-top:20px;margin-bottom:20px;margin-right:auto;margin-left:auto;'><img alt="Evaluating Performance Metrics" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Evaluating-Abacus.png"  border="0" class="full-width" /><p class="wp-caption-text">Doing calculations on an abacus #TBT #math #retro #oldschool #oldskool #oldscool</p></div>
+             </div></div><div class="element-container cf" data-style="" id="le_body_row_9_col_1_el_6"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">Finally, use these questions to help you pick the winning model:</p>
+<ul>
+<li style="text-align: left;">Which model had the best performance on the test set? <strong>(performance)</strong></li>
+<li style="text-align: left;">Does it perform well across various performance metrics? <strong>(robustness)</strong></li>
+<li style="text-align: left;">Did it also have (one of) the best cross-validated scores from the training set? <strong>(consistency)</strong></li>
+<li style="text-align: left;">Does it solve the original business problem? <strong>(win condition)</strong></li>
+</ul>
+</div> </div></div></div></div></div><div style='padding-top:60px;padding-bottom:40px;border-top-width:px;border-top-style:solid;border-top-color:;border-bottom-width:px;border-bottom-style:solid;border-bottom-color:;'  class="row one-column cf ui-sortable section   " id="le_body_row_10" data-style="eyJlbGVtZW50SWQiOiJsZV9ib2R5X3Jvd18xMCIsInBhZGRpbmdUb3AiOiI2MCIsInBhZGRpbmdCb3R0b20iOiI0MCIsImJvcmRlclRvcFdpZHRoIjoiIiwiYm9yZGVyVG9wQ29sb3IiOiIiLCJib3JkZXJCb3R0b21XaWR0aCI6IiIsImJvcmRlckJvdHRvbUNvbG9yIjoiIiwic2VjdGlvblNlcGFyYXRvclR5cGUiOiJub25lIiwic2VjdGlvblNlcGFyYXRvclN0eWxlIjoiIiwiZXh0cmFzIjp7ImFuaW1hdGlvbkVmZmVjdCI6IiIsImFuaW1hdGlvbkRlbGF5IjoiIn0sInJvd1Njcm9sbEZpeGVkUG9zaXRpb24iOiJub25lIiwiYWRkb24iOnsidmlkZW9fYmFja2dyb3VuZF90eXBlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX3dpZHRoIjoiIiwidmlkZW9fYmFja2dyb3VuZF95b3V0dWJlX2hlaWdodCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX21wNCI6IiIsInZpZGVvX2JhY2tncm91bmRfdXJsX3dlYm0iOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3VybF9vZ3YiOiIiLCJ2aWRlb19iYWNrZ3JvdW5kX3ZlcnRpY2FsX2FsaWduIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2NvbG9yIjoiIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X29wYWNpdHkiOiIwIiwidmlkZW9fYmFja2dyb3VuZF9vdmVybGF5X2ltYWdlIjoiIiwidmlkZW9fYmFja2dyb3VuZF9pbWFnZV9wb3NpdGlvbiI6IiIsInZpZGVvX2JhY2tncm91bmRfYWx0ZXJuYXRpdmVfaW1hZ2UiOiIifX0="><div class="op-row-video-background-wrap"><div class="op-video-background-overlay"></div><video class="op-video-background" preload="auto" loop autoplay muted="true" data-muted="false"></video></div><div class="fixed-width"><div class="one-column column cols" id="le_body_row_10_col_1"><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_1"><div class="element"> <h2 style='text-align:center;margin-bottom:30px;'>Conclusion</h2> </div></div><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_2"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><p style="text-align: left;">Kudos for making to the end of day 6! We've come a long way since our first lesson, and it's been a blast.</p>
+<p>&nbsp;</p>
+<hr/>
+<p style="text-align: left;"><strong>Here's the final quiz! Ready?</strong></p>
+<ul style="text-align: left;">
+<li>(Hopefully a freebie) Pick one: better data or fancier algorithms.</li>
+<li>When should you split your dataset into training and test sets, and why?</li>
+<li>What's the key difference between model parameters and hyperparameters?</li>
+<li>Explain how cross-validation helps you "tune" your models?</li>
+</ul>
+<div>
+<hr/>
+<p style="text-align: left;">Tomorrow, we'll review answers and also discuss next steps for develop invaluable skills that can open incredible career opportunities. You won't want to miss it!</p>
+</div>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_3"><div class="element"> <div style="height:40px"></div> </div></div><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_4"><div class="element"> <h2 style='text-align:center;margin-bottom:30px;'>Additional Resources</h2> </div></div><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_5"><div class="element"> <div class="op-text-block" style="width:640px;margin: 0 auto;text-align:center;"><div>
+<ul>
+<li style="text-align: left;"><a href="http://elitedatascience.com/overfitting-in-machine-learning" target="_blank" rel="noopener">Overfitting in Machine Learning: What It Is and How to Prevent It</a></li>
+<li style="text-align: left;"><a href="http://elitedatascience.com/imbalanced-classes" target="_blank" rel="noopener">How to Handle Imbalanced Classes in ML</a></li>
+<li style="text-align: left;"><a href="http://elitedatascience.com/machine-learning-iteration" target="_blank" rel="noopener">The 5 Levels of Machine Learning Iteration</a></li>
+<li style="text-align: left;"><a href="http://elitedatascience.com/machine-learning-projects-for-beginners" target="_blank" rel="noopener">Fun Machine Learning Projects for Beginners</a></li>
+</ul>
+</div>
+</div> </div></div><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_6"><div class="element"> <div style="height:40px"></div> </div></div><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_7"><div class="element"> 
+                <div class="image-caption" style='width:940px;margin-top:0px;margin-bottom:px;margin-right:auto;margin-left:auto;'><img alt="Please Share Crash Course" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/Please-Share-Crash-Course.png"  border="0" class="full-width" /></div>
+             </div></div><div class="element-container cf" data-style="" id="le_body_row_10_col_1_el_8"><div class="element"> <div class="op-custom-html-block"><aside class="mashsb-container mashsb-main mashsb-stretched"><div class="mashsb-box"><div class="mashsb-count mash-small" style="float:left;"><div class="counts mashsbcount">718</div><span class="mashsb-sharetext">SHARES</span></div><div class="mashsb-buttons"><a  class="mashicon-facebook mash-small mash-center mashsb-noshadow" href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Felitedatascience.com" target="_blank" rel="noopener nofollow"><span class="icon"></span><span class="text">Share</span></a><a  class="mashicon-google mash-small mash-center mashsb-noshadow" href="https://plus.google.com/share?text=Day+6%3A+Model+Training&amp;url=https%3A%2F%2Felitedatascience.com" target="_blank" rel="noopener nofollow"><span class="icon"></span><span class="text">Google</span></a><a  class="mashicon-linkedin mash-small mash-center mashsb-noshadow" href="https://www.linkedin.com/shareArticle?trk=Day+6%3A+Model+Training&amp;url=https%3A%2F%2Felitedatascience.com" target="_blank" rel="noopener nofollow"><span class="icon"></span><span class="text">Linkedin</span></a><a  class="mashicon-twitter mash-small mash-center mashsb-noshadow" href="https://twitter.com/intent/tweet?text=Day%206%3A%20Model%20Training&url=https://elitedatascience.com" target="_blank" rel="noopener nofollow"><span class="icon"></span><span class="text">Tweet</span></a><div class="onoffswitch2 mash-small mashsb-noshadow" style="display:none;"></div></div></div>
+                    <div style="clear:both;"></div><div class="mashsb-toggle-container"></div></aside>
+            <!-- Share buttons made by mashshare.net - Version: 3.5.2--></div> </div></div></div></div></div></div>        <div class="full-width footer small-footer-text">
+                        <div class="row">
+                <div class="fixed-width">
+                
+                        <style>
+                            .footer-navigation ul li a,
+                            .footer-navigation ul li a:hover{
+                                
+                            }
+
+                            .footer,
+                            .footer p,
+                            .op-promote a,
+                            .footer .footer-copyright,
+                            .footer .footer-disclaimer{
+                                
+                            }
+
+                            .footer p{  }
+                        </style>
+                    
+                        <nav class="footer-navigation">
+                            <ul id="nav-footer" class="inline-nav">
+                                <li id="menu-item-1224" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-1224"><a href="https://elitedatascience.com/home-page">Home</a></li>
+<li id="menu-item-334" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-334"><a href="https://elitedatascience.com/terms-of-service">Terms</a></li>
+<li id="menu-item-333" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-333"><a href="https://elitedatascience.com/privacy-policy">Privacy</a></li>
+
+                            </ul>
+                        </nav>
+                    <p class="footer-copyright">Copyright 2016-2018 - EliteDataScience.com - All Rights Reserved</p>                </div>
+            </div>
+        </div>
+            </div><!-- container -->
+<script type='text/javascript'>
+/* <![CDATA[ */
+var TVE_Ult_Data = {"ajaxurl":"https:\/\/elitedatascience.com\/wp-admin\/admin-ajax.php","ajax_load_action":"tve_ult_ajax_load","conversion_events_action":"tve_ult_conversion_event","shortcode_campaign_ids":[],"matched_display_settings":[],"campaign_ids":[],"post_id":1127,"is_singular":true,"tu_em":""};
+/* ]]> */
+</script>
+		<script type="text/javascript" src="https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/thrive-ultimatum/js/dist/no-campaign.min.js?v=2.0.29"></script><!-- Drip -->
+<script type="text/javascript">
+  var _dcq = _dcq || [];
+  var _dcs = _dcs || {}; 
+  _dcs.account = '8015924';
+  
+  (function() {
+    var dc = document.createElement('script');
+    dc.type = 'text/javascript'; dc.async = true; 
+    dc.src = '//tag.getdrip.com/8015924.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(dc, s);
+  })();
+</script><script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/comment-reply.min.js?ver=4.9.5'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpcf7 = {"apiSettings":{"root":"https:\/\/elitedatascience.com\/wp-json\/contact-form-7\/v1","namespace":"contact-form-7\/v1"},"recaptcha":{"messages":{"empty":"Please verify that you are not a robot."}},"cached":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=5.0.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var mashsb = {"shares":"718","round_shares":"1","animate_shares":"0","dynamic_buttons":"0","share_url":"https:\/\/elitedatascience.com\/model-training","title":"Day+6%3A+Model+Training","image":null,"desc":"\u2026","hashtag":"","subscribe":"content","subscribe_url":"","activestatus":"1","singular":"1","twitter_popup":"1","refresh":"1","nonce":"4db3f11cbf","postid":"1127","servertime":"1525978384","ajaxurl":"https:\/\/elitedatascience.com\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/mashsharer/assets/js/mashsb.min.js?ver=3.5.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var mashnet = {"body":"Check out this article: ","subject":"Check out this site","pinterest_select":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/mashshare-networks/assets/js/mashnet.min.js?ver=2.3.9'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/jquery/ui/core.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/jquery/ui/widget.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/jquery/ui/accordion.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlusPack/js/elements/opplus-front-all.min.js?ver=1.1.8.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var tve_dash_front = {"ajaxurl":"https:\/\/elitedatascience.com\/wp-admin\/admin-ajax.php","force_ajax_send":"","is_crawler":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/thrive-ultimatum/thrive-dashboard/js/dist/frontend.min.js?ver=2.0.33'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/q2w3-fixed-widget/js/q2w3-fixed-widget.min.js?ver=5.1.4'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-includes/js/wp-embed.min.js?ver=4.9.5'></script>
+<script type='text/javascript' src='https://34tzkp3af7ck1k675g1stf6n-wpengine.netdna-ssl.com/wp-content/plugins/optimizePressPlugin/lib/js/menus.min.js?ver=2.5.13'></script>
+<script type="text/javascript">/*<![CDATA[*/if ( !window.TL_Const ) {var TL_Const={"security":"047c32d908","ajax_url":"https:\/\/elitedatascience.com\/wp-admin\/admin-ajax.php","forms":[],"action_conversion":"tve_leads_ajax_conversion","action_impression":"tve_leads_ajax_impression","ajax_load":1,"custom_post_data":[],"current_screen":{"screen_type":3,"screen_id":1127},"ignored_fields":["email","_captcha_size","_captcha_theme","_captcha_type","_submit_option","_use_captcha","g-recaptcha-response","__tcb_lg_fc","__tcb_lg_msg","_state","_form_type","_error_message_option","_back_url","_submit_option","url","_asset_group","_asset_option","mailchimp_optin"]};} else {ThriveGlobal.$j.extend(true, TL_Const, {"security":"047c32d908","ajax_url":"https:\/\/elitedatascience.com\/wp-admin\/admin-ajax.php","forms":[],"action_conversion":"tve_leads_ajax_conversion","action_impression":"tve_leads_ajax_impression","ajax_load":1,"custom_post_data":[],"current_screen":{"screen_type":3,"screen_id":1127},"ignored_fields":["email","_captcha_size","_captcha_theme","_captcha_type","_submit_option","_use_captcha","g-recaptcha-response","__tcb_lg_fc","__tcb_lg_msg","_state","_form_type","_error_message_option","_back_url","_submit_option","url","_asset_group","_asset_option","mailchimp_optin"]})} /*]]> */</script></body>
+</html>
