@@ -1,0 +1,20 @@
+Installing python 3.6
+
+installing anaconda for windows 10
+
+usage of jupyter notebook and launching of notebook
+print"sample print"
+
+pip is a popular python package manager
+
+pip install pandas
+pip install matplotlib
+pip install nltk
+pip install numpy
+pip install scipy
+pip install scikit-learn
+pip install seaborn
+pip install --upgrade tensorflow
+pip install keras
+pip install pillow
+pip install plotly
