@@ -1,0 +1,377 @@
+
+/* REXX check for invalid data set names and uncataloged data sets */    
+                                                                        
+address ISREDIT                                                          
+                                                                        
+"MACRO"                                                                  
+                                                                        
+"(USERSTAT) = USER_STATE"                                                
+                                                                        
+"FIND 'DSN=' FIRST"                                                      
+                                                                        
+do while rc = 0                                                          
+  "(JCLLINE) = LINE .ZCSR"                                              
+  "(ROW,COL) = CURSOR"                                                  
+  parse var jclline 'DSN=' dsn ',' .                                    
+  /* don't handle symbolics or temporary datsets (yet) */                
+  if left(dsn,1) <> '&' then do                                          
+    dsn = strip(dsn)                                                    
+    call msg 'OFF'                                                      
+    call listdsi "'"strip(dsn)"'"                                        
+    select                                                              
+      when sysreason = 1 then do                                        
+        "LINE_BEFORE "row" = INFOLINE '"dsn" - Invalid dataset name'"    
+        "LINE_BEFORE 1 = INFOLINE '"row": "dsn" - Invalid dataset name'" 
+      end                                                                
+      when sysreason = 5 then do                                        
+        "LINE_BEFORE "row" = INFOLINE 'Dataset "dsn" not cataloged'"    
+        "LINE_BEFORE 1 = INFOLINE '"Row": Dataset "dsn" not cataloged'" 
+      end                                                                
+      otherwise nop                                                      
+    end                                                                  
+  end                                                                    
+  "FIND 'DSN=' NEXT"                                                    
+end                                                                      
+                                                                        
+"RESET FIND"                                                            
+                                                                        
+"USER_STATE = (USERSTAT)"                                                
+
+#13:  Author: miboy,  PostPosted: Wed Jan 22, 2003 9:41 am
+    —
+REXX to expand the PROCS in a JCL 
+
+Code:
+
+/***************************** REXX ***********************************/ 
+/*                                                                    */ 
+/*  THIS REXX PROGRAM IS INTENDED TO EXPAND THE PROC                  */ 
+/*                                                                    */ 
+/*                            ----> MIBOY MATHEW             */ 
+/**********************************************************************/ 
+00000_START_RTN: 
+
+  "ISREDIT MACRO NOPROCESS" 
+  IF  RC > 0 THEN 
+    DO 
+      "%MACROERR" 
+      EXIT 
+    END 
+
+  CALL 10000_INITIAL_RTN 
+  CALL 11000_READ_INTO_STEM 
+  CALL 12000_PROC_ALLOC_LIST 
+
+  DO UNTIL PRC_EXPND_ENDED = 'Y' 
+     CALL 30000_CREATE_OUTPUT 
+     IF  PRC_EXPND_ENDED =  'N' THEN CALL 70000_TEMP_OUTPUT 
+     ELSE 
+       DO 
+          CALL 35000_PROC_ORDER 
+          CALL 71000_WRITE_OUTPUT 
+       END 
+  END 
+
+  CALL 80000_DISPLAY_JCL 
+  CALL 90000_END_PROCESS 
+
+EXIT 
+
+
+10000_INITIAL_RTN: 
+
+   "ISPEXEC LIBDEF ISPPLIB DATASET ID('DNT056.USER.ISPPLIB')" 
+   "ISPEXEC ADDPOP ROW(8) COLUMN(20)" 
+  "ISREDIT (DATASET) = DATASET" 
+
+  STRTLINE = '//*'||COPIES('=P',35) 
+  ENDLINE  = '//*'||COPIES('~P',35) 
+  ERRLINE  = '//*'||COPIES('^E',35) 
+  PROCCNT = 0 
+  "ISPEXEC CONTROL ERRORS RETURN" 
+  "ISPEXEC LIBDEF ISPPLIB DATASET ID('DNT056.USER.ISPPLIB')" 
+  "ISREDIT (CURRLINE) = LINENUM .ZCSR" 
+  "ISREDIT (LASTLINE) = LINENUM .ZL" 
+
+RETURN 
+
+
+11000_READ_INTO_STEM: 
+
+  PROCLINE. = 
+  DO CNT1 = 1 TO LASTLINE 
+     "ISREDIT (CURRDATA) = LINE "CNT1 
+     PROCLINE.CNT1 = CURRDATA 
+  END 
+
+RETURN 
+
+
+12000_PROC_ALLOC_LIST: 
+
+  PRCALLOC_CNT = 0 
+  PRCALLOC.1 = 
+  DO CNT1 = 1 TO LASTLINE 
+     IF  POS(' JCLLIB ',PROCLINE.CNT1) > 0 &, 
+         SUBSTR(PROCLINE.CNT1,1,3) ^= '//*' THEN 
+       DO 
+         ORDER_POS = POS('ORDER=',PROCLINE.CNT1) 
+         SPACE_POS = POS(' ',PROCLINE.CNT1,ORDER_POS) 
+         ORDER_DSNS = SUBSTR(PROCLINE.CNT1,ORDER_POS+6,, 
+                      SPACE_POS - ORDER_POS) 
+         ORDER_DSNS = TRANSLATE(ORDER_DSNS,'   ','(),') 
+         DO CNT2 = 1 TO WORDS(ORDER_DSNS) 
+            PRCALLOC_CNT = PRCALLOC_CNT + 1 
+            PRCALLOC.PRCALLOC_CNT = WORD(ORDER_DSNS,CNT2) 
+         END 
+         LEAVE 
+       END 
+  END 
+
+  SELECT 
+  WHEN DATASET = 'SFRMVSDS.CA7R30.JCLLIB' THEN 
+     DO 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = 'WELCEPDS.PROCLIB' 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = 'WELDNTDS.PROCLIB' 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = USERID()||'.FIX.PROCLIB' 
+     END 
+  WHEN DATASET = 'DNT999.SYST.JOBLIB' THEN 
+     DO 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = 'WELDNTDS.PROCLIB' 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = 'WELCEPDS.PROCLIB' 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = USERID()||'.FIX.PROCLIB' 
+     END 
+  OTHERWISE 
+     DO 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = USERID()||'.FIX.PROCLIB' 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = 'WELDNTDS.PROCLIB' 
+       PRCALLOC_CNT = PRCALLOC_CNT + 1 
+       PRCALLOC.PRCALLOC_CNT = 'WELCEPDS.PROCLIB' 
+     END 
+  END 
+
+RETURN 
+
+30000_CREATE_OUTPUT: 
+
+  OUTPUT. = 
+  OUTCNT = 0 
+  PROC_FOUND = '' 
+  PRC_EXPND_ENDED = 'Y' 
+  EXEC_FOUND = '' 
+
+  DO CNT1 = 1 TO LASTLINE 
+     SELECT 
+     WHEN POS(' EXEC ',PROCLINE.CNT1) > 0 &, 
+          SUBSTR(PROCLINE.CNT1,1,3) ^= '//*' &, 
+          SUBSTR(PROCLINE.CNT1,1,3) ^= '//!' &, 
+          POS(' PGM=',PROCLINE.CNT1) = 0 THEN 
+        DO 
+          IF  EXEC_FOUND = 'Y' THEN CALL 34000_END_MSG 
+          TEMPNAME = WORD(PROCLINE.CNT1,3) 
+          COMMA = SUBSTR(TEMPNAME,LENGTH(TEMPNAME),1) 
+          PRCCOMMA = POS(",",TEMPNAME) 
+          IF  PRCCOMMA > 0 THEN PROCNAME = SUBSTR(TEMPNAME,1,PRCCOMMA-1) 
+          ELSE PROCNAME = TEMPNAME 
+          CALL 31000_ALLOC_AND_READ_RTN 
+          CALL 33000_START_MSG 
+          OUTCNT = OUTCNT + 1 
+          OUTPUT.OUTCNT = '//!'||, 
+                     SUBSTR(PROCLINE.CNT1,3,LENGTH(PROCLINE.CNT1)-2) 
+          IF  COMMA ^= ',' THEN CALL 32000_EXPAND_PROC 
+          ELSE PROC_FOUND = 'Y' 
+          PRC_EXPND_ENDED = 'N' 
+          EXEC_FOUND = 'Y' 
+        END 
+     WHEN PROC_FOUND = 'Y' &, 
+          SUBSTR(PROCLINE.CNT1,1,3) ^= '//*' THEN 
+        DO 
+          OUTCNT = OUTCNT + 1 
+          OUTPUT.OUTCNT = PROCLINE.CNT1 
+          TEMPNAME = WORD(PROCLINE.CNT1,2) 
+          COMMA = SUBSTR(TEMPNAME,LENGTH(TEMPNAME),1) 
+          IF  COMMA ^= ',' THEN 
+            DO 
+              PROC_FOUND = 'N' 
+              CALL 32000_EXPAND_PROC 
+            END 
+        END 
+     WHEN POS(' EXEC ',PROCLINE.CNT1) > 0 &, 
+          SUBSTR(PROCLINE.CNT1,1,3) ^= '//*' &, 
+          SUBSTR(PROCLINE.CNT1,1,3) ^= '//!' &, 
+          EXEC_FOUND = 'Y' &, 
+          POS(' PGM=',PROCLINE.CNT1) > 0 THEN 
+        DO 
+          CALL 34000_END_MSG 
+          OUTCNT = OUTCNT + 1 
+          OUTPUT.OUTCNT = PROCLINE.CNT1 
+        END 
+     OTHERWISE 
+        DO 
+          OUTCNT = OUTCNT + 1 
+          OUTPUT.OUTCNT = PROCLINE.CNT1 
+        END 
+     END 
+  END 
+
+  IF  EXEC_FOUND = 'Y' THEN CALL 34000_END_MSG 
+
+RETURN 
+
+
+31000_ALLOC_AND_READ_RTN: 
+
+   "ISPEXEC CONTROL DISPLAY LOCK" 
+   "ISPEXEC DISPLAY PANEL(EXNDJCLS)" 
+
+   PROCLIB_FOUND = 'N' 
+   DO CNT2 = 1 TO PRCALLOC_CNT 
+      EXPND_LIB = PRCALLOC.CNT2 
+      LIBRARY = PRCALLOC.CNT2"("PROCNAME")" 
+      IF  SYSDSN("'"LIBRARY"'") = 'OK' THEN 
+        DO 
+          PROCLIB_FOUND = 'Y' 
+          LEAVE 
+        END 
+   END 
+
+   IF  PROCLIB_FOUND = 'N' THEN RETURN 
+
+   "ALLOCATE FILE(PROCDD) DA('"LIBRARY"') SHR REU" 
+
+   IF  RC ^= 0 THEN DO 
+       ZEDLMSG = "ERROR IN ALLOCATING COPYBOOK " LIBRARY ", RC : ", 
+       RC 
+       "ISPEXEC SETMSG MSG(ISRZ001)" 
+       EXIT CODE(12) 
+       END 
+
+   "EXECIO * DISKR PROCDD (STEM PROCDATA. FINIS" 
+   "FREE FILE(PROCDD)" 
+
+RETURN 
+
+
+32000_EXPAND_PROC: 
+
+   IF  PROCLIB_FOUND = 'N' THEN RETURN 
+   DO CNT2 = 1 TO PROCDATA.0 
+      OUTCNT = OUTCNT + 1 
+      OUTPUT.OUTCNT = PROCDATA.CNT2 
+   END 
+
+RETURN 
+
+
+33000_START_MSG: 
+
+   IF  PROCLIB_FOUND = 'Y' THEN 
+     DO 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = STRTLINE 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = '//*'||COPIES(' ',10)||, 
+                       'EXPANDING PROC '||PROCNAME 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = '//*'||COPIES(' ',10)||, 
+                       'PROC EXPANDED FROM '||EXPND_LIB 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = STRTLINE 
+     END 
+   ELSE 
+     DO 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = ERRLINE 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = '//*'||COPIES(' ',10)||, 
+                       'PROC NOT FOUND '||PROCNAME 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = ERRLINE 
+     END 
+
+RETURN 
+
+
+34000_END_MSG: 
+
+   EXEC_FOUND = '' 
+   IF  PROCLIB_FOUND = 'Y' THEN 
+     DO 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = ENDLINE 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = '//*'||COPIES(' ',10)||, 
+                       'END OF EXPANDED PROC '||PROCNAME 
+       OUTCNT = OUTCNT + 1 
+       OUTPUT.OUTCNT = ENDLINE 
+     END 
+
+RETURN 
+
+
+35000_PROC_ORDER: 
+
+   OUTCNT = OUTCNT + 1 
+   OUTPUT.OUTCNT = '//'||COPIES('*',70) 
+   OUTCNT = OUTCNT + 1 
+   OUTPUT.OUTCNT = '//*'||COPIES(' ',10)||'PROCLIB SEARCH ORDER' 
+   DO CNT1 = 1 TO PRCALLOC_CNT 
+      OUTCNT = OUTCNT + 1 
+      OUTPUT.OUTCNT = '//*'||COPIES(' ',12)||CNT1||' '||PRCALLOC.CNT1 
+   END 
+   OUTCNT = OUTCNT + 1 
+   OUTPUT.OUTCNT = '//'||COPIES('*',70) 
+
+RETURN 
+
+
+70000_TEMP_OUTPUT: 
+
+   PROCLINE.= 
+   LASTLINE = OUTCNT 
+
+   DO CNT1 = 1 TO OUTCNT 
+      PROCLINE.CNT1 = OUTPUT.CNT1 
+   END 
+
+RETURN 
+
+
+71000_WRITE_OUTPUT: 
+
+   CALL MSG('OFF') 
+   TEMP_DSN = USERID()||'.PROC.EXPND.D'||SUBSTR(DATE('S'),3,6)||, 
+              '.T'||TIME('S') 
+
+   "ALLOC F(OUTPUT) DA('"TEMP_DSN"') NEW", 
+          "LRECL(80) BLKSIZE(27920) RECFM(F,B) SPACE(1,10)" 
+
+   "EXECIO * DISKW OUTPUT (STEM OUTPUT. FINIS" 
+   "FREE FI(OUTPUT)" 
+
+RETURN 
+
+
+80000_DISPLAY_JCL: 
+
+  "ISPEXEC REMPOP" 
+  "ISPEXEC EDIT DATASET('"TEMP_DSN"') MACRO(EXPNDJ)" 
+  "ISPEXEC VIEW DATASET('"TEMP_DSN"') PANEL(EXNDEDDE)" 
+  "DELETE '"TEMP_DSN"'" 
+
+RETURN 
+
+
+90000_END_PROCESS: 
+
+  "ISPEXEC LIBDEF ISPPLIB" 
+
+RETURN 
