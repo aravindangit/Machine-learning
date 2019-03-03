@@ -1,0 +1,164 @@
+/***************************** REXX ***********************************/ 
+/*                                                                    */ 
+/*  THIS REXX PROGRAM IS INTENDED TO EXPAND THE PROC                  */ 
+/*                                                                    */ 
+/*                            ----> MIBOY MATHEW                      */ 
+/**********************************************************************/ 
+00000_START_RTN: 
+
+  "ISREDIT MACRO NOPROCESS" 
+  IF  RC > 0 THEN 
+    DO 
+      "%MACROERR" 
+      EXIT 
+    END 
+
+  CALL 10000_INITIAL_RTN 
+  CALL 20000_SCAN_PROC_PARMS 
+  CALL 40000_START_REPLACE 
+  CALL 90000_FINAL_RTN 
+
+EXIT 
+
+
+10000_INITIAL_RTN: 
+
+RETURN 
+
+
+20000_SCAN_PROC_PARMS: 
+
+  PROCPARM. = 
+  NO_MORE_PROC = 
+
+  "ISREDIT FIND PROC ALL" 
+  CALL 30000_GET_PARAMS 
+
+RETURN 
+
+
+30000_GET_PARAMS: 
+
+  "ISREDIT (CURRLINE) = LINENUM .ZCSR" 
+  "ISREDIT (CURRDATA) = LINE .ZCSR" 
+  FRSTWORD = SUBSTR(CURRDATA,1,3) 
+  TEMPWORD = WORD(CURRDATA,3) 
+  IF  LENGTH(TEMPWORD) > 0 THEN 
+      COMMA = SUBSTR(TEMPWORD,LENGTH(TEMPWORD),1) 
+  ELSE 
+      RETURN 
+
+  DO WHILE COMMA = "," |, 
+           FRSTWORD = '//*' 
+     IF  FRSTWORD = '//*' THEN CALL 32000_CAPTURE_NEXT_LINE 
+     ELSE 
+       DO 
+          CALL 31000_GET_PARAM_ON_LINE 
+          CALL 32000_CAPTURE_NEXT_LINE 
+       END 
+  END 
+
+  CALL 31000_GET_PARAM_ON_LINE 
+
+RETURN 
+
+
+31000_GET_PARAM_ON_LINE: 
+
+  EQUALPOS = POS("=",TEMPWORD) 
+  PARMCHAR = SUBSTR(TEMPWORD,1,EQUALPOS-1) 
+  PARMVAL  = SUBSTR(TEMPWORD,EQUALPOS+1,LENGTH(TEMPWORD)-EQUALPOS) 
+  PARMVAL = STRIP(PARMVAL,B,",") 
+  PARMVAL = STRIP(PARMVAL,B,"'") 
+  PROCPARM.PARMCHAR = PARMVAL 
+
+RETURN 
+
+
+32000_CAPTURE_NEXT_LINE: 
+
+  CURRLINE = CURRLINE + 1 
+  "ISREDIT (CURRDATA) = LINE "CURRLINE 
+  FRSTWORD = SUBSTR(CURRDATA,1,3) 
+  TEMPWORD = WORD(CURRDATA,2) 
+  COMMA = SUBSTR(TEMPWORD,LENGTH(TEMPWORD),1) 
+
+RETURN 
+
+
+40000_START_REPLACE: 
+
+/*TRACE I*/ 
+  "ISREDIT FIND '&' ALL" 
+  DO WHILE RC = 0 
+     "ISREDIT (CURRLINE,CURRCOL) = CURSOR" 
+     "ISREDIT (CURRDATA) = LINE .ZCSR" 
+     IF  SUBSTR(CURRDATA,1,3) ^= '//*' THEN CALL 41000_SUBS_LINE 
+     "ISREDIT RFIND" 
+  END 
+
+RETURN 
+
+41000_SUBS_LINE: 
+
+  NOTELINE = '' 
+  END_OF_AMPERSAND = '' 
+  DELIMIT = "&)(,. " 
+
+  TEMPLINE = 'XX'||SUBSTR(CURRDATA,3,CURRCOL-3) 
+  SUBCHAR = '' 
+
+  DO CNT1 = CURRCOL TO LENGTH(CURRDATA) 
+     CURRCHAR = SUBSTR(CURRDATA,CNT1,1) 
+     SELECT 
+     WHEN END_OF_AMPERSAND = 'N' THEN 
+        DO 
+          IF  POS(CURRCHAR,DELIMIT) > 0 THEN 
+            DO 
+              IF  LENGTH(PROCPARM.SUBCHAR) = 0 THEN 
+                  TEMPLINE = TEMPLINE||'@'||SUBCHAR 
+              ELSE 
+                  TEMPLINE = TEMPLINE||PROCPARM.SUBCHAR 
+              IF  CURRCHAR ^= '.' & CURRCHAR ^= '&' THEN 
+                  TEMPLINE = TEMPLINE||CURRCHAR 
+              IF  CURRCHAR = '&' THEN CNT1 = CNT1 - 1 
+              SUBCHAR = '' 
+              END_OF_AMPERSAND = '' 
+            END 
+          ELSE SUBCHAR = SUBCHAR||CURRCHAR 
+        END 
+     WHEN CURRCHAR = '&' THEN 
+        DO 
+          IF  CNT1 < LENGTH(CURRDATA) &, 
+              SUBSTR(CURRDATA,CNT1+1,1) = '&' THEN 
+            DO 
+              CNT1 = CNT1 + 1 
+              TEMPLINE = TEMPLINE||'@@' 
+            END 
+          ELSE 
+            DO 
+              END_OF_AMPERSAND = 'N' 
+              NOTELINE = 'Y' 
+            END 
+        END 
+     OTHERWISE 
+         TEMPLINE = TEMPLINE||CURRCHAR 
+     END 
+  END 
+
+IF  NOTELINE = 'Y' THEN 
+    "ISREDIT LINE_AFTER .ZCSR =  DATALINE '"TEMPLINE"'" 
+
+  CURRLINE = CURRLINE + 1 
+  "ISREDIT LOCATE "CURRLINE 
+
+RETURN 
+
+90000_FINAL_RTN: 
+
+  "ISREDIT CHANGE '@' '&' ALL" 
+  "ISREDIT RESET CHANGE" 
+  ZEDSMSG = 'PROC EXPANSION COMPLETE' 
+  "ISPEXEC SETMSG MSG(ISRZ001)" 
+
+RETURN 
