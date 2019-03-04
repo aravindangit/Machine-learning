@@ -1,0 +1,16 @@
+/***********************    REXX   ******************************/      00010000
+/*              REXX PROGRAM TO EDIT    */                              00020000
+ADDRESS ISPEXEC                                                         00020331
+"ISPEXEC LIBDEF ISPPLIB DATASET ID('TRNG.EDUC78.REXX.PANEL')"           00020448
+/* "ISPEXEC LIBDEF ISPMLIB DATASET ID(REXX.TRAINING)"  */               00020531
+"ISPEXEC LIBDEF ISPSLIB DATASET ID('TRNG.EDUC78.REXX.EXEC')"            00020631
+"ISPEXEC ADDPOP"                                                        00020731
+"ISPEXEC DISPLAY PANEL(GENPANL)"                                        00020950
+"ISPEXEC VGET (CHOICE,KEYPRESS) ASIS"                                   00021049
+"ISPEXEC REMPOP"                                                        00021131
+   ADDRESS TSO                                                          00021252
+IF CHOICE = 1 THEN                                                      00021349
+"EX 'TRNG.EDUC78.REXX.EXEC(FILEPANL)'"                                  00021455
+ELSE IF CHOICE = 2 THEN                                                 00021549
+"EX 'TRNG.EDUC78.REXX.EXEC(FILPANL2)'"                                  00021656
+EXIT                                                                    00140052

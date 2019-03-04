@@ -1,0 +1,274 @@
+Rexx I/O processing  (a).  Read  routine  and  (b). Write routine   (c).  Close the file...
+READ_CNTL_LIST:                                                     
+   "EXECIO * DISKR INPLIST (FINIS"     /* Reads entire Inputfile  & Close */
+   DISKR_RC = RC                                                     
+  IF DISKR_RC > 0 THEN DO                                           
+     SAY ERROR_MESSAGE_READING  IN_LIST ' RC = ' DISKR_RC           
+     EXIT DISKR_RC                                                  
+     END                                                            
+  IN_CNT = QUEUED()  /* The Queued function returns total rows read from input file */  
+RETURN  0  
+
+WRITE_OUT_JCL:                                                    
+   "EXECIO 1 DISKW OUTPUT1 " /* Write one line to the file */
+   IF RC > 1 THEN DO                                              
+      SAY ERROR_MESSAGE_WRITING  CNTL_FILE ' RC = ' RC            
+      EXIT RC                                                     
+   END                                                            
+RETURN 0    
+
+/* To close the output file. */ 
+FREE_OUTPUT:                                                      
+  "EXECIO 0 DISKW OUTPUT1 (FINIS "                                
+  "FREE F(OUTPUT1)"                                               
+RETURN 0   
+
+Note:  "EXECIO * DISKW JCLINP (FINIS"     -  Writes the buffer/queue to a file in one shot.  
+
+A Rexx  exec to displ ay a n ISPF screen/panel  for  data entry...
+ /*** REXX ****/                                      
+DISPLAY_PANEL:                                       
+ ADDRESS ISPEXEC                                     
+ "LIBDEF ISPPLIB DATASET ID('LCA8455.UTIL.PANELS')"  
+  CLRSCRN  /* Clears the Screen */                                       
+ "DISPLAY PANEL(UTILMENP)"                           
+ EXIT 0  /* END, and Return to calling Routine */        
+
+
+Rexx Notes: 
+PUSH stacks the string resulting from the evaluation of expression LIFO  (Last In, First Out) onto the external data queue.           
+QUEUE appends the string resulting from expression to the tail of the external data queue. That is, it is added FIFO (First In, First Out).  
+PULL reads a string from the head of the external data queue. It is just a short form of the instruction:  
+  Say 'Do you want to erase the file?  Answer Yes or No:'                   
+  Pull answer .                                                             
+  if answer='NO' then say 'The file will not be erased.'                                                                           
+Here the dummy placeholder, a period (.), is used on the template to isolate the first word the user  enters.   
+The QUEUED built-in function,  QUEUED() , returns the number of lines currently in the external data queue.  
+
+Example of a Loop...   
+DO J = 1 TO D_LINES_CNT                  
+   INLINE = DET_LINES.J                  
+   CALL PROCESS_DETAIL_LINES             
+END  /* End Detail Lines */      
+ 
+LCAXXXX.UTIL.PANELS(CHKDSNPN) *** This is an ISPF panel ***
+------------------------------------------------------------------------------------------------------ 
+)ATTR                                                                   
+  + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)                                  
+  % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)                                  
+  _ TYPE(INPUT)  INTENS(HIGH) CAPS(ON) HILITE(USCORE) COLOR(WHITE)      
+  \ TYPE(OUTPUT) INTENS(HIGH)                                           
+  $ TYPE(TEXT)   INTENS(HIGH) SKIP(ON)                                  
+  ~ TYPE(INPUT)  INTENS(HIGH) CAPS(ON)                                  
+  ? TYPE(TEXT)   INTENS(LOW)  COLOR(BLUE)                               
+)BODY                                                                   
+%COMMAND ===>_ZCMD                                                      
++                === REXX AUTOMATED UTILITY SYSTEM (RAUS) ===           
++ *** DB2 IMAGE COPY DATASET/GDGs VERIFICATION REPORT  ***              
++ (Checks The DB2 Catalog (Syscopy) Entries against the ICF Catalog)    
++                                                                       
++Please Enter DB2 SUB-SYSTEM NAME ==>_ENV +  %(e.g. EGP1,EGQ1,EGT1)     
++                 DATABASE NAME ? ==>_DBNAME  +%(e.g. LPAHCA,LQAQA1)    
++                                                                       
++TABLESPACES Like ?==>_TSPREFX +%(Blank for All, OR use a prefix String)
++                     
++ *** Enter ImageCopy Date & Time for Verification/Validation Report ***
++                                                                       
++ImageCopy DATE ? ==>_ICDATE+ %(Enter ImageCopy Date (YYMMDD) Ex: 031117
++ImageCopy Time Range:                                                  
++    Begin Time ==>_ICTIME1+  End Time ==>_ICTIME2+ %(HHMMSS) Ex: 235959
+)MODEL                                                                  
++*** Please Read ***                                                    
++ImageCopy Date (ICDATE) and Time Range (ICTIME1 & ICTIME2) are required
++                                                                       
+)INIT                                                                   
+  &KEYNUM   = .PFKEY                                                    
+  &ENV      = ''                                                        
+  &DBNAME   = ''                                                        
+  &TSPREFX  = ''                                                        
+  &ICDATE   = ''                                                        
+  &ICTIME1  = ''                                                        
+  &ICTIME2  = ''                                                        
+  &ZTDMARK  = '---------------------------------------------+           
+               ----------------------------------'                      
+)PROC                                                  
+VER (&ENV, NB)                                         
+VER (&DBNAME, NB)                                      
+VER (&ICDATE, NB)                                      
+VER (&ICTIME1, NB)                                     
+VER (&ICTIME2, NB)                                     
+IF (&KEYNUM = 'PF03')                                  
+   &NOMORE  = 'Y'                                      
+)END                                                   
+**************************** Bottom of Data *********** 
+   
+
+ *** This is  the Rexx code that calls the ISPF panel and process the input ***
+
+* ==== REXX ===================================================*/
+* REXX EXEC NAME: RXCHKDSN -                                   */
+* DESCRIPTION:    THIS REXX PGM WILL CHECK AND VERIFY THE DB2  */
+*                 IMAGE COPY DATASETS (GDGS) AGAINST THE MVS   */
+*                 CATALOG, TO VERIFY ALL DB2 BACKUPS ARE GOOD, */
+*                 AND VERIFIES THE OFFSITE DATASETS ARE ON THE */
+*                 CORRECT VOLUMES (TAPES).                     */
+*   *** DB2 IMAGE COPY DATASET/GDGs VERIFICATION REPORT  ***   */
+
+(BELOW IS SOME OF THE  REXX CODE TO CREATE THE VERIFICATION REPORT, USING USER INPUT FROM PANEL)
+
+PGM_MAINLINE:                                   
+  ADDRESS TSO                                   
+  SYSUID = sysvar(SYSUID)   /* THE USERID */    
+  KEYNUM = 0                                    
+  NOMORE = ''                                   
+  DO UNTIL (NOMORE = 'Y')                       
+     CLRSCRN  /* Clear the Screen */            
+     CALL PGM_INIT                              
+     CALL DISPLAY_PANEL                         
+     CALL PROCESS_INPUT_LIST                    
+  END  /*End of process loop*/                  
+EXIT 0                                          
+RETURN 0                                        
+
+DISPLAY_PANEL:                                                     
+ ADDRESS ISPEXEC                                                   
+ "LIBDEF ISPPLIB DATASET ID('LCAXXXX.UTIL.PANELS')"                
+ ENV=''; DBNAME=''; TSPREFX=''; ICDATE=''; ICTIME1=''; ICTIME2=''; 
+ "DISPLAY PANEL(CHKDSNPN)"                                         
+ ENV     = STRIP(ENV,B)                                            
+ DBNAME  = STRIP(DBNAME,B)                                         
+ TSPREFX = STRIP(TSPREFX,B)                                        
+ ICDATE  = STRIP(ICDATE,B)                                         
+ ICTIME1 = STRIP(ICTIME1,B)                                        
+ ICTIME2 = STRIP(ICTIME2,B)                                        
+ SELECT                                                            
+   WHEN ENV      = ''    THEN NOMORE = 'Y'                         
+   WHEN DBNAME   = ''    THEN NOMORE = 'Y'                         
+   WHEN KEYNUM = 'PF03'  THEN NOMORE = 'Y'                         
+   OTHERWISE                                                       
+ END                                                               
+ IF (NOMORE = 'Y')    THEN DO                                      
+    CALL EXIT_MENU  /*EXIT PGM*/                                   
+    END                                                            
+RETURN 0    
+
+ 
+It's Here ! The iPadit does it all. (click here==>)  Pre-order iPAD from Apple.com (click here).  
+ 
+   
+On the right side is the ISPF panel for data input/entry to the RXPARSER.
+Below is the main routine of the rexx exit (pgm) to parse the input string in
+the in file and create a new output ... there's an option to modify the line where
+the input string is found, or to delete the line containing the input string.  
+
+Note: this is only a portion of the rexx code ... not shown here is the call to the 
+ISPF panel, the Input/Ouput routines, where we read in of the original file and 
+writing of the modified output file, error messages, etc. 
+
+PROCESS_IN_LINES:                                                       
+  LEN_INLINE = LENGTH(INLINE)                                           
+  MATCH_FOUND = 'N'                                                     
+  END_OF_LINE = 'N'                                                     
+  DO UNTIL (END_OF_LINE = 'Y')                                          
+     CALL CHECK_IN_LINE_FOR_STR                                         
+     POS_POINTER = POS_POINTER +1                                       
+     IF POS_POINTER > LEN_INLINE | MATCH_FOUND ='N' THEN                
+        END_OF_LINE = 'Y'                                               
+  END                                                                   
+  /*SAY 'EDT_OPT=' EDT_OPT ' AND MATCH_FOUND=' MATCH_FOUND*/            
+  IF (EDT_OPT = 'D') & (MATCH_FOUND = 'Y')  THEN                        
+     LNDEL_CNT = LNDEL_CNT +1                                           
+  ELSE DO                                                               
+     CALL WRITE_OUT_FILE  /*Write the Output FILE */                    
+     /* IF Match, Check for posible Truncation of the line */           
+     IF MATCH_FOUND = 'Y' THEN DO                                       
+        IF LEN_NL > LEN_INLINE  THEN DO                                 
+           TRUNCATE_CNT = TRUNCATE_CNT +1                         
+           /*SAY 'Out line > In Line by 'LEN_NL - LEN_INLINE */   
+        END  /*End-of-If Truncate*/                               
+     END  /*End-of-If Match*/                                     
+  END  /*End-Else-DO-Write*/                                      
+RETURN 0                                                          
+CHECK_IN_LINE_FOR_STR:                                            
+  POS1 = POS(IN_STR1,INLINE)                                      
+  IF POS1 > 0  THEN DO                                            
+     MATCH_FOUND = 'Y'                                            
+     FOUND_CNT = FOUND_CNT + 1                                    
+     POS_POINTER = POS1 + LEN_IN1                                 
+     LN1 = SUBSTR(INLINE,1,POS1 -1)                               
+     LN2 = SUBSTR(INLINE,POS_POINTER)                             
+     INLINE = LN1||OUT_STR1||LN2                                  
+     LEN_NL = LENGTH(LN1) + LENGTH(LN2) + LEN_OUT1                
+  END                                                             
+Return 0 
+
+         
+                                               
+     
+
+The ISPF panel for screen Input Entry:
+
+)ATTR                                                                   
+  + TYPE(TEXT)   INTENS(LOW)                                           SKIP(ON)                                  
+
+  % TYPE(TEXT)   INTENS(HIGH) SKIP(ON)                                  
+
+  _ TYPE(INPUT)  INTENS(HIGH) CAPS(ON) HILITE(USCORE) COLOR(WHITE)      
+  \ TYPE(OUTPUT) INTENS(HIGH)                                           
+  # TYPE(OUTPUT) INTENS(HIGH) JUST(RIGHT)                               
+        TYPE(TEXT)   INTENS(LOW)  SKIP(ON)                                  
+  $ TYPE(TEXT)   INTENS(HIGH) SKIP(ON)                                  
+  ~ TYPE(INPUT)  INTENS(HIGH) CAPS(ON)                                  
+)BODY EXPAND(::)                                                        
+%COMMAND ===>_ZCMD                                                      
++=== REXX AUTOMATED UTILITY SYSTEM (RAUS) ===                           
++    ==== ALTER A DATASET OR FILE Using an input and output string ==== 
++                                                                       
+     Enter INPUT FILE NAME ==>_INF                                        +%
+          OUTPUT FILE NAME ==>_OUTF                                       +%
++                                                                       
+     Enter INPUT STRING ==>_INSTR                                         +%
+          INPUT STRING ==>_OUTSTR                                        +%
++                                                                       
+     Edit Option ==>_OPT    +  % [ REPLACE string (R)  or  DELETE line (D) ]
++                                                                       
++     The Replace (R) option Replaces the In string with the Out string.
++     The Delete (D) option Deletes all lines containing the In string. 
++ *The Output file must be New, Will Not over-writing an existing file* 
+)MODEL                                                                  
++                                                                       
+)INIT                                                                   
+  &INF      = ''                                                        
+  &OUTF     = ''                                                        
+  &INSTR    = ''                                                        
+  &OUTSTR   = ''                                                        
+  &OPT      = 'REPLACE'                                                 
+  &KEYNUM   = .PFKEY                                                    
+  &ZTDMARK  = '---------------------------------------------+           
+               ----------------------------------'                      
+)PROC                                                                   
+VER (&INF, NB)                                             
+VER (&OUTF, NB)                                            
+VER (&INSTR, NB)                                           
+VER (&OPT, NB, LIST 'R','REPLACE','REP','D','DELETE','DEL')
+IF (&OUTF = &INF)                                          
+   &OUTF  = '***Error: Input name = Output name ***'       
+IF (&KEYNUM = 'PF03')                                      
+   &NOMORE  = 'Y'                                          
+)END                                                       
+
+(sse display of screen panel below)
+
+    REXX AUTOMATED UTILITY SYSTEM (RAUS) ===                            
+    ==== ALTER A DATASET OR FILE Using an input and output string ====  
+                                                                        
+Enter INPUT FILE NAME ==>                                                       
+     OUTPUT FILE NAME ==>                                                       
+                                                                        
+Enter INPUT STRING ==>                                                          
+      INPUT STRING ==>                                                          
+                                                                        
+Edit Option ==>     REPLACE             [ REPLACE string (R)  or  DELETE line (D) ] 
+                                                                        
+The Replace (R) option Replaces the In string with the Out string. The Delete (D) option Deletes all lines containing the In string. 
+*The Output file must be New, Will Not over-writing an existing file*    

@@ -1,0 +1,462 @@
+/*REXX*/
+ ADDRESS ISPEXEC
+"VGET (ZPF03)"
+SAVEPF03 = ZPF03
+/*******  MENU PAGE  *******/
+  PLATFORM = 'GULF'
+
+  CUR = 'REGION'
+
+  MENU:
+     CALL DISPAN 'UPAT5V1',CUR
+     IF PFKEY = 'PF03' THEN
+     DO
+          ADDRESS ISPEXEC
+          ZPF03 = SAVEPF03
+          "VPUT ZPF03 PROFILE"
+          "SELECT PGM(ISPOPF) PARM(PFK,ON)"
+                  SAY ' '
+                  SAY ' '
+                  SAY ' '
+                  SAY ,
+'**********************************************************************'
+                  SAY,
+'                 THANK YOU FOR USING THE UPAT TOOL!!!                 '
+                  SAY ,
+'**********************************************************************'
+        EXIT
+     END
+
+/******** VALIDATION OF INPUT ***********************/
+
+/******** VALIDATION OF REGION **********************/
+ IF REGION \= 'TRUV' & REGION \= 'TCUV' & REGION \= 'TRWX' &,
+    REGION \= 'TCWX' & REGION \= 'TRYZ' & REGION \= 'TR12' &,
+    REGION \= 'TR34' THEN
+ DO
+    MESSAGE = 'INVALID REGION'
+    CUR = 'REGION'
+    SIGNAL MENU
+ END
+
+/******** VALIDATION OF PLATFORM **********************/
+ IF PLATFORM /= 'GULF' & PLATFORM /= 'GLBL' & PLATFORM /= 'NRTH' THEN
+ DO
+    MESSAGE = 'INVALID PLATFORM'
+    CUR = 'PLATFORM'
+    SIGNAL MENU
+ END
+
+      CJDATE = DATE(JULIAN)
+      IYR = SUBSTR(CJDATE,1,2)
+      IYEAR = '20'||IYR
+      CURJUL = SUBSTR(CJDATE,3,3)
+/******** VALIDATION OF JULIAN DATE  ****************/
+ IF (DATATYPE(JDATE,'N')) THEN
+ DO
+    IF JDATE > 366 | JDATE <= 0 THEN
+    DO
+       MESSAGE = 'INVALID JULIAN DATE'
+       CUR = 'JDATE'
+       SIGNAL MENU
+    END
+    ELSE
+    DO
+         IF JDATE > CURJUL THEN
+         DO
+            MESSAGE = 'JULIAN DATE > CURRENT DATE'
+            CUR = 'JDATE'
+            SIGNAL MENU
+         END
+    END
+ END
+ ELSE
+ DO
+    MESSAGE = 'JULIAN DATE SHOULD BE NUMERIC'
+    CUR = 'JDATE'
+    SIGNAL MENU
+ END
+
+  CJDATE = DATE(JULIAN)
+  IYR = SUBSTR(CJDATE,1,2)
+  IYEAR = '20'||IYR
+
+ IF (DATATYPE(YRS,'N')) THEN
+ DO
+    IF YRS < 2000 | YRS > IYEAR THEN
+    DO
+       MESSAGE = 'YEAR < 2000 OR YEAR > CURRENT YEAR'
+       CUR = 'YRS'
+       SIGNAL MENU
+    END
+    ELSE
+    DO
+       NOP
+    END
+ END
+ ELSE
+ DO
+    MESSAGE = 'YEAR SHOULD BE NUMERIC'
+    CUR = 'YRS'
+    SIGNAL MENU
+ END
+
+ /******** VALIDATION OF JULIAN DATE  ****************/
+  IF RESTORE \= 'Y' & RESTORE\= 'N' & RESTORE\= 'S' THEN
+  DO
+     MESSAGE  = 'INVALID OPTION FOR RESTORE'
+     CUR = 'RESTORE'
+     SIGNAL MENU
+  END
+
+  IF LOADSO\= 'A' & LOADSO \= 'B' THEN
+  DO
+     MESSAGE = 'INVALID OPTION - SHOULD BE A/B'
+     CUR = 'LOADSO'
+     SIGNAL MENU
+  END
+  CYCLV=STRIP(CYCLE)
+  IF CYCLV \= 'D' & CYCLV \= 'M' & CYCLV \= 'C' THEN
+  DO
+     MESSAGE = 'INVALID OPTION FOR CYCLE'
+     CUR = 'CYCLE'
+     SIGNAL MENU
+  END
+
+  IF RESTORE = 'S' THEN
+  DO
+     IF LOADSO = 'A' THEN
+     DO
+        MEMBER = 'LOAD998'
+     END
+     IF LOADSO = 'B' THEN
+     DO
+        MEMBER = 'LOAD997'
+     END
+     RESULT_SUB = SUBPROC(MEMBER,PLATFORM,REGION,CYCLV)
+     IF RESULT_SUB = 1 THEN
+     DO
+        MESSAGE = 'JOBS ARE BEING SUBMITTED - PLEASE WAIT...'
+     END
+     ELSE
+     DO
+        MESSAGE = 'THE JOBS COULD NOT BE SUBMITTED'
+     END
+     CUR = 'REGION'
+     SIGNAL MENU
+  END
+
+  CALL PDSCRTE PLATFORM REGION CYCLE
+  IF RESULT = 1 THEN NOP
+  ELSE
+  DO
+     IF RESULT = 2 THEN
+     DO
+        MESSAGE = 'DATASET COULD NOT BE OPENED'
+     END
+     ELSE
+     DO
+        MESSAGE = 'DATASET CREATION WAS UNSUCCESSUL'
+     END
+     CUR = 'REGION'
+     SIGNAL MENU
+  END
+
+  SAY 'TEST PLATFORM SETUP IS BEING PROCESSED. PLEASE WAIT...'
+  CUR = 'REGION'
+
+  CALL CREATELOAD
+  IF RESULT = 1 THEN NOP
+  ELSE
+  DO
+     IF RESULT = 2 THEN
+     DO
+       MESSAGE = 'GENERATION COULD NOT BE FOUND'
+       SIGNAL MENU
+     END
+     ELSE IF RESULT = 3 THEN
+     DO
+       MESSAGE = 'COULD NOT BUILD DATECARD FILE'
+       SIGNAL MENU
+     END
+     ELSE
+     DO
+       MESSAGE = 'UNSUCCESSUL EXECUTION - REGION SET UP'
+       SIGNAL MENU
+     END
+  END
+  RESULT1 = RESTORE(JDATE,YRS,PLATFORM,REGION)
+  IF RESULT1 = 1 THEN
+  DO
+     CHANGEFLAG = 'Y'
+  END
+  ELSE
+  DO
+     IF RESULT1 = 3 THEN
+     DO
+        CHANGEFLAG = 'N'
+     END
+     ELSE
+     DO
+        MESSAGE = 'THE DATASET COULD NOT BE RESTORED'
+        SIGNAL MENU
+     END
+  END
+  IF CYCLV = 'D' THEN
+  DO
+     RESULT1 = ,
+          DAILYCYC(PLATFORM,REGION,JDATE,YRS,CYCLV,CHANGEFLAG,LOADSO)
+     IF RESULT1 = 1 THEN
+     DO
+        NOP
+     END
+     ELSE
+     DO
+       MESSAGE = 'DAILY CYCLE JOBS COULD NOT BE CREATED'
+       SIGNAL MENU
+     END
+  END
+  CALL MAIL REGION JDATE PLATFORM CYCLV
+  IF RESULT = 1 THEN NOP
+  ELSE
+  DO
+     MESSAGE = 'MAIL PARM CREATION - UNSUCCESSUL'
+     SIGNAL MENU
+  END
+
+  IF CYCLE = 'D' THEN
+  DO
+    OUTDSN  = '    OUTPUT DSN - '||,
+          SYSVAR(SYSUID)||'.'||PLATFORM||'.'||REGION||'.'||'DAILY'
+  END
+  IF CYCLE = 'M' THEN
+  DO
+    OUTDSN  = '    OUTPUT DSN - '||,
+          SYSVAR(SYSUID)||'.'||PLATFORM||'.'||REGION||'.'||'MONTHLY'
+  END
+  IF CYCLE = 'C' THEN
+  DO
+    OUTDSN  = '    OUTPUT DSN - '||,
+          SYSVAR(SYSUID)||'.'||PLATFORM||'.'||REGION||'.'||'CUSTOM'
+  END
+
+  IF RESTORE = 'Y' THEN
+  DO
+     RESULT_SUB = SUBPROC(MEM,PLATFORM,REGION,CYCLV)
+     IF RESULT_SUB = 1 THEN
+     DO
+        MESSAGE = 'JOBS ARE BEING SUBMITTED - PLEASE WAIT...'
+     END
+     ELSE
+     DO
+        MESSAGE = 'THE JOBS COULD NOT BE SUBMITTED'
+     END
+     SIGNAL MENU
+  END
+  ELSE IF RESTORE = 'N' THEN
+  DO
+     MESSAGE = 'PLATFORM SET UP PROCESS - SUCCESSFUL'
+     SIGNAL MENU
+  END
+
+DISPAN:
+   ARG PNAME,C
+   ADDRESS ISPEXEC
+   ZPF03 = 'END'
+   "VPUT (ZPF03) PROFILE"
+   "LIBDEF ISPPLIB DATASET ID ('T3718BTX.URS.TOOL.UPAT5V1.DGIBMS')"
+   "SELECT PGM(ISPOPF) PARM(PFK,OFF)"
+   "DISPLAY PANEL ("PNAME")CURSOR("C")"
+   ADDRESS TSO
+   RETURN
+
+ CREATELOAD:
+
+ DROP SRCJCL.
+
+ USER_ID = SYSVAR(SYSUID)
+/********************************************************************/
+/***    TEMPORARY VALUES               ******************************/
+/********************************************************************/
+ SRCDSN= ''''||'T3718BTX.'||REGION||'.'||SUBSTR(REGION,1,2)||'TEST'||,
+         '.'||'CNTL(T3718LD1)'||''''
+ DAILY = LOADSO
+ MONTHLY = LOADSO
+/********************************************************************/
+ ADDRESS TSO
+ A = OUTTRAP("L.")
+ "ALLOC DA("SRCDSN") SHR REUSE FI(TEMPB)"
+ "EXECIO * DISKR TEMPB(STEM SRCJCL. FINIS"
+ "FREE FI(TEMPB)"
+  RETURN_CODE = RC
+ A = OUTTRAP("OFF")
+
+    DO I = 1 TO SRCJCL.0
+    STR = STRIP(SRCJCL.I)
+    SBSTR = SUBSTR(STR,3,6)
+    IF SBSTR = 'SYSREC' THEN
+    DO
+       PARSE VAR SRCJCL.I PART1 'DSN=' DSN1 '(' REST
+
+       IF DAILY = 'B' THEN
+       DO
+          MEM = 'LOAD997'
+          TQ97 = 'G3718997'
+          PARSE VAR DSN1 FQ '.' SQ '.' TQ '.' LQ '(' REST
+          DFDSN = FQ ||'.'||SQ ||'.'|| TQ97 ||'.'||LQ
+
+          GENDSN = GENFIND(DFDSN,JDATE,YRS,'S')
+          IF GENDSN = 'NOT FOUND' THEN
+          DO
+             SAY 'GENERATION NOT FOUND - ' DFDSN
+             RETURN 2
+          END
+       END
+
+       IF MONTHLY = 'A' THEN
+       DO
+          MEM = 'LOAD998'
+          TQ98 = 'G3718998'
+          PARSE VAR DSN1 FQ '.' SQ '.' TQ '.' LQ '(' REST
+          MFDSN = FQ ||'.'||SQ ||'.'|| TQ98 ||'.'||LQ
+
+          GENDSN = GENFIND(MFDSN,JDATE,YRS,'S')
+          IF GENDSN = 'NOT FOUND' THEN
+          DO
+             SAY 'GENERATION NOT FOUND - ' MFDSN
+             RETURN 2
+          END
+       END
+
+       FGENDSN = STRIP(GENDSN)
+
+       IF INDEX(SRCJCL.I,'TBL72') /= 0 THEN
+       DO
+          RESULT_DATECARD = DATECARD(FGENDSN,PLATFORM,REGION)
+          IF RESULT_DATECARD = 1 THEN
+          DO
+             NOP
+          END
+          ELSE
+          DO
+             RETURN 3
+          END
+       END
+
+
+       PARSE VAR SRCJCL.I FPART '=' REPL ')' LPART ' ' REST
+       SRCJCL.I = FPART || '=' || FGENDSN || LPART
+    END
+    IF SUBSTR(SRCJCL.I,1,3) = '// ' THEN
+    DO
+       CHECKFORSPACE = STRIP(SUBSTR(SRCJCL.I,3,70),LEADING,' ')
+       IF SUBSTR(CHECKFORSPACE,1,1) = ' ' THEN
+       DO
+          SPPART1 = ' '
+          SPPART2 = ' '
+          PARSE VAR SRCJCL.I SPPART1 '/ ' SPPART2 +71
+          SRCJCL.I = SPPART1||'/*'||SPPART2
+          SRCJCL.I = SUBSTR(SRCJCL.I,1,72)
+          ITERATE
+       END
+    END
+ END
+ /******* TO TRIGER ANOTHER JCL *********************************/
+   A = SRCJCL.0
+   A = A + 1
+   SRCJCL.A = '//*'
+   A = A + 1
+   SRCJCL.A = "//      IF RC = 0 THEN"
+   A = A + 1
+   SRCJCL.A = "//TRIG01 EXEC PGM=IEBGENER"
+   A = A + 1
+   SRCJCL.A = "//SYSPRINT DD SYSOUT=*"
+   A = A + 1
+   IF CYCLV = 'D' THEN
+   DO
+   SRCJCL.A = "//SYSUT1   DD DSN=&SYSUID.."||PLATFORM||'.'||REGION||,
+              ".DAILY(T3718A10),DISP=SHR"
+   END
+   IF CYCLV = 'M' THEN
+   DO
+   SRCJCL.A = "//SYSUT1   DD DSN=&SYSUID.."||PLATFORM||'.'||REGION||,
+              ".MONTHLY(T3718A10),DISP=SHR"
+   END
+   IF CYCLV = 'C' THEN
+   DO
+   SRCJCL.A = "//SYSUT1   DD DSN=&SYSUID.."||PLATFORM||'.'||REGION||,
+              ".CUSTOM(T3718A10),DISP=SHR"
+   END
+   A = A + 1
+   SRCJCL.A = "//SYSUT2 DD SYSOUT=(A,INTRDR)"
+   A = A + 1
+   SRCJCL.A = "//SYSIN DD DUMMY"
+   A = A + 1
+   SRCJCL.A = "//     ENDIF"
+   A = A + 1
+   SRCJCL.A = '//*'
+   A = A + 1
+   SRCJCL.A = "//      IF RC = 0 THEN"
+   A = A + 1
+   SRCJCL.A = "//STEPMAIL EXEC PGM=IEBGENER"
+   A = A + 1
+   SRCJCL.A = "//SYSPRINT DD SYSOUT=*"
+   A = A + 1
+   SRCJCL.A = "//SYSOUT   DD SYSOUT=*"
+   A = A + 1
+   SRCJCL.A = "//SYSIN    DD DUMMY"
+   A = A + 1
+   IF CYCLV = 'D' THEN
+   DO
+      SRCJCL.A = "//SYSUT1   DD DSN=&SYSUID.."||PLATFORM||'.'||REGION||,
+                 ".DAILY(MAIL),DISP=SHR"
+   END
+   IF CYCLV = 'M' THEN
+   DO
+      SRCJCL.A = "//SYSUT1   DD DSN=&SYSUID.."||PLATFORM||'.'||REGION||,
+                 ".MONTHLY(MAIL),DISP=SHR"
+   END
+   IF CYCLV = 'C' THEN
+   DO
+      SRCJCL.A = "//SYSUT1   DD DSN=&SYSUID.."||PLATFORM||'.'||REGION||,
+                 ".CUSTOM(MAIL),DISP=SHR"
+   END
+   A = A + 1
+   SRCJCL.A = "//SYSUT2   DD SYSOUT=B,DEST=MVSMAIL"
+   A = A + 1
+   SRCJCL.A = "//     ENDIF"
+   A = A + 1
+   SRCJCL.A = "//*"
+
+ IF CYCLV = 'D' THEN
+ DO
+    DSNNAME = ''''||SYSVAR(SYSUID)||'.'||PLATFORM||'.'||REGION||,
+              '.DAILY('||MEM||')'||''''
+ END
+ IF CYCLV = 'C' THEN
+ DO
+    DSNNAME = ''''||SYSVAR(SYSUID)||'.'||PLATFORM||'.'||REGION||,
+              '.CUSTOM('||MEM||')'||''''
+ END
+ IF CYCLV = 'M' THEN
+ DO
+    DSNNAME = ''''||SYSVAR(SYSUID)||'.'||PLATFORM||'.'||REGION||,
+              '.MONTHLY('||MEM||')'||''''
+ END
+
+ A = OUTTRAP("L.")
+ "ALLOC DA("DSNNAME") F(TEMP3) SHR REUSE"
+ "EXECIO * DISKW TEMP3(STEM SRCJCL. FINIS"
+ "FREE F(TEMP3)"
+ RES = RC
+ A = OUTTRAP("OFF")
+
+ IF RES = 0 THEN
+ DO
+    RETURN 1
+ END
+ ELSE
+ DO
+   RETURN  0
+ END
+

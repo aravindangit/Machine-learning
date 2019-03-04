@@ -1,0 +1,40 @@
+VGET Command
+Syntax:
+VGET (varname [,varname...])  [varpool]
+
+Arguments:
+varname 
+The name of a variable to copy from the Shadow REXXTOOLS shared variable pool into the REXX variable pool. The Shadow REXXTOOLS variable itself is unchanged. The name of the REXX variable created or modified is identical to the name of the variable in the Shadow REXXTOOLS variable pool. Only simple variables whose names are 1 to 8 characters in length are permitted. REXX stem variables are not supported. 
+Note: You may use one or more blanks between syntactical elements in the VGET command. Also, you may use blanks instead of commas to separate variable names. 
+
+varpool 
+The name of the variable pool. At present, the only valid variable pool is SHARED. 
+Module Name:
+SWXARXT 
+Service Description:
+VGET is a host command that is executed under the REXXTOOL host command environment. VGET is used to copy the current values of Shadow REXXTOOLS shared variables into the REXX variable pool. The shared variable pool is available to all REXX programs that execute under the same MVS task. Shared variables are kept in main storage until they are VERASEd or until the task terminates. 
+Returned Information:
+The VGET command returns a return code in the REXX RC variable. Some return codes are common to all REXXTOOL host commands. These are documented under the topic "ADDRESS REXXTOOL". In addition, the VGET command produces the following RC values: 
+0 
+Successful execution. All variable names were found in the Shadow REXXTOOLS shared variable pool, and all REXX variables with the same names were created or updated. 
+8 
+At least one varname was not found in the Shadow REXXTOOLS shared variable pool. Variables that were not found did not cause updates to REXX variables with the same names. Variables that were found had their values copied to REXX variables with the same names. 
+Examples:
+In this example, the top-level program, TOP, calls an external subroutine, BOTTOM, that VPUTs 3 variables into the shared variable pool. Upon return to TOP, a VGET is issued to retrieve the contents of these variables: 
+/* REXX - TOP */
+call bottom
+address rexxtool "vget (v1,v2,v3) shared"
+exit
+ 
+/* REXX - BOTTOM */
+v1 = 'one'
+v2 = 'two'
+v3 = 'three
+address rexxtool
+"vput (v1,v2,v3) shared"
+exit
+
+
+
+--------------------------------------------------------------------------------
+© Copyright 1998 by Open Software Technologies,

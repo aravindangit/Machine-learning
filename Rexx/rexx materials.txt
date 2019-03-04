@@ -1,0 +1,283 @@
+  
+A Full Screen REXX Exec
+
+by Bruce Hall 
+
+Peter Vanderhaden's FS REXX Exec (Spring 1994) is just the ISPF utility I was looking for. Of course I modified it to suit my needs. I changed the "SAY" messages to display as ISPF messages. I gave the file created a variable FILENAME so FS could be stacked. I also created a custom BROWSE Panel (FSCMDBRO) so the command I entered is displayed in place of the data set name.
+
+  FS - LISTDS CNTL ST --------------- LINE 00000000 COL 001 080
+  COMMAND ===>                                  SCROLL ===> CSR
+************************* TOP OF DATA *************************
+USE123.CNTL
+--RECFM-LRECL-BLKSIZE-DSORG--DDNAME---DISP
+  FB    80    3120    PO     SYS00127 KEEP
+--LAST USE--TRKS ALLO--TRKS USED
+   1994.263 45         33.32
+--VOLUMES--
+  VOL123
+*********************** BOTTOM OF DATA ************************
+
+Next, I created another FS-like command called FSE. FSE has the additional feature of being able to EDIT and SAVE (actually, REPLACE or CREATE) the command output using my FSCMDEDT PANEL.
+
+Lastly, I put FS and FSE in the ISPF Command Table so I don't have to prefix FS/FSE with TSO:
+
+ISPF Command Table...
+   '''' TSO       0   SELECT SUSPEND CMD(&ZPARM)
+                         INVOKE A TSO SERVICE
+   '''' FS        0   SELECT SUSPEND CMD(%FS &ZPARM)
+                         INVOKE A TSO SERVICE AND BROWSE OUTPUT
+   '''' FSE       0   SELECT SUSPEND CMD(%FSE &ZPARM)
+                         INVOKE A TSO SERVICE AND EDIT OUTPUT
+
+Download this Exec in text format (FSBROWSE.TXT) 
+
+FS FULL SCREEN BROWSE REXX EXEC
+
+/**************** REXX ******************************/
+/* FS - FULL SCREEN BROWSE OF TSO COMMAND OUTPUT    */
+/*      SYNTAX: FS                     */
+/****************************************************/
+IF SYSVAR(SYSISPF) \= 'ACTIVE' THEN
+   DO
+     SAY 'FS ONLY RUNS UNDER ISPF.'
+     EXIT
+   END
+ARG ARG1
+IF LENGTH(ARG1) = 0 THEN
+  DO
+    ZEDSMSG = 'INVALID SYNTAX:'
+    ZEDLMSG = 'SYNTAX IS FS '
+    ADDRESS ISPEXEC "SETMSG MSG(ISRZ0000)"
+    EXIT
+  END
+ELSE NOP
+X = MSG('ON')
+X = PROMPT('OFF')
+X = OUTTRAP("OUTLINE.")
+FILENAM = "TS"TIME('S')
+"ALLOC FI("FILENAM") TRACKS SPACE(1,1) UNIT(SYSDA) NEW DDSORG(PS)",
+       "LRECL(132) RECFM(F,B) BLKSIZE(23364)"
+""ARG1""
+RETC = RC
+X = OUTTRAP(OFF)
+IF RETC < 0 THEN
+  DO
+    ZEDSMSG = WORD(ARG1,1)  'NOT FOUND'
+    ZEDLMSG = WORD(ARG1,1)  'COMMAND WAS NOT FOUND. RC'RETC
+    SIGNAL ENDD
+  END
+IF RETC = 20 THEN
+  DO
+    ZEDSMSG = WORD(ARG1,1) 'NOT FOUND'
+    ZEDSMSG = WORD(ARG1,1) 'COMMAND WAS NOT FOUND. RC'RETC
+    SIGNAL ENDD
+  END
+IF OUTLINE.0 = 0 THEN
+  DO
+    ZEDSMSG = WORD(ARG1,1) 'HAS NO FS OUTPUT'
+    ZEDLMSG = 'COMMAND 'WORD(ARG1,1) 'HAS NO FS OUTPUT.RC 'RETC
+    SIGNAL ENDD
+  END
+"EXECIO * DISKW "FILENAM" (FINIS STEM OUTLINE."
+FSCMD = ARG1
+ADDRESS ISPEXEC "VPUT (FSCMD)"
+ADDRESS ISPEXEC "LMINIT DATAID(IDVAR) DDNAME("FILENAM")"
+ADDRESS ISPEXEC "BROWSE DATAID("IDVAR") PANEL(FSCMDBRO)"
+ADDRESS ISPEXEC "LMFREE DATAID("IDVAR")"
+ZEDSMSG = WORD(ARG1,1) 'COMPLETE'
+ZEDLMSG = 'COMMAND 'WORD(ARG1,1) 'COMPLETE.   RC 'RETC
+ENDD:
+ADDRESS ISPEXEC "SETMSG MSG(ISRZ000)"
+X = MSG('OFF')
+"FREE FI("FILENAM") DELETE"
+
+
+FSE Full Screen Edit REXX Exec
+
+/**************** REXX ******************************/
+/* FSE - FULL SCREEN EDIT OF TSO COMMAND OUTPUT     */
+/*       SYNTAX: FSE                   */
+/****************************************************/
+IF SYSVAR(SYSISPF) \= 'ACTIVE' THEN
+  DO
+    SAY 'FSE ONLY RUNS UNDER ISPF.'
+    EXIT
+  END
+ARG ARG1
+IF LENGTH(ARG1) = 0 THEN
+  DO
+    ZEDSMSG = 'INVALID SYNTAX:'
+    ZEDSMSG = 'SYNTAX IS FSE '
+    ADDRESS ISPEXEC "SETMSG MSG(ISRZ000)"
+    EXIT
+  END
+ELSE NOP
+X = MSG('ON')
+X = PROMPT('OFF')
+X = OUTTRAP("OUTLINE.")
+FILENAM = "TS"TIME('S')
+"ALLOC FI("FILENAM"+) TRACKS SPACE(1,1) UNIT(SYSDA) NEWDSORG(PS)",
+       "LRECL(132) RECFM(F,B) BLKSIZE(23364)"
+""ARG1""
+RETC = RC
+X = OUTTRAP(OFF)
+IF RETC < 0 THEN
+  DO
+    ZEDSMSG = WORD(ARG1,1) 'NOT FOUND'
+    ZEDLMSG = WORD(ARG1,1) 'COMMAND WAS NOT FOUND. RC 'RETC
+    SIGNAL ENDD
+  END
+IF RETC = 20 THEN
+  DO
+     ZEDSMSG = WORD(ARG,1,) 'NOT FOUND'
+     ZEDLMSG = WORD(ARG1,1) 'COMMAND WAS NOT FOUND. RC 'RETC
+     SIGNAL ENDD
+   END
+IF OUTLINE.0 = 0 THEN
+  DO
+    ZEDSMSG = WORD(ARG1,1) 'HAS NO FSE OUTPUT'
+    ZEDSMSG = 'COMMAND 'WORD(ARG1,1) 'HAS NO FSE OUTPUT.  RC 'RETC
+    SIGNAL ENDD
+  END
+"EXECIO * DISKW "FILENAM" (FINIS STEM OUTLINE."
+FSCMD = ARG1
+ADDRESS ISPEXEC "VPUT (FSCMD)"
+ADDRESS ISPEXEC "LMINIT DATAID(IDVAR)  DDNAME("FILENAM")"
+ADDRESS ISPEXEC "EDIT DATAID("IDVAR") PANEL(FSCMDEDT) PROFILE(DATA)"
+ADDRESS ISPEXEC "LMFREE DATAID("IDVAR")"
+ZEDSMSG = WORD(ARG1,1) 'COMPLETE'
+ZEDLMSG = 'COMMAND 'WORD(ARG1,1) 'COMPLETE.  RC 'RETC
+ENDD:
+ADDRESS ISPEXEC "SETMSG MSG(ISRZ000)"
+X = MSG('OFF')
+"FREE FI("FILENAM") DELETE"
+
+
+FSCMDBRO ISPF Browse Panel
+
+)ATTR
+  _ TYPE(INPUT) CAPS(OFF) INTENS(HIGH) FORMAT(&MIXED)
+  | AREA(DYNAMIC) EXTEND(ON) SCROLL(ON)
+  + TYPE(TEXT) INTENS(LOW)
+  ! TYPE(OUTPUT) INTENS(HIGH) PAD(-)
+ 01 TYPE(DATAOUT) INTENS(LOW)
+ 02 TYPE(DATAOUT) INTENS(HIGH)
+ 0B TYPE(DATAOUT) INTENS(HIGH) FORMAT(DBCS)
+ 0C TYPE(DATAOUT) INTENS(HIGH) FORMAT(EBCDIC)
+ 0D TYPE(DATAOUT) INTENS(HIGH) FORMAT(&MIXED)
+ 10 TYPE(DATAOUT) INTENS(LOW)  FORMAT(DBCS)
+ 11 TYPE(DATAOUT) INTENS(LOW)  FORMAT(EBCDIC)
+ 12 TYPE(DATAOUT) INTENS(LOW)  FORMAT(&MIXED)
+)BODY WIDTH(&ZWIDTH) EXPAND(//)
+%FS - &ZTITLE -------------/-/-----%LINE!ZLINES %COL!ZCOLUMS+
+%COMMAND ===>_ZCMD                     / / %SCROLL ===>_Z   +
+|ZDATA ----------------/ /------------------|
+|                                      / / |
+| -------------------/-/ ----------------|
+)INIT
+  .HELP = ISR10000       /* DEFAULT TUTORIAL NAME     */
+  .ZVARS = 'ZSCBR'       /* SCROLL AMT VARIABLE NAME  */
+  &ZTITLE = '&FSCMD '
+  &MIXED = MIX
+  IF (&ZPDMIX = N)       /* EBCDIC MODE REQUESTED     */
+    &MIXED = EDCDIC)
+)REINIT
+  REFRESH(ZCMD,ZSCBR,ZDATA,ZLINES,ZCOLUMS)
+  .ATTRCHAR(+) = 'INTENS(&ZINTEN)'
+)PROC
+  &ZCURSOR = .CURSOR
+  &ZCSROFF = .CSRPOS
+  &ZLVLINE = LVLINE(ZDATA)
+)END
+
+
+FSCMDEDT ISPF Edit Panel
+
+)ATTR
+  _ TYPE(INPUT) CAPS(OFF) INTENS(HIGH) FORMAT(&MIXED)
+  | AREA(DYNAMIC) EXTEND(ON) SCROLL(ON) USERMOD(20)
+  ! TYPE(OUTPUT) INTENS(HIGH) PAD(-)
+ 01 TYPE(DATAOUT) INTENS(LOW)
+ 02 TYPE(DATAOUT) INTENS(HIGH)
+ 03 TYPE(DATAOUT) SKIP(ON) /* FOR TEXT ENTER CMD. FIELD */
+ 04 TYPE(DATAIN)  INTENS(LOW)  CAPS(OFF) FORMAT(&MIXED) /*@OY36835*/
+ 05 TYPE(DATAIN)  INTENS(HIGH) CAPS(OFF) FORMAT(&MIXED) /*@OY36835*/
+ 06 TYPE(DATAIN)  INTENS(LOW)  CAPS(IN)  FORMAT(&MIXED) /*@OY36835*/
+ 07 TYPE(DATAIN)  INTENS(HIGH) CAPS(IN)  FORMAT(&MIXED) /*@OY36835*/
+ 08 TYPE(DATAIN)  INTENS(LOW)  FORMAT(DBCS)
+ 09 TYPE(DATAIN)  INTENS(LOW)  FORMAT(EBCDIC)
+ 0A TYPE(DATAIN)  INTENS(LOW)  FORMAT(&MIXED)
+ 20 TYPE(DATAIN)  INTENS(LOW) CAPS(IN) FORMAT(&MIXED)
+)BODY WIDTH(&ZWIDTH) EXPAND(//)
+%FSE -!ZTITLE ------------/-/----------%COLUMNS!ZCL!ZCR%%
+%COMMAND ===>_ZCMD                     / /                %SCROLL ===>_Z   %
+|ZDATA ---------------/-/-------------------|
+|                                      / /                |
+| ------------------/-/-------------------|
+)INIT
+  .HELP = ISR20000         /* DEFAULT TUTORIAL NAME      */
+  .ZVARS = 'ZSCED'         /* SCROLL AMT VARIABLE NAME   */
+  &MIXED = MIX             /* SET FORMAT MIX             */
+  IF (&ZPDMIX = N)         /* IF EBCDIC  */
+/****************************************************/
+IF SYSVAR(SYSISPF) \= 'ACTIVE' THEN
+  DO
+    SAY 'FSE ONLY RUNS UNDER ISPF.'
+    EXIT
+  END
+ARG ARG1
+IF LENGTH(ARG1) = 0 THEN
+  DO
+    ZEDSMSG = 'INVALID SYNTAX:'
+    ZEDSMSG = 'SYNTAX IS FSE '
+    ADDRESS ISPEXEC "SETMSG MSG(ISRZ000)"
+    EXIT
+  END
+ELSE NOP
+X = MSG('ON')
+X = PROMPT('OFF')
+X = OUTTRAP("OUTLINE.")
+FILENAM = "TS"TIME('S')
+"ALLOC FI("FILENAM"+) TRACKS SPACE(1,1) UNIT(SYSDA) NEWDSORG(PS)",
+       "LRE, Inc.,
+
+Vienna, Virginia.
+
+
+  
+
+The TSO Times is back by popular demand! 
+Register now for your FREE subscription 
+ 
+
+ •
+•
+•
+•
+•
+•
+
+• 
+
+ 
+ Chicago-Soft, LTD
+ISPF Tools & Toys
+MVS Help Board
+Lionel Dyck's Tools
+IBM ISPF Page
+Tom Brennan's Vista tn3270 Page
+Mark Zelden's MVS Utilities
+
+ 
+  
+
+ 
+ 
+
+ 
+   
+
+home · current articles · archives · forums ·
+· subscribe · about us · contact us · links
+
+ 

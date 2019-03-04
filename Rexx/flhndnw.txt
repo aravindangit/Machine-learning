@@ -1,0 +1,53 @@
+/***********************    REXX   ******************************/      00010000
+/*              REXX PROGRAM TO EDIT    */                              00020000
+DELSTACK                                                                00022021
+SAY 'WHAT IS THE FILE TO EDIT'                                          00030033
+PULL INFILE                                                             00040033
+SAY 'ENTER THE STRING TO BE EDITED'                                     00041033
+PULL STRNG                                                              00042033
+SAY 'ENTER THE LENGTH OF STRING TO BE REPLACED'                         00042133
+PULL LENG                                                               00042233
+SAY 'ENTER THE NEW STRING'                                              00043033
+PULL NSTRNG                                                             00044033
+SAY INFILE                                                              00050033
+"FREE FI(EDTDD)"                                                        00051004
+"ALLOC F(EDTDD) DA('"INFILE"') SHR"                                     00060033
+"FREE FI(EDTD1)"                                                        00061025
+"ALLOC F(EDTD1) DA('"INFILE"') SHR"                                     00070033
+"EXECIO * DISKR EDTDD (STEM INREC."                                     00080019
+SAY RC                                                                  00090000
+DO I = 1 TO INREC.0                                                     00093002
+"EXECIO 1 DISKRU EDTD1 "I"(LIFO"                                        00093123
+SAY RC                                                                  00093224
+PULL INEDIT                                                             00093316
+  STRRES=POS(STRNG,INEDIT)                                              00093433
+  SAY STRRES                                                            00093516
+  IF STRRES \= 0 THEN                                                   00093616
+     DO                                                                 00093709
+       SAY 'STRRES  IS NOT ZERO'                                        00093816
+       IF STRRES > 0 THEN                                               00093916
+          DO                                                            00094009
+          SAY 'STRRES IS GREATER THAN 1'                                00094116
+          STRNG1=SUBSTR(INEDIT,1,STRRES-1)                              00094233
+          STRNG2=SUBSTR(INEDIT,STRRES+LENG)                             00094333
+          OTEDIT=STRNG1||NSTRNG||STRNG2                                 00094433
+          PUSH OTEDIT                                                   00094529
+          SAY OTEDIT                                                    00094620
+          END                                                           00094709
+       ELSE                                                             00094809
+          DO                                                            00094909
+          SAY 'STRRES IS EQUAL TO 1'                                    00095016
+          STRNG1=SUBSTR(INEDIT,1+LENG)                                  00095133
+          OTEDIT=NSTRNG||STRNG1                                         00095233
+          PUSH OTEDIT                                                   00095329
+          SAY OTEDIT                                                    00095420
+          END                                                           00095509
+     END                                                                00095609
+   ELSE                                                                 00095730
+     PUSH INEDIT                                                        00095830
+"EXECIO 1 DISKW EDTD1 (FINIS"                                           00095928
+SAY RC                                                                  00096018
+END                                                                     00097002
+ /**      "LISTDS 'TRNG.EDUC78.CPP'" *******THIS IS WORKING*/           00120000
+/*        "LIST 'TRNG.EDUC78.CPP'" */                                   00130000
+EXIT                                                                    00140000

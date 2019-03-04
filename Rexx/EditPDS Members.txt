@@ -1,0 +1,113 @@
+ have two macros ... 
+to add comments in all the members of the pds 
+
+################################# 
+First macro : COMMENTS 
+
+/* REXX */ 
+"ISREDIT MACRO (STRING)" 
+STRING = "PROCLIB" 
+"ISREDIT F FIRST" (STRING) 
+ADDRESS ISREDIT "(FRED) = "CURSOR 
+ADDRESS ISREDIT "LINE_BEFORE "FRED " = 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+1"= 
+'//*F* FINANCIAL= '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+2"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+3"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+4"= 
+'//*Z* CRITICAL PATH = '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+5"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+6"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+7"= 
+'//*I* FILE NAME -> APPLICATION NAME '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+8"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+9"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+10"= 
+'//*O* FILE NAME -> APPLICATION NAME '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+11"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+12"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+13"= 
+'//*L* '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+14"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+15"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+16"= 
+'//*W* DOWNSTREAM IMPACTS '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+17"= 
+'//*W* APPLICATION NAME '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+18"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+19"= 
+'//*******************************************************************'" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+20"= 
+'//*B* BYPASS PROCEDURE '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+21"= 
+'//*B* '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+22"= 
+'//*B* '" 
+ADDRESS ISREDIT "LINE_BEFORE "FRED+23"= 
+'//*******************************************************************'" 
+"END" 
+EXIT 
+
+####################################### 
+
+Second Macro : PDSEDIT 
+
+
+/************************ REXX ********************************/ 
+/* EDIT ALL MEMBERS OF THE CURRENTLY ALLOCATED PDS EXCEPT THE */ 
+/* MEMBER BEING EDITED. PASS NAME OF EDIT MACRO AS ONLY PARM. */ 
+/**************************************************************/ 
+"ISREDIT MACRO (EDITMAC)" 
+/* IDENTIFY CURRENTLY OPEN PDS */ 
+"ISREDIT (OPENPDS) = DATAID" 
+/* IDENTIFY CURRENTLY OPEN MEMBER */ 
+"ISREDIT (OPENMBR) = MEMBER" 
+/* OPEN PDS FOR INPUT */ 
+ADDRESS ISPEXEC 
+"LMOPEN DATAID("OPENPDS") OPTION(INPUT)" 
+MBR = ' ' 
+SAVERC = 0 
+DO WHILE SAVERC = 0 
+"LMMLIST DATAID("OPENPDS") MEMBER(MBR) OPTION(LIST) STATS(NO)" 
+SAVERC = RC 
+IF (SAVERC = 0) & (MBR \= OPENMBR) THEN DO 
+"EDIT DATAID("OPENPDS") MEMBER("MBR") MACRO("EDITMAC")" 
+END 
+END 
+/* FREE AND CLOSE PDS */ 
+"LMMLIST DATAID("OPENPDS") OPTION(FREE)" 
+"LMCLOSE DATAID("OPENPDS")" 
+END 
+EXIT 
+
+###################################### 
+
+when i execute these Macro from the respective PDS member.... it successfully adds the comments in the members.... BUT everytime it edits a member i need to press F3 to go to next member of the PDS..... there are 1500 members in my PDS so i will have to press F3 1500 times... is there any way by which i can avoid pressing F3 everytime 
+
+....please help me i m new to rexx......
+
+
+At the end of COMMENT macro, add ADDRESS ISREDIT "END". 
+
+
+
+If the inserted lines are always the same, why not just insert a member once rather than a line 20+ times. 
+
+"ISREDIT COPY member BEFORE pos" 
+
+or 
+
+"ISREDIT COPY 'pds name(member)' BEFORE pos"
+

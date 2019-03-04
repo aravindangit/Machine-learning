@@ -1,0 +1,46 @@
+/***********************    REXX   ******************************/      00010000
+/*              REXX PROGRAM TO EDIT    */                              00020000
+DELSTACK                                                                00021016
+SAY 'WHAT IS THE FILE TO EDIT'                                          00030000
+PULL INFILE                                                             00040015
+SAY 'ENTER THE STRING TO BE EDITED'                                     00041006
+PULL STRNG                                                              00042006
+SAY 'ENTER THE LENGTH OF STRING TO BE REPLACED'                         00042109
+PULL LENG                                                               00042209
+SAY 'ENTER THE NEW STRING'                                              00043006
+PULL NSTRNG                                                             00044006
+SAY INFILE                                                              00050015
+"FREE FI(EDTDD)"                                                        00051004
+"ALLOC F(EDTDD) DA('"INFILE"') SHR"                                     00060015
+/*** "ALLOC F(OUTDD) DA('TRNG.EDUC78.CPPTRIAL') SHR" ****/              00070015
+"EXECIO * DISKRU EDTDD (STEM INREC."                                    00080015
+SAY RC                                                                  00090000
+DO I = 1 TO INREC.0                                                     00093002
+/***PULL INREC.I***/                                                    00093115
+  STRRES.I=POS(STRNG,INREC.I)                                           00093208
+  SAY STRRES.I-1                                                        00093310
+  IF STRRES.I \= 0 THEN                                                 00093412
+     DO                                                                 00093509
+       SAY 'STRRES.I IS NOT ZERO'                                       00093611
+       IF STRRES.I-1 > 0 THEN                                           00093712
+          DO                                                            00093809
+          SAY 'STRRES.I IS GREATER THAN 1'                              00093911
+          STRNG1=SUBSTR(INREC.I,1,STRRES.I-1)                           00094009
+          STRNG2=SUBSTR(INREC.I,STRRES.I+LENG)                          00094109
+          INREC.I=STRNG1||NSTRNG||STRNG2                                00094215
+          SAY INREC.I                                                   00094315
+          END                                                           00094509
+       ELSE                                                             00094609
+          DO                                                            00094709
+          SAY 'STRRES.I IS EQUAL TO 1'                                  00094811
+          STRNG1=SUBSTR(INREC.I,1+LENG)                                 00094909
+          INREC.I=NSTRNG||STRNG1                                        00095015
+          SAY INREC.I                                                   00095115
+          END                                                           00095309
+     END                                                                00095409
+END                                                                     00096002
+"EXECIO * DISKW EDTDD (STEM INREC."                                     00100015
+SAY RC                                                                  00110015
+ /**      "LISTDS 'TRNG.EDUC78.CPP'" *******THIS IS WORKING*/           00120000
+/*        "LIST 'TRNG.EDUC78.CPP'" */                                   00130000
+EXIT                                                                    00140000

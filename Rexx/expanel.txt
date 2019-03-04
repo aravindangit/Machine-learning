@@ -1,0 +1,33 @@
+/*REXX*/                                                                00010000
+MESSAGE = ' '                                                           00020006
+ADDRESS ISPEXEC                                                         00030000
+"ISPEXEC LIBDEF ISPPLIB DATASET ID('TRNG.EDUC78.REXX.EXEC')"            00040002
+/* "ISPEXEC LIBDEF ISPMLIB DATASET ID(REXX.TRAINING)"  */               00050000
+"ISPEXEC LIBDEF ISPSLIB DATASET ID('TRNG.EDUC78.REXX.EXEC')"            00060002
+"ISPEXEC ADDPOP"                                                        00070000
+"ISPEXEC VPUT MESSAGE ASIS"                                             00080006
+"ISPEXEC DISPLAY PANEL(PANEL)"                                          00090000
+"ISPEXEC VGET (DATA1,WORD1,WORD2,KEYPRESS) ASIS"                        00100007
+"ISPEXEC REMPOP"                                                        00110000
+IF KEYPRESS = 'PF03' THEN EXIT                                          00120000
+MESSAGE = 'PLEASE WAIT.. JCL IS GETTING READY'                          00130000
+"ISPEXEC ADDPOP"                                                        00140000
+"ISPEXEC VPUT MESSAGE ASIS"                                             00150006
+"ISPEXEC CONTROL DISPLAY LOCK"                                          00160000
+"ISPEXEC DISPLAY PANEL(PANEL)"                                          00170000
+/*DUMMY WAIT*/                                                          00180000
+DO 30                                                                   00190000
+DO 10000; NOP; END                                                      00200000
+END                                                                     00210000
+/*END OF DUMMY WAIT*/                                                   00220000
+SRCHDSN = DATA1                                                         00230000
+SRCHWD = WORD1                                                          00240000
+/***"ISPEXEC FTOPEN TEMP"*******/                                       00250003
+/***"ISPEXEC FTINCL SKEL"*******/                                       00260003
+/***"ISPEXEC FTCLOSE"**********/                                        00270004
+/****"ISPEXEC VGET (ZTEMPF) SHARED" ****/                               00280004
+MESSAGE = 'JCL IS READY.. PRESS ENTER TO SEE THE JCL'                   00290000
+"ISPEXEC ADDPOP"                                                        00300000
+"ISPEXEC VPUT MESSAGE ASIS"                                             00310006
+"ISPEXEC DISPLAY PANEL(PANEL)"                                          00320000
+/*****"ISPEXEC EDIT DATASET('"ZTEMPF"')" ***********/                   00330004

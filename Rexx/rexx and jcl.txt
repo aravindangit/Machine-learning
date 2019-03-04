@@ -1,0 +1,358 @@
+ Introduction  
+  Get Parameters from JCL and Display a Message  
+  Get Parameters from JCL and Display a Message, the REXX Program  
+  Get Parameters from JCL and Display a Message, the JCL Member  
+  Display Multiple Messages  
+  Display Multiple Messages, the REXX Program  
+  Display Multiple Messages, the JCL Member  
+  Create and Populate a File  
+  Create and Populate a File, the REXX Program  
+  Create and Populate a File, the JCL Member  
+  Queues and User-Defined SYSOUT Spool File  
+  Queues and User-Defined SYSOUT, the REXX Program  
+  Queues and User-Defined SYSOUT, the JCL Member  
+  Ancillary and Support Programs  
+  Ancillary and Support, Create a PDS for the REXX Program Members  
+  Summary  
+  Software Agreement and Disclaimer  
+  Downloads and Links to Similar Pages  
+  Downloads and Links, Internet Access Required  
+  Glossary of Terms  
+  Comments, Suggestions or Feedback  
+  Company Overview  
+ 
+ 
+The SimoTime Home Page 
+
+   Introduction 
+This document descibes a few programs that use basic functions provided with the REXX Programming Language. The programs originally executed on an IBM Mainframe. In recent years the programs have been copied and executed in a Windows environment using the Enterprise Edition of Micro Focus Studio.
+
+   Get Parameters from JCL and Display a Message 
+This is a very simple REXX program that will get the parameters passed from JCL via the PARM= keyword and display a message to the screen.
+
+   Get Parameters from JCL and Display a Message, the REXX Program 
+The following (RXPARMX1.rex) is the source code member for the REXX program.
+
+/* ********************** REXX ********************** */
+SAY "* RXPARMX1 - EXEC PGM=IRXJCL,PARM='RXPARMX1 2 3'"
+ARG FIRST SECOND
+RESULT = FIRST + SECOND
+SAY "* RXPARMX1 - The Result is" RESULT
+/* ************************************************** */
+/* End of Program Execution
+*/
+SAY "* RXPARMX1 - End of Program Execution"
+EXIT 0
+
+
+   Get Parameters from JCL and Display a Message, the JCL Member 
+The following (RXPARMJ1.jcl) is the JCL Member that will execute the REXX program.
+
+//RXPARMJ1 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=&SYSUID
+//* *******************************************************************
+//*       This JCL Member is provided by SimoTime Enterprises         *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Use IRXJCL to execute a Rexx Program
+//* Author - SimoTime Enterprises
+//* Date   - January 01, 1992
+//*
+//* This JCL Member will execute IRXJCL. The PARM= keyword will caused
+//* the IRXJCL program to execute the Rexx program RXPARMX1 and pass
+//* the remaining parameters that are numeric values to the RXPARMX1
+//* program.
+//*
+//* *******************************************************************
+//* Step 1 of 1, Get Parameters and post to SYSTSPRT...
+//*
+//REXXEXEC EXEC PGM=IRXJCL,PARM='RXPARMX1 1 2'
+//SYSEXEC  DD  DSN=SIMOTIME.PDS.REXXLIB,DISP=SHR
+//SYSTSPRT DD  SYSOUT=*
+//
+//*
+
+
+   Display Multiple Messages 
+This is a simple REXX program that will get the parameters passed from JCL via the PARM= keyword and displays multiple messages to the screen.
+
+   Display Multiple Messages, the REXX Program 
+The following (RXPARMX2.rex) is the source code member for the REXX program.
+
+/* ********************** REXX ********************** */
+SAY "* RXPARMX2 - Starting Program Execution"
+ARG FIRST SECOND
+RESULT = FIRST + SECOND
+SAY "* RXPARMX2 - The Result is" RESULT
+/* ************************************************** */
+/* Prepare the Next test, display four message lines
+*/
+MESSAGE.1 = "This is Message Line 001..."
+MESSAGE.2 = "This is Message Line 002..."
+MESSAGE.3 = "This is Message Line 003..."
+MESSAGE.4 = "This is Message Line 004..."
+SAY "* RXPARMX2 - Display the four message lines"
+DO I = 1 to 4
+  SAY "* RXPARMX2 -" MESSAGE.I
+END I
+/* ************************************************** */
+/* End of Program Execution
+*/
+SAY ""
+SAY "" RESULT
+SAY "* RXPARMX2 - Finished Program Execution"
+EXIT 0
+
+
+   Display Multiple Messages, the JCL Member 
+The following (RXPARMJ2.jcl) is the JCL Member that will execute the REXX program.
+
+//RXPARMJ2 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=&SYSUID
+//* *******************************************************************
+//*       This JCL Member is provided by SimoTime Enterprises         *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Use IRXJCL to execute a Rexx Program
+//* Author - SimoTime Enterprises
+//* Date   - January 01, 1992
+//*
+//* This JCL Member will execute IRXJCL. The PARM= keyword will caused
+//* the IRXJCL program to execute the Rexx program RXPARMX2 and pass
+//* the remaining parameters that are numeric values to the RXPARMX2
+//* program.
+//*
+//* *******************************************************************
+//* Step 1 of 1, Display multiple messages...
+//*
+//REXXEXEC EXEC PGM=IRXJCL,PARM='RXPARMX2 3 4'
+//SYSEXEC  DD  DSN=SIMOTIME.PDS.REXXLIB,DISP=SHR
+//SYSTSPRT DD  SYSOUT=*
+//SYSSTIN  DD  DUMMY
+//*
+
+
+   Create and Populate a File 
+This is a sample REXX program that will get a parameter passed from JCL via the PARM= keyword and and write records to a disk file.
+
+   Create and Populate a File, the REXX Program 
+The following (RXPARMX2.rex) is the source code member for the REXX program.
+
+/* ********************** REXX ********************** */
+SAY "* RXPARMX3 - Starting Program Execution"
+ARG USERTAG
+SAY "* RXPARMX3 - The User Tag is" USERTAG
+/* ************************************************** */
+/* Prepare records to populate a file
+*/
+RECORDS.1 = USERTAG "This is Record 001..."
+RECORDS.2 = USERTAG "This is Record 002..."
+RECORDS.3 = USERTAG "This is Record 003..."
+RECORDS.4 = USERTAG "This is Record 004..."
+/* ************************************************** */
+/* Create and Populate a File
+*/
+"EXECIO * DISKW RXDATA80 (OPEN"
+EXECIO 4 DISKW RXDATA80 (STEM RECORDS.
+EXECIO * DISKW RXDATA80 (FINIS
+/* ************************************************** */
+/* End of Program Execution
+*/
+SAY "* RXPARMX3 - Finished Program Execution"
+EXIT 0
+
+
+   Create and Populate a File, the JCL Member 
+The following (RXPARMJ3.jcl) is the JCL Member that will execute the REXX program.
+
+//RXPARMJ3 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=&SYSUID
+//* *******************************************************************
+//*       This JCL Member is provided by SimoTime Enterprises         *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Use IRXJCL to execute a Rexx Program
+//* Author - SimoTime Enterprises
+//* Date   - January 01, 1992
+//*
+//* This JCL Member will execute IRXJCL. The PARM= keyword will caused
+//* the IRXJCL program to execute the Rexx program RXPARMX3 and pass
+//* the remaining parameters to the RXPARMX3 program.
+//*
+//* *******************************************************************
+//* Step 1 of 2, Delete any previously created file...
+//*
+//GETREADY EXEC PGM=IEFBR14
+//RXDATA80 DD  DSN=SIMOTIME.DATA.RXDATA80,DISP=(MOD,DELETE,DELETE),
+//             STORCLAS=MFI,
+//             SPACE=(TRK,5),
+//             DCB=(RECFM=FB,LRECL=80,DSORG=PS)
+//*
+//* *******************************************************************
+//* Step 2 of 2, Create and populate a new QSAM file...
+//*
+//REXXEXEC EXEC PGM=IRXJCL,PARM='RXPARMX3 TESTDATA'
+//SYSEXEC  DD  DSN=SIMOTIME.PDS.REXXLIB,DISP=SHR
+//SYSTSPRT DD  SYSOUT=*
+//SYSSTIN  DD  DUMMY
+//RXDATA80 DD  DSN=SIMOTIME.DATA.RXDATA80,
+//             DISP=(NEW,CATLG,KEEP),
+//             STORCLAS=MFI,
+//             SPACE=(TRK,5),
+//             DCB=(RECFM=FB,LRECL=80,DSORG=PS)
+//SYSOUT   DD  SYSOUT=*
+//*
+
+
+   Queues and User-Defined SYSOUT Spool File 
+This is a sample REXX program that will get a parameter passed from JCL via the PARM= keyword and and write records to a user-defined SYSOUT spool file.
+
+   Queues and User-Defined SYSOUT, the REXX Program 
+The following (RXPARMX4.rex) is the source code member for the REXX program.
+
+/* ********************** REXX ********************** */
+/* Get the Parameter (or Arguments) from the PARM=
+   Keyword of the EXEC statement in the JCL Member.
+   Write the Startup message and the parameter value
+   to the SYSOUTU1 (SYSOUT for user content). The
+   SYSOUTU1 must be predefined in the JCL.
+*/
+ARG JCLPARM
+QUEUE "* RXPARMX4 - Starting Program Execution"
+EXECIO queued() DISKW SYSOUTU1 (FINIS
+QUEUE "* RXPARMX4 - The JCL Parameter is" JCLPARM
+EXECIO queued() DISKW SYSOUTU1 (FINIS
+/* **************************************************
+   Fill the Queue with three items. Write the queue
+   (all items in queue) to the SYSOUTU1 File using
+   one EXECIO statement.
+*/
+QUEUE "* RXPARMX4 -" JCLPARM "Queue Stack Entry 001"
+QUEUE "* RXPARMX4 -" JCLPARM "Queue Stack Entry 002"
+QUEUE "* RXPARMX4 -" JCLPARM "Queue Stack Entry 003"
+QUEUE "* RXPARMX4 -" JCLPARM "Queue Stack Entry 004"
+EXECIO queued() DISKW SYSOUTU1 (FINIS
+/* **************************************************
+   Write the Finished message to the SYSOUTU1
+*/
+QUEUE "* RXPARMX4 - Finished Program Execution"
+EXECIO queued() DISKW SYSOUTU1 (FINIS
+exit 0
+
+
+   Queues and User-Defined SYSOUT, the JCL Member 
+The following (RXPARMJ4.jcl) is the JCL Member that will execute the REXX program.
+
+//RXPARMJ4 JOB SIMOTIME,ACCOUNT,CLASS=1,MSGCLASS=0,NOTIFY=&SYSUID
+//* *******************************************************************
+//*       This JCL Member is provided by SimoTime Enterprises         *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Use IRXJCL to execute a Rexx Program
+//* Author - SimoTime Enterprises
+//* Date   - January 01, 1992
+//*
+//* This JCL Member will execute IRXJCL. The PARM= keyword will caused
+//* the IRXJCL program to execute the Rexx program RXPARMX4 and pass
+//* the remaining parameters to the RXPARMX4 program.
+//*
+//* *******************************************************************
+//* Step 1 of 1, The RXPARMX1 program is expected to write to SYSOUTU1.
+//*
+//REXXEXEC EXEC PGM=IRXJCL,PARM='RXPARMX4 TESTPARM'
+//SYSEXEC  DD  DSN=SIMOTIME.PDS.REXXLIB,DISP=SHR
+//SYSTSPRT DD  SYSOUT=*
+//SYSSTIN  DD  DUMMY
+//SYSOUTU1 DD  SYSOUT=*
+//*
+
+
+   Ancillary and Support Programs 
+This section describes additional utilitarian programs and procedures that are used to configure and support the execution of the REXX programs.
+
+   Ancillary and Support, Create a PDS for the REXX Program Members 
+The following (RXMKPOJ1.jcl) is the JCL member that will create a PDS for the REXX Program Members.
+
+//RXMKPOJ1 JOB SIMOTIME,CLASS=1,MSGCLASS=0,USER=SIMOTIME,NOTIFY=CSIP1
+//* *******************************************************************
+//*       This JCL Member is provided by SimoTime Enterprises         *
+//*           (C) Copyright 1987-2014 All Rights Reserved             *
+//*             Web Site URL:   http://www.simotime.com               *
+//*                   e-mail:   helpdesk@simotime.com                 *
+//* *******************************************************************
+//*
+//* Text   - Create a PDS for the Rexx Program Members
+//* Author - SimoTime Enterprises
+//* Date   - January 01, 1992
+//*
+//* *******************************************************************
+//*
+//PODEFINE EXEC PGM=IEFBR14
+//SYSOUT   DD   SYSOUT=*
+//REXXLIB  DD  DSN=SIMOTIME.PDS.REXXLIB,
+//             DISP=(NEW,CATLG,CATLG),
+//             STORCLAS=MFI,
+//             SPACE=(TRK,5),
+//             DCB=(DSORG=PO,LRECL=00080,RECFM=LSEQ)
+//*MFE: %PCDSN=C:\SIMOSAM1\DEVL\REXXLIB\*.REX
+//* The following comments are for the preceding two (2) Statements.
+//* The RECFM=LSEQ is a Micro Focus extension. For the Mainframe this
+//* would need to be changed to RECFM=PS.
+//*
+//* The //*MFE statement is a Micro Focus extension that is used to
+//* specify the PCDSN or physical location of the folder containing
+//* the PDS Members.
+//* The \*.REX defines the extension that is used to dynamically
+//* populate the PDS.
+//* Since the //*MFE statement starts with //* it would be treated
+//* as a JCL comment statement on the mainframe.
+//*
+
+
+   Summary 
+This document descibes a few programs that use basic functions provided with the REXX Programming Language. This document may be used to assist as a tutorial for new programmers or as a quick reference for experienced programmers. In the world of programming there are many ways to solve a problem. This documents and the links to other documents are intended to provide a choice of alternatives.
+
+   Software Agreement and Disclaimer 
+Permission to use, copy, modify and distribute this software, documentation or training material for any purpose requires a fee to be paid to SimoTime Enterprises. Once the fee is received by SimoTime the latest version of the software, documentation or training material will be delivered and a license will be granted for use within an enterprise, provided the SimoTime copyright notice appear on all copies of the software. The SimoTime name or Logo may not be used in any advertising or publicity pertaining to the use of the software without the written permission of SimoTime Enterprises.
+
+SimoTime Enterprises makes no warranty or representations about the suitability of the software, documentation or learning material for any purpose. It is provided "AS IS" without any expressed or implied warranty, including the implied warranties of merchantability, fitness for a particular purpose and non-infringement. SimoTime Enterprises shall not be liable for any direct, indirect, special or consequential damages resulting from the loss of use, data or projects, whether in an action of contract or tort, arising out of or in connection with the use or performance of this software, documentation or training material.
+
+   Downloads and Links to Similar Pages 
+This section includes links to documents with additional information that are beyond the scope and purpose of this document.
+
+Note: The latest versions of the SimoTime Documents and Program Suites are available on the Internet and may be accessed using the  icon. If a user has a SimoTime Enterprise License the Documents and Program Suites may be available on a local server and accessed using the  icon.
+
+      Explore An Enterprise System Model that describes and demonstrates how Applications that were running on a Mainframe System and non-relational data that was located on the Mainframe System were copied and deployed in a Microsoft Windows environment with Micro Focus Enterprise Server.
+
+      Explore The ASCII and EBCDIC Translation Tables. These tables are provided for individuals that need to better understand the bit structures and differences of the encoding formats.
+
+      Explore The File Status Return Codes to interpret the results of accessing VSAM data sets and/or QSAM files.
+
+   Downloads and Links, Internet Access Required 
+The following links will require an internet connect.
+
+This suite of programs and documentation is available to download for review and evaluation purposes. Other uses will require a SimoTime Software License. Link to an Evaluation zPAK Option that includes the program members, documentation and control files.
+
+A good place to start is The SimoTime Home Page via Internet Connect for access to white papers, program examples and product information.
+
+Explore The Micro Focus Web Site via Internet Connect for more information about products and services available from Micro Focus.
+
+   Glossary of Terms 
+      Explore the Glossary of Terms for a list of terms and definitions used in this suite of documents and white papers.
+
+   Comments, Suggestions or Feedback 
+This document was created and is copyrighted and maintained by SimoTime Enterprises.
+
+If you have any questions, suggestions, comments or feedback please call or send an e-mail to: helpdesk@simotime.com 
+
+We appreciate hearing from you.
+

@@ -1,0 +1,624 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0044)http://www.schlabb.de/resources/CSCRX2HT.TXT -->
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2900.3314" name=GENERATOR></HEAD>
+<BODY><PRE>/* --- REXX -------------------------------------------------------- */
+/*                                                                   */
+/* Module        : CSCRX2HT                                          */
+/*                                                                   */
+/* Language      : REXX/MVS                                          */
+/*                                                                   */
+/* Function      : Convert REXX to HTML with ISPF-like coloring      */
+/*                                                                   */
+/* Description   : This program analyses the REXX program code and   */
+/*                 builds a HTML file with color attributes as used  */
+/*                 by ISPF Edit.                                     */
+/*                 This file can be transferred to the PC by using   */
+/*                 ISPF Workstation Agent. In addition the program   */
+/*                 might invoke the Windows application associated   */
+/*                 with file extention ".htm".                       */
+/*                 The program runs as ISPF edit macro or might be   */
+/*                 used as line command on the extended member list  */
+/*                 of ISPF List Utility (usually menu option 3.4).   */
+/*                 In addition the program might be invoked on       */
+/*                 on command line. In this case the dataset name    */
+/*                 has to be supplied as invocation paramater.       */
+/*                                                                   */
+/* Parameters    : Dataset name (optional)                           */
+/*                                                                   */
+/* Author        : www.schlabb.de                                    */
+/*                 (based on an idea of W. Sch„fer, rubin Software,  */
+/*                 see http://ww.rubin-software.de/index.php)        */
+/*                                                                   */
+/* Date created  : August 8th 2007                                   */
+/*                                                                   */
+/* Change history -------------------------------------------------- */
+/*                                                                   */
+/* DD.MM.YYYY      - ...........................................     */
+/* &lt;Name&gt;                                                            */
+/*                                                                   */
+/* Structure ------------------------------------------------------- */
+/*                                                                   */
+/*  MAIN                                                             */
+/*  +-- GET_SOURCE                                                   */
+/*  +-- INIT_VARS                                                    */
+/*  +-- BUILD_HTML                                                   */
+/*  !   +-- BUILD_LIST_OF_KEYWORDS                                   */
+/*  +-- GENERATE_OUTPUT                                              */
+/*  +-- XFER_AND_SHOW_HTML                                           */
+/*                                                                   */
+/* Links ----------------------------------------------------------- */
+/*                                                                   */
+/*  Link         Type      Module                                    */
+/*                                                                   */
+/*  SELECT       Exec      COMSPEC%                                  */
+/*  SELECT       Program   ISPWSCD                                   */
+/*                                                                   */
+/* ----------------------------------------------------------------- */
+
+                       /* Get the name of the currently running pgm  */
+  parse SOURCE . . source .
+
+/* ----------------------------------------------------------------- */
+MAIN:
+/* ----------------------------------------------------------------- */
+
+  call GET_SOURCE      /* Read the REXX program source               */
+  call INIT_VARS       /* Initialize the global variables            */
+  call BUILD_HTML      /* Now go on and build the HTML output        */
+  call GENERATE_OUTPUT /* Write the output to a temporary dataset    */
+
+                       /* Show the resulting dataset, if desired     */
+  if view_html = 'YES' then "ISPEXEC VIEW DATASET("dsn_out")"
+
+                       /* Transfer the html file to the PC           */
+  if xfer_WSA = 'YES' then call XFER_AND_SHOW_HTML
+
+  exit
+
+/* ----------------------------------------------------------------- */
+/* Read the REXX program source                                      */
+/* ----------------------------------------------------------------- */
+GET_SOURCE:
+/* ----------------------------------------------------------------- */
+
+  rxdata = ''          /* Initialize rexx program data variable      */
+  pgm    = ''          /* Initialize rexx program name               */
+
+  "ISREDIT MACRO"      /* Do we run as an ISPF edit macro ?          */
+  if rc = 0 then ,     /* If so,                                     */
+     do                /*    get dataset(member) name from ISPF      */
+        "ISREDIT (DS)  = DATASET"
+        "ISREDIT (MBR) = MEMBER"
+        if mbr = '' then dsn_in = "'" !! dataset !! "'"
+        else do
+           pgm    = mbr
+           dsn_in = "'" !! ds !! '(' !! mbr !! ")'"
+        end
+                       /*    get last line number                    */
+        "ISREDIT (LL)  = LINENUM .ZL"
+                       /*    load data into variable "rxdata"        */
+                       /*    and indicate line breaks                */
+        do i = 1 by 1 to ll
+           "ISREDIT (DATALINE) = LINE" I
+           rxdata = rxdata !! STRIP(dataline,'T') !! '0d0a'X
+        end
+     end
+  else do              /* If not running as edit macro,              */
+     parse ARG dsn_in  /*    get dataset name as parameter           */
+
+                       /*    Is any dataset name being passed ?      */
+     if dsn_in = '' then do
+        say 'Error - No dataset name passed'
+        say source 'could be used as an edit macro'
+        say 'or as a line command on ISPF dataset list utility.'
+        say 'In both cases the dataset name will be automatically'
+        say 'determined.'
+        say 'If you call' source 'on command line you have to pass'
+        say 'the name of the dataset to be processed, e.g.'
+        say 'Command ===&gt;' source 'my.rexx.dataset(test)'
+        exit 8
+     end
+
+                       /*   Force single quotes around dataset name  */
+     dsn_in = "'" !! STRIP(dsn_in,'B',"'") !! "'"
+
+                       /*   Does input dataset exist ?               */
+     if SYSDSN(dsn_in) &lt;&gt; 'OK' then do
+        say 'Error - Dataset' dsn_in 'could not be found'
+        exit 8
+     end
+
+                       /*   Extract member name, if present          */
+     parse VAR dsn_in . '(' mbr ')'
+     if mbr &lt;&gt; '' then pgm = mbr
+
+                       /*   Now read the rexx program code           */
+     "ALLOC DD(" !! source !! ") DA("dsn_in") SHR REUSE"
+     if (rc &gt; 0) then do
+        say 'Error - Dataset' dsn_in 'could not be allocated - rc' rc
+        exit 8
+     end
+     "EXECIO * DISKR" source "(FINIS)"
+     if (rc &gt; 0) then do
+        say 'Error - Dataset' dsn_in 'could not be read - rc' rc
+        exit 8
+     end
+     do QUEUED()       /*    load data into variable "rxdata"        */
+                       /*    and indicate line breaks                */
+        parse PULL dataline
+        rxdata = rxdata !! STRIP(dataline,'T') !! '0d0a'X
+     end
+     "FREE DD(" !! source !! ")"
+  end
+
+  return
+
+/* ----------------------------------------------------------------- */
+/* Initialize the global variables                                   */
+/* ----------------------------------------------------------------- */
+INIT_VARS:
+/* ----------------------------------------------------------------- */
+
+                       /* Temporary output dataset                   */
+  dsn_out       = "'" !! USERID() !! '.' !! source !! ".TEMP'"
+
+                       /* Text strings for title, header and footer  */
+  title         = 'Rexx Program:' STRIP(dsn_in,'B',"'")
+  header        = 'Rexx Program:' STRIP(dsn_in,'B',"'")
+  footer        = 'Created on' DATE() 'by' USERID() 'with' source
+
+  view_html     = 'YES'/* View html output after generating ?        */
+  xfer_WSA      = 'YES'/* Transfer html to PC via ISPF WSA ?         */
+  start_browser = 'YES'/* Start browser associated with .htm ?       */
+  dir_PC        = 'c:\'/* PC directory where html should be stored   */
+                       /* Name of generated html file on PC          */
+  if pgm &lt;&gt; '' then htmlfile = pgm !! '.htm'
+  else              htmlfile = 'rexxpgm.htm'
+
+                       /* Color settings for different data          */
+  col_deflt = 'lime'   /*   lime(green)  - default                   */
+  col_keyw  = 'red'    /*   red          - keywords                  */
+  col_strng = 'white'  /*   white        - quoted strings            */
+  col_cmnt  = 'aqua'   /*   aqua(turq)   - comments                  */
+  col_spchr = 'gold'   /*   gold(yellow) - special characters        */
+
+                       /* List of special characters to be translated*/
+                       /* due to html restrictions                   */
+  special_chars  = 'ä ö ü Ä Ö Ü ß &lt; &gt; &amp; "'
+                       /* List of corresponding html strings         */
+  special_html   = '&amp;auml; &amp;ouml; &amp;uuml; &amp;Auml; &amp;Ouml; &amp;Uuml; &amp;szlig;',
+                   '&amp;lt; &amp;gt; &amp;amp; &amp;quot;'
+                       /* List of characters to be highlighted       */
+  special_hilite = '+-*/=&lt;&gt;&amp;^!:%\'
+                       /* List of characters separating words        */
+  separator      = " (=*-+/^%)&amp;!&lt;&gt;'" !! '"'
+
+  return
+
+/* ----------------------------------------------------------------- */
+/* Build the HTML output                                             */
+/* ----------------------------------------------------------------- */
+BUILD_HTML:
+/* ----------------------------------------------------------------- */
+
+                       /* Several switches for parsing               */
+  quoted_strg   = 0    /*   Current pos within a quoted string ?     */
+                       /*   (If so, it contains the quote character) */
+  comment       = 0    /*   Counter for nesting depth of comments    */
+  kwbegin       = 1    /*   Do we expect a new keyword ?             */
+
+                       /* Load the list of REXX keywords             */
+  call BUILD_LIST_OF_KEYWORDS
+
+                       /* Initialize the html output string          */
+  htmlout = '&lt;font face="Courier New"&gt;&lt;font color='col_deflt'&gt;&lt;pre&gt;'
+
+  do until rxdata = '' /* Now loop over the REXX program code        */
+
+                       /* Strip off the first and the first two bytes*/
+     l1 = LEFT(rxdata,1)
+     l2 = LEFT(rxdata,2)
+                       /* Is it a special character ?                */
+     sc = WORDPOS(l1,special_chars)
+                       /* Is it a special hilite character ?         */
+     sh = POS(l1,special_hilite)
+     kw = ''           /* Initialize keyword                         */
+                       /* If we are at the beginning of a keyword ...*/
+     if (  (kwbegin           = 1) ,
+         &amp; (POS(l1,separator) = 0)  ) then do
+        parse UPPER VAR rxdata kw
+                       /*    ... we search the next separator ...    */
+        sep_pos = VERIFY(kw,separator,'M')
+                       /*    ... and save the keyw. if sep. is found */
+        if (sep_pos &gt; 0) then kw = LEFT(kw,sep_pos-1)
+        kwbegin = 0
+        end
+                       /* If we are on a separator we keep in mind   */
+                       /* that it's the beginning of a new keyword   */
+     if POS(l1,separator) &gt; 0 then kwbegin = 1
+
+     select            /* Now determine how to colorize the data     */
+                       /* Spaces ar kept unchanged                   */
+        when (l1 = ' ') then do
+             htmlout = htmlout !! ' '
+             rxdata  = SUBSTR(rxdata,2)
+             end
+                       /* Set line breaks                            */
+        when (l2 = '0d0a'x) then do
+             htmlout = htmlout !! '&lt;br&gt;'
+             kwbegin = 1
+             rxdata  = SUBSTR(rxdata,3)
+             end
+                       /* This is the beginning of a comment ...     */
+        when (  (l2          = '/*') ,
+              &amp; (quoted_strg = 0 ) ) then do
+             comment = comment + 1
+             htmlout = htmlout !! '&lt;font color='col_cmnt'&gt;/*'
+             rxdata  = SUBSTR(rxdata,3)
+             end
+                       /* ... and that's the end of a comment        */
+        when (  (l2          = '*/') ,
+              &amp; (quoted_strg = 0 ) ) then do
+             comment = comment - 1
+             htmlout = htmlout !! '*/&lt;/font&gt;'
+             rxdata  = SUBSTR(rxdata,3)
+             end
+                       /* Here begins a single-quoted string ...     */
+        when (  (l1          = "'") ,
+              &amp; (quoted_strg = 0 ) ,
+              &amp; (comment     = 0  )  ) then do
+             htmlout     = htmlout !! '&lt;font color='col_strng"&gt;'"
+             quoted_strg = "'"
+             rxdata      = SUBSTR(rxdata,2)
+             end
+                       /* ... and here it ends                       */
+        when (  (l1          = "'"  ) ,
+              &amp; (quoted_strg = "'" ) ,
+              &amp; (l2          &lt;&gt; "''") ,
+              &amp; (comment     =  0   )  ) then do
+             htmlout     = htmlout !! "'&lt;/font&gt;"
+             rxdata      = SUBSTR(rxdata,2)
+             quoted_strg = 0
+             end
+                       /* Here begins a double-quoted string ...     */
+        when (  (l1          = '"') ,
+              &amp; (quoted_strg = 0 ) ,
+              &amp; (comment     = 0  )  ) then do
+             htmlout     = htmlout !! '&lt;font color='col_strng'&gt;"'
+             quoted_strg = '"'
+             rxdata      = SUBSTR(rxdata,2)
+             end
+                       /* ... and here it ends                       */
+        when (  (l1          =  '"' ) ,
+              &amp; (quoted_strg = '"' ) ,
+              &amp; (l2          &lt;&gt; '""') ,
+              &amp; (comment     =  0   )  ) then do
+             htmlout     = htmlout !! '"&lt;/font&gt;'
+             rxdata      = SUBSTR(rxdata,2)
+             quoted_strg = 0
+             end
+                       /* A special character has to be translated   */
+        when (sc &gt; 0) then do
+             htmlout = htmlout !! WORD(special_html,sc)
+             rxdata  = SUBSTR(rxdata,2)
+             end
+                       /* A special character has to be highlighted  */
+        when (  (sh          &gt; 0) ,
+              &amp; (comment     = 0) ,
+              &amp; (quoted_strg = 0) ) then do
+             htmlout = htmlout !! '&lt;font color='col_spchr"&gt;"
+             htmlout = htmlout !! l1
+             htmlout = htmlout !! "&lt;/font&gt;"
+             rxdata  = SUBSTR(rxdata,2)
+             end
+                       /* It's a keyword                             */
+        when (  (keyword.kw  = 1) ,
+              &amp; (comment     = 0) ,
+              &amp; (quoted_strg = 0) ) then do
+             htmlout = htmlout !! '&lt;font color='col_keyw'&gt;'
+             kw      = LEFT(rxdata,LENGTH(kw))
+             rxdata  = SUBSTR(rxdata,LENGTH(kw)+1)
+             htmlout = htmlout !! kw'&lt;/font&gt;'
+             end
+                       /* It's anything else                         */
+        otherwise do
+             htmlout = htmlout !! l1
+             rxdata  = SUBSTR(rxdata,2)
+             end
+     end
+  end
+
+                       /* Add the final html tag sequence            */
+  htmlout = htmlout !! '&lt;/pre&gt;&lt;/font&gt;&lt;/font&gt;'
+
+  return
+
+/* ----------------------------------------------------------------- */
+/* Load the list of REXX keywords                                    */
+/* ----------------------------------------------------------------- */
+BUILD_LIST_OF_KEYWORDS:
+/* ----------------------------------------------------------------- */
+
+  keyword. = 0
+
+                       /* Keyword Instructions                       */
+  keyword.ADDRESS     = 1
+  keyword.ARG         = 1
+  keyword.BY          = 1
+  keyword.CALL        = 1
+  keyword.DO          = 1
+  keyword.DROP        = 1
+  keyword.ELSE        = 1
+  keyword.END         = 1
+  keyword.ERROR       = 1
+  keyword.EXIT        = 1
+  keyword.EXPOSE      = 1
+  keyword.FOR         = 1
+  keyword.FOREVER     = 1
+  keyword.FAILURE     = 1
+  keyword.HALT        = 1
+  keyword.IF          = 1
+  keyword.INTERPRET   = 1
+  keyword.ITERATE     = 1
+  keyword.LEAVE       = 1
+  keyword.NOP         = 1
+  keyword.NUMERIC     = 1
+  keyword.OFF         = 1
+  keyword.OTHERWISE   = 1
+  keyword.ON          = 1
+  keyword.PARSE       = 1
+  keyword.PROCEDURE   = 1
+  keyword.PULL        = 1
+  keyword.PUSH        = 1
+  keyword.QUEUE       = 1
+  keyword.RC          = 1
+  keyword.RESULT      = 1
+  keyword.RETURN      = 1
+  keyword.SAY         = 1
+  keyword.SCIENTIFIC  = 1
+  keyword.SELECT      = 1
+  keyword.SIGL        = 1
+  keyword.SIGNAL      = 1
+  keyword.SOURCE      = 1
+  keyword.SYNTAX      = 1
+  keyword.THEN        = 1
+  keyword.TO          = 1
+  keyword.TRACE       = 1
+  keyword.UNTIL       = 1
+  keyword.UPPER       = 1
+  keyword.VAR         = 1
+  keyword.VERSION     = 1
+  keyword.WHEN        = 1
+  keyword.WHILE       = 1
+  keyword.WITH        = 1
+
+                       /* Built-in Functions                         */
+  keyword.ABBREV      = 1
+  keyword.ABS         = 1
+  keyword.ADDRESS     = 1
+  keyword.ARG         = 1
+  keyword.BITAND      = 1
+  keyword.BITOR       = 1
+  keyword.BITXOR      = 1
+  keyword.B2X         = 1
+  keyword.CENTER      = 1
+  keyword.CENTRE      = 1
+  keyword.COMPARE     = 1
+  keyword.CONDITION   = 1
+  keyword.COPIES      = 1
+  keyword.C2D         = 1
+  keyword.C2X         = 1
+  keyword.DATATYPE    = 1
+  keyword.DATE        = 1
+  keyword.DELSTR      = 1
+  keyword.DELWORD     = 1
+  keyword.DIGITS      = 1
+  keyword.D2C         = 1
+  keyword.D2X         = 1
+  keyword.ERRORTEXT   = 1
+  keyword.FIND        = 1
+  keyword.FORM        = 1
+  keyword.FORMAT      = 1
+  keyword.FUZZ        = 1
+  keyword.INDEX       = 1
+  keyword.INSERT      = 1
+  keyword.JUSTIFY     = 1
+  keyword.LASTPOS     = 1
+  keyword.LEFT        = 1
+  keyword.LENGTH      = 1
+  keyword.LINESIZE    = 1
+  keyword.MAX         = 1
+  keyword.MIN         = 1
+  keyword.OVERLAY     = 1
+  keyword.POS         = 1
+  keyword.QUEUED      = 1
+  keyword.RANDOM      = 1
+  keyword.REVERSE     = 1
+  keyword.RIGHT       = 1
+  keyword.SIGN        = 1
+  keyword.SOURCELINE  = 1
+  keyword.SPACE       = 1
+  keyword.STRIP       = 1
+  keyword.SUBSTR      = 1
+  keyword.SUBWORD     = 1
+  keyword.SYMBOL      = 1
+  keyword.TIME        = 1
+  keyword.TRACE       = 1
+  keyword.TRANSLATE   = 1
+  keyword.TRUNC       = 1
+  keyword.USERID      = 1
+  keyword.VALUE       = 1
+  keyword.VERIFY      = 1
+  keyword.WORD        = 1
+  keyword.WORDINDEX   = 1
+  keyword.WORDLENGTH  = 1
+  keyword.WORDPOS     = 1
+  keyword.WORDS       = 1
+  keyword.XRANGE      = 1
+  keyword.X2B         = 1
+  keyword.X2C         = 1
+  keyword.X2D         = 1
+
+                       /* TSO/E External Functions                   */
+  keyword.EXTERNALS   = 1
+  keyword.FIND        = 1
+  keyword.GETMSG      = 1
+  keyword.INDEX       = 1
+  keyword.JUSTIFY     = 1
+  keyword.LINESIZE    = 1
+  keyword.LISTDSI     = 1
+  keyword.MSG         = 1
+  keyword.MVSVAR      = 1
+  keyword.OUTTRAP     = 1
+  keyword.PROMPT      = 1
+  keyword.SETLANG     = 1
+  keyword.STORAGE     = 1
+  keyword.SYSCPUS     = 1
+  keyword.SYSDSN      = 1
+  keyword.SYSVAR      = 1
+  keyword.USERID      = 1
+
+                       /* DBCS Functions                             */
+  keyword.DBADJUST    = 1
+  keyword.DBBRACKET   = 1
+  keyword.DBCENTER    = 1
+  keyword.DBCJUSTIFY  = 1
+  keyword.DBCS        = 1
+  keyword.DBLEFT      = 1
+  keyword.DBRIGHT     = 1
+  keyword.DBRLEFT     = 1
+  keyword.DBRRIGHT    = 1
+  keyword.DBTODBCS    = 1
+  keyword.DBTOSBCS    = 1
+  keyword.DBUNBRACKET = 1
+  keyword.DBVALIDATE  = 1
+  keyword.DBWIDTH     = 1
+
+                       /* TSO/E REXX Commands                        */
+  keyword.DELSTACK    = 1
+  keyword.DROPBUF     = 1
+  keyword.EXECIO      = 1
+  keyword.EXECUTIL    = 1
+  keyword.HE          = 1
+  keyword.HI          = 1
+  keyword.HT          = 1
+  keyword.MAKEBUF     = 1
+  keyword.NEWSTACK    = 1
+  keyword.QBUF        = 1
+  keyword.QELEM       = 1
+  keyword.QSTACK      = 1
+  keyword.RT          = 1
+  keyword.SUBCOM      = 1
+  keyword.TE          = 1
+  keyword.TS          = 1
+
+  return
+
+/* ----------------------------------------------------------------- */
+/* Write the output to a temporary dataset                           */
+/* ----------------------------------------------------------------- */
+GENERATE_OUTPUT:
+/* ----------------------------------------------------------------- */
+
+                       /* Put the header lines onto the stack        */
+  queue '&lt;html&gt;&lt;head&gt;&lt;title&gt;' !! title !! '&lt;/title&gt;&lt;/head&gt;'
+  queue '&lt;body bgcolor=black text=white link=aqua&gt;'
+  queue '&lt;h3&gt;' !! header !! '&lt;/h3&gt;'
+  queue '&lt;pre&gt;'
+
+                       /* Split the html code into separate lines    */
+                       /* and put them on top of the stack           */
+  do while htmlout &lt;&gt; ''
+     parse VALUE htmlout with dataline '&lt;br&gt;' htmlout
+     queue dataline
+  end
+
+                       /* Put the footer lines onto the stack        */
+  queue '&lt;/pre&gt;&lt;p&gt;&lt;center&gt;'
+  queue footer
+  queue '&lt;/center&gt;&lt;/p&gt;'
+  queue '&lt;/body&gt;&lt;/html&gt;'
+
+                       /* Create the temporary output dataset        */
+  x = OUTTRAP(trap.)
+  "FREE DD(" !! source !! ")"
+  "DEL" dsn_out
+  x = OUTTRAP('OFF')
+  "ALLOC DD(" !! source !! ") DA("dsn_out") NEW CAT UNIT(SYSDA)" ,
+        "TRA SPACE(5 5) LRECL(4096) BLKSIZE(0) RECFM(V B) DSORG(PS)"
+  if (rc &gt; 0) then do
+     say 'Error when allocating' dsn_out
+     return 8
+  end
+
+                       /* Write the data stack to the dataset        */
+  "EXECIO" QUEUED() "DISKW" source "(FINIS)"
+  if (rc &gt; 0) then do
+     queue 'Error when writing to' dsn_out
+     return 8
+  end
+
+  "FREE DD(" !! source !! ")"
+
+  return
+
+/* ----------------------------------------------------------------- */
+/* Transfer the html file to the PC via ISPF Workstation Agent       */
+/* and start the application associated with extention .htm          */
+/* ----------------------------------------------------------------- */
+XFER_AND_SHOW_HTML:
+/* ----------------------------------------------------------------- */
+
+                       /* Format the name of the html file for PC    */
+  if SUBSTR(REVERSE(dir_pc),1,2) = '\:' then w = dir_pc !! htmlfile
+  else do
+       dir_pc = STRIP(dir_pc,'T','/') !! '/'
+       w = dir_pc !! htmlfile
+  end
+  if SUBSTR(REVERSE(dir_pc),1,2) &lt;&gt; '\:' then do
+     dir_pc = STRIP(dir_pc,'T','/') !! '/'
+  end
+  w = dir_pc !! htmlfile
+
+  connected         = 0/* Initialize some switches                   */
+  already_connected = 0
+
+                       /* Is user already connected to WSA ?         */
+  "ISPEXEC VGET ZWSCON SHARED"
+  if (rc = 8) ! (zwscon = '') then do
+     already_connected = 0
+                       /* If not, allow connection now               */
+     "ISPEXEC SELECT PGM(ISPWSCD) PARM(WSCON,PANEL)"
+                       /* Is user now connected to WSA ?             */
+     "ISPEXEC VGET ZWSCON SHARED"
+     if (rc = 0) &amp; (zwscon &lt;&gt; '') then connected = 1
+  end
+  else do
+     connected         = 1
+     already_connected = 1
+  end
+
+                       /* Issue message if still no connection exists*/
+  if connected = 0 then "ISPEXEC SETMSG MSG(ISPP605)"
+  else do              /* otherwise put file names in ISPF pool ...  */
+     h = dsn_out
+     x = OUTTRAP(trap.)
+     "ISPEXEC VPUT (H W)"
+                       /* ... transfer html file to the PC ...       */
+     "ISPEXEC FILEXFER HOST(H) WS(W) TO(WS) TEXT"
+                       /* ... and start the corresponding browser    */
+     if start_Browser = 'YES' then do
+        "ISPEXEC SELECT WSCMD(%COMSPEC% /C START /MIN" w")" ,
+                       "MODELESS MIN VIS"
+     end
+                       /* Connection is to be closed only if it has  */
+                       /* not been established before this program   */
+     if already_connected = 0 then do
+        "ISPEXEC SELECT PGM(ISPWSCD) PARM(WSDISCON,&amp;ZPARM)"
+     end
+     x = OUTTRAP('OFF')
+  end
+
+  return</PRE></BODY></HTML>

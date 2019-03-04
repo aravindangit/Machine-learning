@@ -1,0 +1,294 @@
+Holy Macro!
+
+from - http://www.theamericanprogrammer.com/programming/holymac.shtml
+
+How to write TSO/ISPF Editor Macros in REXX.
+
+Why?
+
+Edit macros can simplify your editing and save you time. They can help you avoid costly mistakes. Besides they are fun.
+
+Assumptions.
+
+I assume here that you are familiar with REXX in the TSO Environment. I also assume you know how to use the TSO/ISPF Editor. Those topics would fill a book. (They did - my books on TSO and REXX.) 
+
+What is a macro?
+
+It’s a program written in REXX or CLIST on TSO/ISPF that is in your REXX or CLIST library. The library is allocated to the DDNAME SYSPROC or SYSEXEC. (That is way beyond the scope of this short paper - if you know how to use REXX you know about that already.)
+
+A macro mainly gives commands to the TSO/ISPF Editor. It can give commands to TSO and ISPF as well, but we are mostly interested in talking to the Editor.
+
+How do you use it?
+
+You execute it during an Editor session. You type its name (UPPER, in this figure) on the command line as shown in the top half of Figure 1. 
+
+(Want to know why do you sometimes put the word TSO in front of commands executed on the command line? - see the paragraph TSO or not TSO.)
+
+What does it look like?
+
+The bottom half of Figure 1 shows a sample of macro code. I’ll analyze the lines one at a time. 
+
+Line 1 is a REXX comment. On TSO, I recommend you put a comment on the first line of your program with the word REXX and the name of the program. (Sometimes you need the comment and sometimes you don’t. Since this is a short paper, I’m just showing you what always works.)
+
+Line 2 is ADDRESS ISREDIT "MACRO PROCESS". This makes it a macro. It says: "Editor, I’m talking to you, and I’m a macro." If this statement isn’t there, you don’t have a macro even if you stay clean and healthy and pay your taxes. You need that line before you try to say anything else to the Editor.
+
+PROCESS (the default) says that the Editor should process line commands, such as A and C, before executing your macro. The opposite is NOPROCESS which says not to process line commands before executing the macro.
+
+You generally use NOPROCESS when you process those commands yourself, with the macro command PROCESS and RANGE_CMD. 
+Line 3 shows how you actually give an Editor command to the editor. ADDRESS ISREDIT "CHANGE ALL P’<’ P’>’" means "Dear Editor, please execute the command "change all lower case characters to upper." The command is shown in quotes. That’s because REXX ignores things in quotes and simply passes them to the command processor, the Editor in this case. (The quotes may be apostrophes instead, in which case you can’t use apostrophes inside the apostrophes without confusing REXX, the Editor, yourself and me.) I always use quotes, not apostrophes, in the TSO environment because there are fewer conflicts with commands that way. 
+
+More on Editor commands. 
+
+You know some of these already. Some of them are commands that you normally type in from the command line, such as SAVE, CHANGE, CAPS ON, etc. 
+
+There are others that can’t be used except in a macro. One example of that is in Figure 2, ADDRESS ISREDIT "(USTAT) = USER_STATE". This says to capture the current status of the file being edited in the variable USTAT. You can’t do that from the command line. 
+
+What’s all this ADDRESS stuff?
+
+Here’s the scoop. ADDRESS specifies which command processor REXX should send commands to. When a REXX program starts up in the TSO environment it will send commands to TSO by default. REXX thinks something is a command if it is the first thing on the line that is not a REXX verb (REXX verbs are SAY, ARG, etc.) and is not an assignment (PAY = 10000000 is an assignment.) 
+
+If you had just put "CHANGE ALL P’<’ P’>’ " on the line by itself, REXX would send it to TSO. You don’t want to send a command to TSO. You want it to go to the Editor. 
+
+Here’s how you say that your command should go to the Editor and not to TSO: ADDRESS ISREDIT followed by the Editor command in quotes. (As usual, there are other ways - but this is a short paper.)
+
+TSO or not TSO.
+
+You put the word TSO before the command name when you execute a TSO command, CLIST, or REXX program that is not a macro from the command line on any TSO/ISPF screen. You may not put the word TSO there if you are executing a macro. 
+
+What happens if you put the word TSO in front of a macro name and try to execute the macro that way?
+
+It doesn’t work. You can’t give commands to the editor that way.
+
+What happens if you don’t put the word TSO in front of a TSO command, CLIST, or REXX program that is not a macro? It may work! However it won’t pick up command line arguments. If you execute a fictitious command, CLIST or REXX program CANJOB by typing CANJOB JOB001 instead of TSO CANJOB JOB001, it won’t see the JOB001 and will not work right.
+
+ 
+
+Figure 2
+
+OVER72. This macro will tell you if there is anything besides spaces in columns 73 to 80. If you’re writing JCL, COBOL, or IBM utilities, you don’t want to put anything in these columns. They do no good and sometimes get you into trouble because they are misinterpreted, or because they can sometimes find themselves in the significant area - columns 1 thru 72. 
+
+Line1. The normal comment that is found at the beginning of REXX programs.
+
+Line 2. The normal ADDRESS ISREDIT "MACRO PROCESS" command. It says that this is a macro.
+
+Line 3. Signal on Error is REXX. It doesn’t talk to the Editor. It says that the program should jump to line 13, the ERROR label, if a command for ISPF, TSO or the Editor goes bad.
+
+Line 4. Addressing somebody new here. This line talks to ISPF, not the Editor. It says that errors recognized by ISPF should fail softly, without kicking you out of the Editor. Unfortunately, this also hides diagnostic messages.
+
+Line 5. Saving the current status and settings within the Editor in the variable USTAT. This allows you to restore them in line 10.
+
+Line 6. Telling the Editor to find the first occurrence of a non blank in columns 73 to 80. If one is found, the program continues with the next line, line 7. If it isn’t found, the Signal in line 3 sends the program to the label ERROR on line 13, which ends the program.
+
+Line 7. This captures the line number the cursor is currently on and the column as well. (The FIND command put the cursor on the non blank character). 
+
+Line 8. Sets the variable ZEDSMSG to the line number the cursor is on and the message "Over 72 Data". This variable is predefined. It has a special meaning to ISPF: it is the short message that will appear on the screen in the upper right. 
+
+Line 9. Sets the variable ZEDLMSG to the message shown. This variable is the long message that will appear if you press PF1 after seeing the short message.
+
+Line 10. Restores the original status and settings within the Editor. 
+
+Line 11. Talks to ISPF. Tells ISPF that it should use the messages you have put in the variables ZEDSMG and ZEDLMSG. 
+
+Line 12. Ends the program and puts the cursor on the command line. 
+
+Line 13. The program jumps here if the FIND command in line 6 doesn’t find anything. It ends the program.
+
+Figure 3
+
+This macro, INFO, will give information about the file or member you are editing. To use it, type INFO on the command line. To give credit where credit is due, the FILEAID product has an Editor subcommand INFO that does the same thing.
+
+Line 1. The initial comment
+
+Line2. A statement that tells ISPF that the program is to simply terminate if there is something that ISPF considers an error. Omitting this causes ISPF to cancel your program, sometimes kicking you back to the Main Menu. 
+
+Line 3. The statement that says that this is a macro.
+
+Line 4. This puts the record length of the file being edited into a variable named LRECL, (the one in the parentheses). 
+
+Line 5. This puts the record format of the file being edited into a variable named RECFM, (the one in the parentheses). 
+
+Line 6. If the file being edited has been changed since the start of the Edit session or the last SAVE, this will put the word YES into the variable CHANGED.
+
+Lines 7, 8. If CHANGED contained YES, change it to CHANGED, otherwise change it to UNCHANGED.
+
+Line 9. Set ISPF’s variable ZEDSMSG to the record length, record format, and the contents of the variable CHANGED. This variable contains the short message that ISPF will display in the upper right of the next screen that appears, provided that the next line is executed.
+
+Line 10. This tells ISPF to display the message contained in the variable ZEDSMSG in the upper right of the next screen that appears.
+
+Figure 4.
+
+This is not an executable program. It contains examples of macro commands that you might be able to use in your program.
+
+Is that all there is?
+
+No. There’s a lot more. I could go into how you talk to ISPF, but I won’t. That could fill a book. (It hasn’t, but it’s one of the classes I teach.) You’ll need a handy source of reference. I hope you have access to MVS Quick Reference. If you have it, you can just type QW on the command line and you are taken into it. In there you will find all you ever wanted to know about REXX, about ISPF, and about Editor macros. Compliments of Gabe.
+
+ 
+
+ 
+
+Figure 1.
+
+EDIT userid.TEST.CNTL(TESTIT) - 01.01
+
+Command ===> upper Scroll ===> CSR
+
+****** ***************************** Top of Data ******************************
+
+000001 //tsouida JOB (abcd,1234),'GABE x-1234',CLASS=a,
+
+000002 // MSGCLASS=T,NOTIFY=&SYSUID,TIME=2
+
+000003 //DELETE EXEC PGM=IDCAMS
+
+000004 //SYSPRINT DD sysout=*
+
+000005 //SYSIN DD *
+
+000006 DELETE tsouid.test.file1
+
+000007 DELETE tsouid.test.file2
+
+000008 /*
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+EDIT userid.TEST.CLIST(UPPER) - 01.03 Columns 00001 00072
+
+Command ===> Scroll ===> CSR
+
+****** ***************************** Top of Data ******************************
+
+000001 /* REXX UPPER */
+
+000002 ADDRESS ISREDIT "MACRO PROCESS"
+
+000003 ADDRESS ISREDIT "CHANGE ALL P'<' P'>'"
+
+000004 ADDRESS ISREDIT "CAPS ON"
+
+ 
+
+ 
+
+Figure 2.
+
+1 /* REXX OVER72 */
+
+2 ADDRESS ISREDIT "MACRO PROCESS"
+
+3 SIGNAL ON ERROR
+
+4 ADDRESS ISPEXEC "CONTROL ERRORS RETURN "
+
+5 ADDRESS ISREDIT "(USTAT) = USER_STATE "
+
+6 ADDRESS ISREDIT "FIND FIRST P'¬' 73 80 "
+
+7 ADDRESS ISREDIT "(CURSL,CURSC) = CURSOR"
+
+8 ZEDSMSG = "LINE" CURSL "OVER 72 DATA"
+
+9 ZEDLMSG = "THERE IS DATA IN COLUMN 72 OR HIGHER ON LINE" CURSL
+
+10 ADDRESS ISREDIT "USER_STATE = (USTAT)"
+
+11 ADDRESS ISPEXEC "SETMSG MSG(ISRZ001)"
+
+12 EXIT 1 /* PUTS CURSOR ON CMD LINE */
+
+13 ERROR: EXIT 1
+
+ 
+
+Figure 3
+
+1 /* REXX INFO*/
+
+2 ADDRESS ISPEXEC "CONTROL ERRORS RETURN"
+
+3 ADDRESS ISREDIT "MACRO PROCESS"
+
+4 ADDRESS ISREDIT "(LRECL) = LRECL "
+
+5 ADDRESS ISREDIT "(RECFM) = RECFM "
+
+6 ADDRESS ISREDIT "(CHANGED) = DATA_CHANGED"
+
+7 IF CHANGED = "YES" THEN CHANGED = "CHANGED"
+
+8 ELSE CHANGED = "UNCHANGED"
+
+9 ZEDSMSG = LRECL RECFM CHANGED
+
+10 ADDRESS ISPEXEC "SETMSG MSG(ISRZ001)"
+
+Figure 4.
+
+/* TELL THE ISPF EDITOR THAT THIS IS A MACRO */
+
+/* AND PICK UP ANY COMMAND LINE ARGUMENTS IN THE VARIABLE PARM*/
+
+ADDRESS ISREDIT "MACRO (PARM) PROCESS"
+
+SAY "YOUR COMMAND LINE ARGUMENTS WERE " PARM
+
+/* PUT THE LINE NUMBER WHERE THE CURSOR IS, INTO CURSL
+
+PUT ITS COLUMN POSITION INTO CURSC*/
+
+ADDRESS ISREDIT "(CURSL,CURSC) = CURSOR"
+
+SAY "CURSOR IS AT LINE" CURSL "COLUMN" CURSC
+
+/* PUT THE LINE OF DATA WHERE THE CURSOR IS,
+
+INTO THELINE */
+
+ADDRESS ISREDIT "(THELINE) = LINE .ZCSR"
+
+SAY "THIS IS THE LINE OF DATA THE CURSOR IS ON " THELINE
+
+/* PUT THE NAME OF THE FILE OR LIBRARY YOU ARE EDITING
+
+INTO PGMLIB */
+
+ADDRESS ISREDIT "(PGMLIB) = DATASET"
+
+SAY "THIS IS THE FILE YOU ARE EDITING " PGMLIB
+
+/* PUT THE MEMBER NAME YOU ARE EDITING
+
+INTO MEMBER. PUT SPACES / NULL IF THERE IS NO MEMBER */
+
+ADDRESS ISREDIT "(MEMBER) = MEMBER"
+
+SAY "THIS IS THE MEMBER YOU ARE EDITING " MEMBER
+
+/* CAPTURE THE CURRENT SETTINGS PLACING THEM INTO THE VARIABLE USTAT */
+
+ADDRESS ISREDIT "(TYPE) = PROFILE"
+
+SAY "THIS IS THE NAME OF THE PROFILE " TYPE
+
+/* RESTORE THE CURRENT SETTINGS FROM THE VARIABLE USTAT */
+
+ADDRESS ISREDIT "USER_STATE = (USTAT)"
+
+/* PUT THE CURSOR ON LINE 1, COLUMN 5 */
+
+ADDRESS ISREDIT "CURSOR = 1 5"
+
+/* GET THE LINE NUMBER OF THE FIRST LINE */
+
+ADDRESS ISREDIT "(FRSTLINE) = LINENUM .ZF"
+
+SAY "THE LINE NUMBER OF THE FIRST LINE IS " FRSTLINE
+
+/* GET THE LINE NUMBER OF THE LAST LINE */
+
+ADDRESS ISREDIT "(LASTLINE) = LINENUM .ZL"
+
+SAY "THE LINE NUMBER OF THE LAST LINE IS " LASTLINE
+

@@ -1,0 +1,76 @@
+/***********************    REXX   ******************************/      00010000
+/*              REXX PROGRAM TO EDIT    */                              00020000
+MESSAGE = ' '                                                           00020231
+ADDRESS ISPEXEC                                                         00020331
+"ISPEXEC LIBDEF ISPPLIB DATASET ID('TRNG.EDUC78.REXX.PANEL')"           00020448
+/* "ISPEXEC LIBDEF ISPMLIB DATASET ID(REXX.TRAINING)"  */               00020531
+"ISPEXEC LIBDEF ISPSLIB DATASET ID('TRNG.EDUC78.REXX.EXEC')"            00020631
+"ISPEXEC ADDPOP"                                                        00020731
+"ISPEXEC VPUT MESSAGE ASIS"                                             00020831
+"ISPEXEC DISPLAY PANEL(PANEL)"                                          00020931
+"ISPEXEC VGET (DATA1,WORD1,WORD2,KEYPRESS) ASIS"                        00021031
+"ISPEXEC REMPOP"                                                        00021131
+ADDRESS TSO                                                             00021232
+DELSTACK                                                                00022021
+"FREE FI(EDTDD)"                                                        00051004
+"ALLOC F(EDTDD) DA('"DATA1"') SHR"                                      00060031
+"FREE FI(EDTD1)"                                                        00061025
+"ALLOC F(EDTD1) DA('"DATA1"') SHR"                                      00070031
+"EXECIO * DISKR EDTDD (STEM INREC."                                     00080019
+/****SAY RC ****/                                                       00090041
+NOOFUPDTN=0                                                             00091043
+DO I = 1 TO INREC.0                                                     00093002
+"EXECIO 1 DISKRU EDTD1 "I"(LIFO"                                        00093123
+/***SAY RC ****/                                                        00093241
+PULL INEDIT                                                             00093316
+ DO FOREVER                                                             00093437
+  STRRES=POS(WORD1,INEDIT)                                              00093535
+  /** SAY STRRES ***/                                                   00093641
+  IF STRRES \= 0 THEN                                                   00093716
+     DO                                                                 00093809
+       NOOFUPDTN = 1 + NOOFUPDTN                                        00093945
+       /***SAY 'STRRES  IS NOT ZERO' ******/                            00094041
+       IF STRRES > 1 THEN                                               00094135
+          DO                                                            00094209
+          /*****SAY 'STRRES IS GREATER THAN 1'*****/                    00094341
+          WORD11=SUBSTR(INEDIT,1,STRRES-1)                              00094433
+          WORD12=SUBSTR(INEDIT,STRRES+LENGTH(WORD1))                    00094533
+          INEDIT=WORD11||WORD2||WORD12                                  00094635
+     /*** PUSH OTEDIT ****/                                             00094735
+     /**  SAY OTEDIT ****/                                              00094835
+          END                                                           00094909
+       ELSE                                                             00095009
+          DO                                                            00095109
+            /****SAY 'STRRES IS EQUAL TO 1'***/                         00095241
+            WORD11=SUBSTR(INEDIT,1+LENGTH(WORD1))                       00095337
+            INEDIT=WORD2||WORD11                                        00095437
+       /**  PUSH OTEDIT ***/                                            00095637
+       /**  SAY OTEDIT **/                                              00095737
+          END                                                           00095809
+     END                                                                00096009
+     ELSE                                                               00096137
+      DO                                                                00096237
+        LEAVE                                                           00096337
+      END                                                               00096437
+ /*ELSE ********/                                                       00096535
+  END                                                                   00096737
+  PUSH INEDIT                                                           00096837
+"EXECIO 1 DISKW EDTD1 (FINIS"                                           00096928
+/****SAY RC *****/                                                      00097041
+/****SAY 'I AM HERE'****/                                               00097141
+END                                                                     00098002
+ /**      "LISTDS 'TRNG.EDUC78.CPP'" *******THIS IS WORKING*/           00120000
+/*        "LIST 'TRNG.EDUC78.CPP'" */                                   00130000
+IF NOOFUPDTN >0 THEN                                                    00130144
+    MESSAGE = NOOFUPDTN 'UPDATIONS..ENTER TO VIEW FILE'                 00130246
+ELSE                                                                    00130443
+    MESSAGE = 'NO MATCH FOUND..PRESS ENTER--VIEW FILE'                  00130547
+ADDRESS ISPEXEC                                                         00130643
+"ISPEXEC ADDPOP"                                                        00131039
+"ISPEXEC VPUT MESSAGE ASIS"                                             00132039
+"ISPEXEC DISPLAY PANEL(PANEL)"                                          00133039
+"ISPEXEC REMPOP"                                                        00133150
+"ISPEXEC EDIT DATASET('"DATA1"')"                                       00134039
+ADDRESS TSO                                                             00135039
+"EX 'TRNG.EDUC78.REXX.EXEC(FILGPANL)'"                                  00136049
+EXIT                                                                    00140000

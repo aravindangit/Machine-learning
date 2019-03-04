@@ -1,0 +1,26 @@
+/*REXX*/                                                                00010000
+MESSAGE = ' '                                                           00020000
+ADDRESS ISPEXEC                                                         00030000
+"ISPEXEC LIBDEF ISPPLIB DATASET ID(INED07.REXX)"                        00040001
+"ISPEXEC LIBDEF ISPSLIB DATASET ID(INED07.REXX)"                        00050001
+"ISPEXEC ADDPOP"                                                        00060000
+"ISPEXEC VPUT MESSAGE ASIS"                                             00070000
+"ISPEXEC DISPLAY PANEL(REXPANEL)"                                       00080000
+"ISPEXEC VGET (DATA1,WORD1,KEYPRESS) ASIS"                              00090000
+"ISPEXEC REMPOP"                                                        00100000
+MESSAGE = 'PLEASE WAIT.. '                                              00110004
+"ISPEXEC ADDPOP"                                                        00120000
+"ISPEXEC VPUT MESSAGE ASIS"                                             00130000
+"ISPEXEC CONTROL DISPLAY LOCK"                                          00140000
+"ISPEXEC DISPLAY PANEL(REXPANEL)"                                       00150000
+SRCHDSN = DATA1                                                         00160000
+SRCHWD = WORD1                                                          00170000
+"ISPEXEC FTOPEN TEMP"                                                   00180000
+"ISPEXEC FTINCL SKEL"                                                   00190000
+"ISPEXEC FTCLOSE"                                                       00200000
+"ISPEXEC VGET (ZTEMPF) SHARED"                                          00210000
+MESSAGE = 'JCL IS READY.. PRESS ENTER TO SEE THE JCL'                   00220000
+"ISPEXEC ADDPOP"                                                        00230000
+"ISPEXEC VPUT MESSAGE ASIS"                                             00240000
+"ISPEXEC DISPLAY PANEL(PANEL)"                                          00250000
+"ISPEXEC EDIT DATASET('"ZTEMPF"')"                                      00260000
