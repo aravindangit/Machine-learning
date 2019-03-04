@@ -1,0 +1,282 @@
+//T754504H JOB (8200,3703),'11MN CEDRECS',
+//  SCHENV=DB2VH1,
+//* RESTART=STEP02,
+//  MSGLEVEL=1,CLASS=A,MSGCLASS=J,NOTIFY=&SYSUID
+//*
+/*ROUTE PRINT EOSH1SJT
+//**********************************************************************
+//*                 MI FILE   -   MASTERFILE
+//*  POINT IN TIME SNAPSHOT OF ALL CEDED CLAIMS, BOTH OPEN AND CLOSED.  00120010
+//*  THE FILE PROVIDES CLAIM LEVEL, DEAL LEVEL, AND PARTICIPANT LEVEL   00130010
+//*  DATA. THE FILE IS CREATED NIGHTLY.                                 00140010
+//*                                                                     00160010
+//**********************************************************************00170010
+//* MAINTENANCE LOG:                                                  * 00180010
+//*  DATE:       PROGRAMMER:           DESCRIPTION:                   * 00190010
+//* ___________ _____________________ ________________________________* 00200010
+//*  2004-04-21                        CREATED                        * 00200110
+//*  2005-05-12  DWK                   UPDATED FOR PHASE 1C           * 00200110
+//*  2007-05-18  NEELIMA             MIS35682 : AUTO CALC CHANGES     *
+//*                                                                     00200200
+//**********************************************************************00200310
+//*
+//*********************************************************************
+//*    STEP00: DELETE INTERNAL WORK FILES
+//*********************************************************************
+//STEP00  EXEC PGM=IDCAMS
+//SYSOUT   DD SYSOUT=*
+//SYSUDUMP DD SYSOUT=*
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD DSN=T7545BTX.CEDED.VT.CNTL(P754509B),DISP=SHR
+//*YSIN    DD DSN=ENDH1.B06CL002.SPARMLIB(P754509B),DISP=SHR
+//*
+//*********************************************************************
+//*    STEP01: UNLOAD CEDED CLM KEY TABLE TO FLAT FILE
+//*********************************************************************
+//STEP01  EXEC PGM=IKJEFT01,DYNAMNBR=20                                 00060000
+//STEPLIB  DD  DSN=SYS1.LE.SCEERUN,DISP=SHR
+//         DD  DSN=SYSVVDH1.DSNLOAD,DISP=SHR
+//SYSTSIN  DD  DSN=T7545BTX.CEDED.VT.CNTL(UNLDVDH1),DISP=SHR
+//*YSTSIN  DD  DSN=ENDH1.B06CL002.SPARMLIB(P754501L),DISP=SHR
+//SYSTSPRT DD  SYSOUT=*                                                 00090000
+//SYSPRINT DD  SYSOUT=*                                                 00100000
+//DSNTRACE DD  SYSOUT=*                                                 00110000
+//SYSUDUMP DD  SYSOUT=*                                                 00130000
+//CAIPRINT DD  SYSOUT=*                                                 00130000
+//SYSPUNCH DD  DUMMY,DCB=BLKSIZE=8000                                   00140000
+//SYSREC00 DD  DSN=T7545BTX.CLS.VT.G754504H.CLMKEY,                     00180000
+//             DISP=(NEW,CATLG,DELETE),                                 00180000
+//*            LABEL=RETPD=010,
+//             UNIT=SYSALLDA,SPACE=(CYL,(10,10),RLSE),                  00180000
+//             DCB=(BLKSIZE=4096)                                       00190000
+//SYSIN    DD  DSN=T7545BTX.CEDED.VT.CNTL(P754504T),DISP=SHR            00360000
+//*YSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754504T),DISP=SHR           00360000
+//*
+//ABORT01 EXEC PGM=ABORT1,COND=(4,GE,STEP01)
+//*
+//**********************************************************************
+//*       STEP02 MI MASTERFILE - M754504H                             *
+//*           0  IS NORMAL RETURN CODE FOR THIS STEP.
+//**********************************************************************
+//STEP02  EXEC PGM=IKJEFT01
+//STEPLIB  DD  DSN=SYS1.LE.SCEERUN,DISP=SHR
+//         DD  DSN=SYSVVDH1.DSNLOAD,DISP=SHR
+//*        DD  DSN=DB2VS.DSNLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B02CL002.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B04CL002.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B04CL006.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.D06DADMT.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B06CL006.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B06CL005.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B06CL004.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B06CL003.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B06CL002.SBATLOAD,DISP=SHR
+//         DD  DSN=ENDH1.B06CL001.SBATLOAD,DISP=SHR
+//SYSTSIN  DD DSN=T7545BTX.CEDED.VT.CNTL(P754509A),DISP=SHR
+//*YSTSIN  DD DSN=ENDH1.B06CL002.SPARMLIB(P754509A),DISP=SHR
+//*
+//CLMKEY   DD DSN=T7545BTX.CLS.VT.G754504H.CLMKEY,DISP=(OLD,KEEP)
+//CLAIM    DD DSN=T7545BTX.CLS.VT.MASTER.CLAIM.UNSRT(+1),
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(CYL,(130,70),RLSE),UNIT=SYSALLDA,
+//*           LABEL=RETPD=030,
+//            DCB=(RECFM=FB,LRECL=2290,BLKSIZE=0)
+//DEAL     DD DSN=T7545BTX.CLS.VT.MASTER.DEAL.UNSRT(+1),
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(CYL,(270,50),RLSE),UNIT=SYSALLDA,
+//*           LABEL=RETPD=030,
+//            DCB=(RECFM=FB,LRECL=1500,BLKSIZE=0)
+//PAYER    DD DSN=T7545BTX.CLS.VT.MASTER.PAYER.UNSRT(+1),
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(CYL,(300,50),RLSE),UNIT=SYSALLDA,
+//*           LABEL=RETPD=030,
+//            DCB=(RECFM=FB,LRECL=900,BLKSIZE=0)
+//REINS    DD DSN=T7545BTX.CLS.VT.MASTER.REINS.UNSRT(+1),
+//            DISP=(NEW,CATLG,UNCATLG),
+//            UNIT=TAP5,
+//            LABEL=RETPD=010,
+//            DCB=(RECFM=FB,LRECL=870,BLKSIZE=0)
+//ERROUT   DD DSN=T7545BTX.CLS.VT.G754504H.TXTERRS(+1),
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(TRK,(15,15),RLSE),UNIT=SYSALLDA,
+//            DCB=(RECFM=FB,LRECL=80,BLKSIZE=0)
+//SYSOUT   DD SYSOUT=*
+//CAIPRINT DD SYSOUT=*
+//SYSPRINT DD SYSOUT=*
+//SYSUDUMP DD SYSOUT=*
+//SYSTSPRT DD SYSOUT=*
+//CAOESTOP DD SYSOUT=*
+//CEEDUMP  DD SYSOUT=*
+//*
+//ABORT02 EXEC PGM=ABORT1,COND=(0,EQ,STEP02)
+//*
+//*********************************************************************
+//* STEP03 SORT CLAIM SEGMENT OF MASTERFILE BY CLM-SYSASGNNBR-ID
+//*********************************************************************
+//STEP03 EXEC PGM=SORT
+//SORTIN   DD  DSN=T7545BTX.CLS.VT.MASTER.CLAIM.UNSRT(+1),
+//             DISP=(OLD,KEEP)
+//SORTOUT  DD  DSN=T7545BTX.CLS.VT.MASTER.CLAIM.SRTD,
+//             DISP=(NEW,CATLG,DELETE),
+//             SPACE=(CYL,(130,70),RLSE),UNIT=SYSALLDA,
+//*            LABEL=RETPD=030,
+//             DCB=(*.SORTIN)
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754506X),DISP=SHR
+//*
+//ABORT03 EXEC PGM=ABORT1,COND=(0,EQ,STEP03)
+//*
+//*********************************************************************
+//* STEP04 SORT DEAL SEGMENT OF MASTERFILE BY CLM-SYSASGNNBR-ID
+//*                                           DEAL-SYSASGNNBR-ID
+//*                                           DEAL-TYP-CD
+//*********************************************************************
+//STEP04 EXEC PGM=SORT
+//SORTIN   DD  DSN=T7545BTX.CLS.VT.MASTER.DEAL.UNSRT(+1),
+//             DISP=(OLD,KEEP)
+//SORTOUT  DD  DSN=T7545BTX.CLS.VT.MASTER.DEAL.SRTD,
+//             DISP=(NEW,CATLG,DELETE),
+//             SPACE=(CYL,(270,50),RLSE),UNIT=SYSALLDA,
+//*            LABEL=RETPD=030,
+//             DCB=(*.SORTIN)
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754506Y),DISP=SHR
+//*
+//ABORT04 EXEC PGM=ABORT1,COND=(0,EQ,STEP04)
+//*
+//*********************************************************************
+//* STEP05 SORT PAYER SEGMENT OF MASTERFILE BY CLM-SYSASGNNBR-ID
+//*                                            DEAL-SYSASGNNBR-ID
+//*                                            DEAL-TYP-CD
+//*                                            PARTCP-CD
+//*                                            PARTCP-TYP-CD
+//*********************************************************************
+//STEP05 EXEC PGM=SORT
+//SORTIN   DD  DSN=T7545BTX.CLS.VT.MASTER.PAYER.UNSRT(+1),
+//             DISP=(OLD,KEEP)
+//SORTOUT  DD  DSN=T7545BTX.CLS.VT.MASTER.PAYER.SRTD,
+//             DISP=(NEW,CATLG,DELETE),
+//             SPACE=(CYL,(300,50),RLSE),UNIT=SYSALLDA,
+//*            LABEL=RETPD=030,
+//             DCB=(*.SORTIN)
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754506Z),DISP=SHR
+//*
+//ABORT05 EXEC PGM=ABORT1,COND=(0,EQ,STEP05)
+//*
+//*********************************************************************
+//* STEP06 SORT REINS SEGMENT OF MASTERFILE BY CLM-SYSASGNNBR-ID
+//*                                            DEAL-SYSASGNNBR-ID
+//*                                            DEAL-TYP-CD
+//*                                            PARTCP-CD
+//*                                            PARTCP-TYP-CD
+//*                                            REINS-CD
+//*                                            REINS-SEQ-NBR
+//*********************************************************************
+//STEP06 EXEC PGM=SORT
+//SORTIN   DD  DSN=T7545BTX.CLS.VT.MASTER.REINS.UNSRT(+1),
+//             DISP=(OLD,KEEP)
+//SORTOUT  DD  DSN=T7545BTX.CLS.VT.MASTER.REINS.SRTD,
+//             DISP=(NEW,CATLG,UNCATLG),
+//             UNIT=TAP5,
+//             LABEL=RETPD=010,
+//             DCB=(*.SORTIN)
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507A),DISP=SHR
+//*
+//ABORT06 EXEC PGM=ABORT1,COND=(0,EQ,STEP06)
+//*
+//*********************************************************************
+//* EZT TO MATCH MASTERFILE CLAIM SEG TO CLAIM BILL DATA FILE
+//*********************************************************************
+//STEP07  EXEC PGM=EZTPA00,PARM='DYNALLOC=(SYSDA,32)'
+//STEPLIB  DD  DSN=SYSPEZTR.EZTRIEVE.LOADLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSSNAP  DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//EZTVFM   DD  UNIT=SYSDA,SPACE=(CYL,(100,10))
+//MSTCLAIM DD  DSN=T7545BTX.CLS.VT.MASTER.CLAIM.SRTD,DISP=(OLD,KEEP)
+//CLMBILL  DD  DSN=T7545BTX.CLS.VT.CLAIM.BILLDATA(0),DISP=(OLD,KEEP)
+//OUTFILE  DD  DSN=T7545BTX.CLS.VT.MASTER.CLAIM(+1),
+//             DISP=(NEW,CATLG,DELETE),
+//             SPACE=(CYL,(130,70),RLSE),UNIT=SYSALLDA,
+//*            LABEL=RETPD=030,
+//             DCB=(RECFM=FB,LRECL=2290,BLKSIZE=0)
+//*YSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507B),DISP=SHR
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507B),DISP=SHR
+//*
+//ABORT07 EXEC PGM=ABORT1,COND=(0,EQ,STEP07)
+//*
+//*********************************************************************
+//* EZT TO MATCH MASTERFILE DEAL SEG TO DEAL BILL DATA FILE
+//*********************************************************************
+//STEP08  EXEC PGM=EZTPA00,PARM='DYNALLOC=(SYSDA,32)'
+//STEPLIB  DD  DSN=SYSPEZTR.EZTRIEVE.LOADLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSSNAP  DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//EZTVFM   DD  UNIT=SYSDA,SPACE=(CYL,(100,10))
+//MSTDEAL  DD  DSN=T7545BTX.CLS.VT.MASTER.DEAL.SRTD,DISP=(OLD,KEEP)
+//DEALBILL DD  DSN=T7545BTX.CLS.VT.DEAL.BILLDATA(0),DISP=(OLD,KEEP)
+//OUTFILE  DD  DSN=T7545BTX.CLS.VT.MASTER.DEAL(+1),
+//             DISP=(NEW,CATLG,DELETE),
+//             SPACE=(CYL,(270,50),RLSE),UNIT=SYSALLDA,
+//*            LABEL=RETPD=030,
+//             DCB=(RECFM=FB,LRECL=1500,BLKSIZE=0)
+//SYSIN    DD  DSN=T7545BTX.CEDED.PRODPARM(P754507C),DISP=SHR
+//*YSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507C),DISP=SHR
+//*
+//ABORT08 EXEC PGM=ABORT1,COND=(0,EQ,STEP08)
+//*
+//*********************************************************************
+//* EZT TO MATCH MASTERFILE PAYER SEG TO PAYER BILL DATA FILE
+//*********************************************************************
+//STEP09  EXEC PGM=EZTPA00,PARM='DYNALLOC=(SYSDA,32)'
+//STEPLIB  DD  DSN=SYSPEZTR.EZTRIEVE.LOADLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSSNAP  DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//EZTVFM   DD  UNIT=SYSDA,SPACE=(CYL,(100,10))
+//MSTPAYER DD  DSN=T7545BTX.CLS.VT.MASTER.PAYER.SRTD,DISP=(OLD,KEEP)
+//PARTBILL DD  DSN=T7545BTX.CLS.VT.PARTCP.BILLDATA(0),DISP=(OLD,KEEP)
+//OUTFILE  DD  DSN=T7545BTX.CLS.VT.MASTER.PAYER(+1),
+//             DISP=(NEW,CATLG,DELETE),
+//             SPACE=(CYL,(300,50),RLSE),UNIT=SYSALLDA,
+//*            LABEL=RETPD=030,
+//             DCB=(RECFM=FB,LRECL=900,BLKSIZE=0)
+//*YSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507D),DISP=SHR
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507D),DISP=SHR
+//*
+//ABORT09 EXEC PGM=ABORT1,COND=(0,EQ,STEP09)
+//*
+//*********************************************************************
+//* EZT TO MATCH MASTERFILE REINS SEG TO REINS BILL DATA FILE
+//*********************************************************************
+//STEP10  EXEC PGM=EZTPA00,PARM='DYNALLOC=(SYSDA,32)'
+//STEPLIB  DD  DSN=SYSPEZTR.EZTRIEVE.LOADLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSSNAP  DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//EZTVFM   DD  UNIT=SYSDA,SPACE=(CYL,(100,10))
+//MSTREINS DD  DSN=T7545BTX.CLS.VT.MASTER.REINS.SRTD,DISP=(OLD,KEEP)
+//REINBILL DD  DSN=T7545BTX.CLS.VT.REINS.BILLDATA(0),DISP=(OLD,KEEP)
+//OUTFILE  DD  DSN=T7545BTX.CLS.VT.MASTER.REINS(+1),
+//             DISP=(NEW,CATLG,UNCATLG),
+//             SPACE=(CYL,(300,50),RLSE),UNIT=SYSALLDA,
+//*            UNIT=TAP5,
+//*            LABEL=RETPD=010,
+//             DCB=(RECFM=FB,LRECL=870,BLKSIZE=0)
+//*YSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507E),DISP=SHR
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754507E),DISP=SHR
+//*
+//ABORT10 EXEC PGM=ABORT1,COND=(0,EQ,STEP10)
+//*
+//ONCALL  EXEC PGM=COPYHASP,COND=ONLY
+//SYSIN    DD  DSN=ENDH1.B06CL002.SPARMLIB(P754599A),DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//*
+

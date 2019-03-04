@@ -1,0 +1,165 @@
+/* TIDY UP YOUR JCL                      REXX              */
+/* OBTAINED FROM CBT TAPE #9102 -- FILE095 MEMBER FIXJCL*/
+/********************************************************************/
+   ADDRESS "ISREDIT";"MACRO (HELP) NOPROCESS"
+   IF HELP = "?"  THEN DO;
+      ISPEXEC DISPLAY PANEL(FIXJCL)
+      EXIT
+   END;
+
+/*                                                         */
+/*    ALIGN JCL JOB, EXEC, AND DD STATEMENTS ON STANDARD BOUNDARIES */
+/*    T. M. HANES, ASYST INC. 1988/02/01                   */
+/*    D.E.M.I., 1988/03/01                                 */
+/*    D.MCRITCHIE, 1993/06/14 CONVERTED TO REXX            */
+/*                                                         */
+/*      SITE DEPENDENT DEFINITIONS:                        */
+/*      ALIGNMENT COLUMNS FOR CARD TYPES                   */
+   JOBA = 11
+   JOBB = 15
+   PROCA = 11
+   PROCB = 16
+   PENDA = 11
+   PENDB = 16
+   DDA = 11
+   DDB = 15
+   EXECA = 11
+   EXECB = 16
+   CONTA = 15
+   CONTB = 15
+
+   /*      PRESERVE CONTINUATION CHARACTERS IN 72             */
+   "PROCESS RANGE J"
+   IF RC = 0  THEN DO;
+         "(RCMD) = RANGE_CMD"
+         "(JZF) = LINENUM .ZFRANGE"
+         "(JZL) = LINENUM .ZLRANGE"
+   END;
+   ELSE DO;
+         "(JZF) = LINENUM .ZFIRST"
+         "(JZL) = LINENUM .ZLAST"
+   END;
+
+   "LABEL" JZF "= .JZF 0"
+   "LABEL" JZL "= .JZL 0"
+   LJZF = ".JZF"
+   LJZL = ".JZL"
+   IF JZF = JZL  THEN LJZF = ".JZL"
+
+   "(CL,CR) = CURSOR"
+   "(LB,RB) = BOUNDS"
+   "BOUNDS  = 1 71"
+   "X ALL"
+   "F '//'                   1 ALL "  LJZF LJZL
+   "X '//"||"*'              1 ALL "  LJZF LJZL
+   "X '/"||"*'               1 ALL "  LJZF LJZL
+   /* I THINK SPACES COULD LURK IN QUOTES */
+   "X ""'""                    ALL "  LJZF LJZL
+   "X '""'                     ALL "  LJZF LJZL
+   /*      REMOVE EXTRA SPACES            <*/
+   "C ' ' '{'             3 71 ALL NX  "  LJZF LJZL
+   "C '{{{{{{' '{'        3 71 ALL NX  "  LJZF LJZL
+   "C '{{{{{' '{'         3 71 ALL NX  "  LJZF LJZL
+   "C '{{{{' '{'          3 71 ALL NX  "  LJZF LJZL
+   "C '{{{' '{'           3 71 ALL NX  "  LJZF LJZL
+   "C '{{' '{'            3 71 ALL NX  "  LJZF LJZL
+   "C '{' ' '             3 71 ALL NX  "  LJZF LJZL
+   /* JOB, PROC, EXEC, DD AND PEND; CONVERSION */
+   KEYWD = "JOB"
+   FLDA = DDA - 1
+   FLDB = DDB
+
+   DO   WHILE KEYWD <> " ";
+      "X ALL"
+      "F ' "KEYWD" '      3 25 ALL"            LJZF LJZL
+      "X ' "KEYWD" '           ALL 11"         LJZF LJZL
+      "F ' "KEYWD" '      3 25 ALL NX "        LJZF LJZL
+      IF RC = 0 THEN DO;
+
+      "X 1 2 ' ' ALL"   /* EXCLUDE NON-JCL CARDS AND JCL COMMENT*/
+      "X 1 2 P'#' ALL"
+      "X 1 2 P'@' ALL"
+      "X '//"||"*'            1 ALL"           LJZF LJZL
+
+      "C ' "KEYWD" ' '{"KEYWD"}' ALL NX "      LJZF LJZL
+      "C '{' '{{'         3 25 ALL NX"         LJZF LJZL
+      "C '}' '}}'         3 40 ALL NX"         LJZF LJZL
+      "C '{' '{{'         3 25 ALL NX"         LJZF LJZL
+      "C '}' '}}'         3 40 ALL NX"         LJZF LJZL
+      "C '{' '{{'         3 25 ALL NX"         LJZF LJZL
+      "C '}' '}}'         3 40 ALL NX"         LJZF LJZL
+      "C '{' '{{'         3 25 ALL NX"         LJZF LJZL
+      "C '{"KEYWD"}' '_"KEYWD"_' ALL NX "      LJZF LJZL
+      "C ' ' 'ª'               ALL NX"         LJZF LJZL
+      "C '{' ' '          3    ALL NX" FLDA    LJZF LJZL
+      "C '{' ''                ALL NX"         LJZF LJZL
+      "C '}ª' '}'              ALL NX"         LJZF LJZL
+      "C '}' ' '         10    ALL NX" FLDB    LJZF LJZL
+      "C '}' ''                ALL NX"         LJZF LJZL
+      "C '_"KEYWD"_' ' "KEYWD" ' ALL"          LJZF LJZL
+      "C 'ª' ' '               ALL NX"         LJZF LJZL
+      END
+      IF KEYWD == "OUTPUT" THEN DO;
+         KEYWD = ""
+      END;
+
+      IF KEYWD == "DD" THEN DO;
+         KEYWD = "OUTPUT"
+         FLDA = EXECA - 1
+         FLDB = EXECB
+      END;
+
+      IF KEYWD == "PEND" THEN DO;
+         KEYWD = "DD"
+         FLDA = DDA - 1
+         FLDB = DDB
+      END;
+
+
+      IF KEYWD == "EXEC" THEN DO;
+         KEYWD = "PEND"
+         FLDA = PENDA - 1
+         FLDB = PENDB
+      END;
+
+      IF KEYWD == "PROC" THEN DO;
+         KEYWD = "EXEC"
+         FLDA = EXECA - 1
+         FLDB = EXECB
+      END;
+
+      IF KEYWD == "JOB" THEN DO;
+         KEYWD = "PROC"
+         FLDA = PROCA - 1
+         FLDB = PROCB
+      END;
+
+   END;
+
+
+   /*      CONTINUATION CARD CONVERSION                       */
+   "X ALL"
+   "F '// '         1 ALL"       LJZF LJZL
+   "X ' OUTPUT ' 3 22 ALL"         LJZF LJZL
+   "X ' PROC '   3 20 ALL"         LJZF LJZL
+   "X ' EXEC '   3 20 ALL"         LJZF LJZL
+   "X ' DD '     3 20 ALL"         LJZF LJZL
+   "X ' PEND '   3 20 ALL"         LJZF LJZL
+   "X ' JOB '    3 20 ALL"         LJZF LJZL
+   "C ' ' '}'    3    ALL NX"      LJZF LJZL
+   "C '}' '}}'   3 25 ALL NX"      LJZF LJZL
+   "C '}' '}}'   3 25 ALL NX"      LJZF LJZL
+   "C '}' '}}'   3 25 ALL NX"      LJZF LJZL
+   "C '}' '}}'   3 25 ALL NX"      LJZF LJZL
+   "C '}' '}}'   3 25 ALL NX"      LJZF LJZL
+   "C ' ' 'ª'    3 70 ALL NX"      LJZF LJZL
+   "C '}ª' '}'   3 70 ALL NX"      LJZF LJZL
+   "C '}' ' '    3" CONTA "ALL NX" LJZF LJZL
+   "C '}' ''          ALL NX"      LJZF LJZL
+   "C 'ª' ' '         ALL NX"      LJZF LJZL
+   "BOUNDS =" LB RB
+   "LEFT MAX"
+   "RESET"
+   "CURSOR =" CL CR
+   EXIT 0
+

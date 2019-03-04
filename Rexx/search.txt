@@ -1,0 +1,88 @@
+/*REXX*/
+MESSAGE = ' '
+ADDRESS ISPEXEC
+"ISPEXEC LIBDEF ISPPLIB DATASET ID(REXX.TRAINING)"
+/* "ISPEXEC LIBDEF ISPMLIB DATASET ID(REXX.TRAINING)"  */
+"ISPEXEC LIBDEF ISPSLIB DATASET ID(REXX.SKELETON)"
+"ISPEXEC ADDPOP"
+"ISPEXEC VPUT MESSAGE ASIS"
+"ISPEXEC DISPLAY PANEL(PANEL)"
+"ISPEXEC VGET (DATA1,WORD1,KEYPRESS) ASIS"
+"ISPEXEC REMPOP"
+IF KEYPRESS = 'PF03' THEN EXIT
+MESSAGE = 'PLEASE WAIT.. JCL IS GETTING READY'
+"ISPEXEC ADDPOP"
+"ISPEXEC VPUT MESSAGE ASIS"
+"ISPEXEC CONTROL DISPLAY LOCK"
+"ISPEXEC DISPLAY PANEL(PANEL)"
+/*DUMMY WAIT*/
+DO 30
+DO 10000; NOP; END
+END
+/*END OF DUMMY WAIT*/
+SRCHDSN = DATA1
+SRCHWD = WORD1
+"ISPEXEC FTOPEN TEMP"
+"ISPEXEC FTINCL SKEL"
+"ISPEXEC FTCLOSE"
+"ISPEXEC VGET (ZTEMPF) SHARED"
+MESSAGE = 'JCL IS READY.. PRESS ENTER TO SEE THE JCL'
+"ISPEXEC ADDPOP"
+"ISPEXEC VPUT MESSAGE ASIS"
+"ISPEXEC DISPLAY PANEL(PANEL)"
+"ISPEXEC EDIT DATASET('"ZTEMPF"')"
+------------------------------------------------------------------------------------------------------
+
+
+The ISPF Panel libraries are linked to ddname ISPPLIB
+The ISPF Message libraries are linked to ddname ISPMLIB
+THE ISPF Skeleton libraries are linked to ddname ISPSLIB
+
+
+-----------------------------------
+
+The ISPF services can be invoked from REXX by addressing the ISPF commands to the ISPEXEC 
+environment
+
+ADDRESS ISPEXEC “Give the command here in quotes”
+
+Example:
+/*REXX*/
+ADDRESS ISPEXEC
+“ISPEXEC DISPLAY PANEL(MYPANEL)“
+
+-----------------------------------------
+
+ASIS : Specifies that the variables are to be copied to the pool 
+in which they already exist or that they are to be copied to the 
+shared pool, if they are new. If the variables exist in both the 
+shared and profile pools, they are copied only to the shared pool.
+--------------------------------------
+
+
+Concatenating your personal libraries to system ISPF libraries using LIBDEF service
+
+/*REXX*/
+ADDRESS ISPEXEC
+“ISPEXEC LIBDEF ISPPLIB DATASET ID(‘MYPNAEL.LIBRARY’)”
+“ISPEXEC DISPLAY PANEL(PANEL1)
+----------------------------------------
+
+The ADDPOP and REMPOP service
+The ADDPOP service is used to open the panel in a pop up window whose size is 
+determined by the WINDOW command in the body section of the panel. IF the WINDOW command 
+is not specified, a default size is used depending on the contents of the PANEL.
+
+The REMPOP service removes the POP up window from the screen and memory
+-----------------------------------------
+
+
+FTOPEN TEMP  ? Allocates and opens a temporary file for writing                                                 
+
+FTINCL <Skeleton name> ? Starts substitutions in the skeleton file and writes into the file
+ opened by FTOPEN
+                                              
+FTCLOSE ? Close the temporary file
+
+ZTEMPF ? Contains the name of the temporary dataset. It is present in the shared pool.
+

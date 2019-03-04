@@ -1,0 +1,2875 @@
+From: <Saved by Microsoft Internet Explorer 5>
+Subject: REXX - Batch REXX using IDCAMS ALLOC
+Date: Fri, 14 Jul 2006 17:11:47 +0530
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----=_NextPart_000_0000_01C6A768.96820AA0"
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2900.2180
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.tek-tips.com/viewthread.cfm?qid=1143493&page=1
+
+=EF=BB=BF<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" =
+"http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<HTML xmlns=3D"http://www.w3.org/1999/xhtml"><HEAD><TITLE>REXX - Batch =
+REXX using IDCAMS ALLOC</TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Dutf-8"><LINK=20
+href=3D"http://www.tek-tips.com/css/frame.css" type=3Dtext/css =
+rel=3Dstylesheet><LINK=20
+href=3D"http://www.tek-tips.com/css/main.css" type=3Dtext/css =
+rel=3Dstylesheet><LINK=20
+href=3D"http://www.tek-tips.com/css/tgml.css" type=3Dtext/css =
+rel=3Dstylesheet><LINK=20
+href=3D"/favicon.ico" type=3Dimage/x-icon rel=3D"shortcut icon">
+<SCRIPT language=3Djavascript1.2 =
+src=3D"http://www.tek-tips.com/jsource.js"=20
+type=3Dtext/javascript></SCRIPT>
+
+<SCRIPT language=3Djavascript1.2 =
+src=3D"http://www.tek-tips.com/domnews.js"=20
+type=3Dtext/javascript></SCRIPT>
+
+<SCRIPT language=3Djavascript>=0A=
+function gofaq(pid,fid) {=0A=
+	var theURL =3D "faqs.cfm?pid=3D"+pid+"&fid=3D"+fid; =
+window.top.location.href=3DtheURL;=0A=
+}=0A=
+function gothread(pid,qid) {=0A=
+	var theURL =3D "viewthread.cfm?qid=3D"+qid;=0A=
+	window.top.location.href=3DtheURL;=0A=
+}=0A=
+function goforum(pid) {=0A=
+	var theURL =3D "threadminder.cfm?pid=3D"+pid;=0A=
+	window.top.location.href=3DtheURL;=0A=
+}=0A=
+function golink(pid) {=0A=
+	var theURL =3D "links.cfm?pid=3D"+pid;=0A=
+	window.top.location.href=3DtheURL;=0A=
+}=0A=
+</SCRIPT>
+<LINK media=3Dprint href=3D"http://www.tek-tips.com/css/printthread.css" =
+
+type=3Dtext/css rel=3Dstylesheet>
+<META content=3D"MSHTML 6.00.2900.2802" name=3DGENERATOR></HEAD>
+<BODY onload=3D"doPopup();document.forms['pass'].Handle.focus();">
+<TABLE id=3Dheader>
+  <TBODY>
+  <TR vAlign=3Dtop>
+    <TD width=3D213><A class=3Dlogo =
+href=3D"http://www.tek-tips.com/"><IMG=20
+      alt=3D"Tek-Tips Forums"=20
+src=3D"http://www.tek-tips.com/images/logo.gif"></A></TD>
+    <TD vAlign=3Dtop align=3Dmiddle>
+      <DIV class=3Dlinks>
+      <DIV><A href=3D"http://www.tek-tips.com/about.cfm">About Us</A> | =
+<A=20
+      onmouseover=3D"window.status=3D'Contact Us';return true;"=20
+      onmouseout=3D"window.status=3D'';return true;"=20
+      href=3D"javascript:cont('')">Contact Us</A> | <A=20
+      href=3D"http://www.tecumsehgroup.com/administration.htm">Site=20
+      Policies</A></DIV></DIV>
+      <DIV class=3Dpromo><A=20
+      href=3D"http://www.tek-tips.com/supportus.cfm">Donate</A> | <A=20
+      href=3D"http://www.tek-tips.com/groups">Start A Group</A> | <A=20
+      href=3D"http://tek-tips.4jobs.com/" target=3Djobs>Jobs</A> | <A=20
+      =
+href=3D"http://www.tek-tips.com/whitepapers/">Whitepapers</A><BR></DIV>
+      <DIV class=3Dbanner>
+      <SCRIPT type=3Dtext/javascript><!--
+google_ad_client =3D "pub-8000425157908189";
+google_ad_width =3D 468;
+google_ad_height =3D 60;
+google_ad_format =3D "468x60_as";
+google_color_border =3D ["B4D0DC","A8DDA0","DDB7BA","FDFFCA"];
+google_color_bg =3D ["ECF8FF","EBFFED","FFF5F6","FDFFCA"];
+google_color_link =3D "0000CC";
+google_color_url =3D "008000";
+google_color_text =3D ["6F6F6F","6F6F6F","6F6F6F","000000"];
+//--></SCRIPT>
+
+      <SCRIPT =
+src=3D"http://pagead2.googlesyndication.com/pagead/show_ads.js"=20
+      type=3Dtext/javascript>
+</SCRIPT>
+      </DIV></TD></TR></TBODY></TABLE>
+<TABLE id=3Dmain>
+  <TBODY>
+  <TR vAlign=3Dtop>
+    <TD id=3Dleftcol>
+      <DIV class=3Dcont>
+      <DIV class=3Dtagline>INTELLIGENT WORK FORUMS<BR>FOR COMPUTER=20
+      PROFESSIONALS</DIV>
+      <DIV class=3Dwrapper>
+      <H4>Member Login</H4>
+      <DIV class=3Da>
+      <DIV class=3Db>
+      <DIV class=3Dc>
+      <FORM id=3Dpass name=3Dpass action=3D/passcheck.cfm =
+method=3Dpost><INPUT=20
+      type=3Dhidden value=3Dlogin name=3Dmethod>=20
+      <TABLE>
+        <TBODY>
+        <TR>
+          <TD>HANDLE<BR><INPUT style=3D"WIDTH: 70px" maxLength=3D20 =
+size=3D8=20
+            name=3DHandle><BR><INPUT style=3D"WIDTH: 70px" =
+type=3Dpassword=20
+            maxLength=3D20 size=3D8 name=3DPass><BR>PASSWORD</TD>
+          <TD><INPUT type=3Dimage=20
+            =
+src=3D"http://www.tek-tips.com/images/btn-login.gif"></TD></TR></TBODY></=
+TABLE><INPUT=20
+      type=3Dcheckbox value=3D1 name=3DRemember><A=20
+      href=3D"javascript:rememberme()">Remember Me</A><BR><A=20
+      href=3D"javascript:popforgotpassword();">Forgot Password?</A>=20
+      </FORM></DIV></DIV></DIV></DIV>
+      <DIV class=3Dwrapper>
+      <H4>Navigation</H4>
+      <DIV class=3Da>
+      <DIV class=3Db>
+      <DIV class=3Dc><A =
+href=3D"http://www.tek-tips.com/register.cfm">Join=20
+      Us!</A><BR><A=20
+      =
+href=3D"javascript:openindex(200,200,'http://www.tipmaster.com/includes/g=
+searchinfo.cfm?w=3D250&amp;h=3D250')">Keyword=20
+      Search</A><BR><A =
+href=3D"http://www.tek-tips.com/threadarea.cfm">Browse=20
+      Forums</A><BR><A href=3D"http://tek-tips.4jobs.com/"=20
+      target=3Djobs>Jobs</A><BR><A =
+href=3D"http://www.tek-tips.com/groups">Start A=20
+      Group</A><BR><A=20
+      =
+href=3D"javascript:openindex(600,400,'/pops/emailfriend.cfm?w=3D600&amp;h=
+=3D400')">Tell=20
+      A Friend</A><BR><A=20
+      href=3D"http://www.tek-tips.com/supportus.cfm">Donate</A><BR><A=20
+      href=3D"http://www.tek-tips.com/whitepapers/">Whitepapers</A>=20
+      </DIV></DIV></DIV></DIV>
+      <DIV class=3Dwrapper>
+      <H4>Come Join Us!</H4>
+      <DIV class=3Da>
+      <DIV class=3Db>
+      <DIV class=3Dc>
+      <UL>
+        <LI>Talk With Other Members=20
+        <LI>Be Notified Of Responses<BR>To Your Posts=20
+        <LI>Keyword Search=20
+        <LI>Turn Off Ad Banners=20
+        <LI>One-Click Access To Your<BR>Favorite Forums=20
+        <LI>Automated Signatures<BR>On Your Posts=20
+        <LI>Best Of All, It's Free! </LI></UL>
+      <HR width=3D"80%" SIZE=3D2>
+
+      <FORM name=3DRegister action=3D/registermanager.cfm method=3Dpost>
+      <DIV style=3D"TEXT-ALIGN: right">E-mail* <INPUT style=3D"WIDTH: =
+85px"=20
+      maxLength=3D50 size=3D8 name=3Demail><BR>Handle <INPUT =
+style=3D"WIDTH: 85px"=20
+      maxLength=3D20 size=3D8 name=3DHandle><BR><SELECT name=3DUserType> =
+<OPTION=20
+        value=3D"Select A Type" selected>Select A Type</OPTION> <OPTION=20
+        value=3DMIS>MIS</OPTION> <OPTION=20
+        value=3DIS/IT--Management>IS/IT--Management</OPTION> <OPTION=20
+        value=3DProgrammer>Programmer</OPTION> <OPTION =
+value=3DISP>ISP</OPTION>=20
+        <OPTION value=3DInstructor>Instructor</OPTION> <OPTION=20
+        value=3DVendor>Vendor</OPTION> <OPTION=20
+        =
+value=3DTechnicalUser>TechnicalUser</OPTION></SELECT><BR>Password <INPUT =
+
+      style=3D"WIDTH: 85px" type=3Dpassword maxLength=3D10 size=3D8 =
+name=3Dpass><BR>Verify=20
+      P'word <INPUT style=3D"WIDTH: 85px" type=3Dpassword maxLength=3D10 =
+size=3D8=20
+      name=3Dpass2></DIV>
+      <DIV align=3Dcenter><INPUT type=3Dimage=20
+      src=3D"http://www.tek-tips.com/images/btn-join.gif"></DIV></FORM>
+      <DIV style=3D"MARGIN-TOP: 6px; FONT-SIZE: 9px">*Tek-Tips's =
+functionality=20
+      depends on members receiving e-mail. By joining you are opting in =
+to=20
+      receive e-mail.</DIV></DIV></DIV></DIV></DIV>
+      <DIV class=3Dwrapper>
+      <H4>Partner With Us!</H4>
+      <DIV class=3Da>
+      <DIV class=3Db>
+      <DIV class=3Dc><B>"Best Of Breed" Forums Add Stickiness To Your=20
+      Site</B><BR><A href=3D"http://www.tek-tips.com/affiliates/"><IMG =
+height=3D60=20
+      alt=3D"Partner Button"=20
+      src=3D"http://www.tek-tips.com/images/partnerbtn120x60.gif"=20
+      width=3D120></A><BR>(Download This Button Today!) =
+</DIV></DIV></DIV></DIV>
+      <DIV class=3Dwrapper>
+      <H4>Member Feedback</H4>
+      <DIV class=3Da>
+      <DIV class=3Db>
+      <DIV class=3Dc>"...I posted a query a short while ago and had an =
+informed=20
+      answer within a couple of hours. Terrific!..."=20
+      <DIV class=3Dcol align=3Dcenter><A=20
+      =
+href=3D"http://www.tek-tips.com/feedback.cfm"><B>More...</B></A></DIV></D=
+IV></DIV></DIV></DIV>
+      <DIV class=3Dwrapper>
+      <H4>Geography</H4>
+      <DIV class=3Da>
+      <DIV class=3Db>
+      <DIV class=3Dc>Where in the world do Tek-Tips members come from?=20
+      <DIV class=3Dcol align=3Dcenter><A=20
+      href=3D"http://www.tek-tips.com/geography.cfm"><B>Click Here To =
+Find=20
+      Out!</B></A></DIV></DIV></DIV></DIV></DIV>
+      <DIV class=3Dwrapper>
+      <H4>Partners</H4>
+      <DIV class=3Da>
+      <DIV class=3Db>
+      <DIV class=3Dc><A href=3D"http://www.aspalliance.com/" =
+target=3DBlank>ASP=20
+      Alliance</A><BR><A href=3D"http://www.codeproject.com/" =
+target=3DBlank>Code=20
+      Project</A><BR><A href=3D"http://www.developerfusion.co.uk/"=20
+      target=3DBlank>Developer Fusion</A><BR><A=20
+      href=3D"http://www.developersdex.com/" target=3DBlank>Developers =
+Dex</A><BR><A=20
+      href=3D"http://www.devguru.com/" target=3DBlank>devGuru</A><BR><A=20
+      href=3D"http://www.planet-source-code.com/" target=3DBlank>Planet =
+Source=20
+      Code</A><BR><A href=3D"http://www.programmersheaven.com/"=20
+      target=3DBlank>Programmers Heaven</A><BR><A =
+href=3D"http://www.tek-tips.com/"=20
+      target=3DBlank>Tek-Tips =
+Forums</A><BR></DIV></DIV></DIV></DIV></DIV></TD>
+    <TD>
+      <TABLE style=3D"WIDTH: 100%">
+        <TBODY>
+        <TR>
+          <TD id=3Dpagetitle colSpan=3D2>
+            <DIV id=3Dsearch=20
+            style=3D"BACKGROUND-IMAGE: url(images/srchfrm-bg2.gif); =
+BACKGROUND-COLOR: #cccccc">
+            <DIV class=3Ds>
+            <TABLE cellSpacing=3D0 cellPadding=3D0>
+              <TBODY>
+              <TR>
+                <TD style=3D"WIDTH: 270px" noWrap align=3Dmiddle =
+width=3D"50%">
+                  <FORM action=3D/forumsearch.cfm method=3Dpost>
+                  <TABLE>
+                    <TBODY>
+                    <TR>
+                      <TD width=3D100><INPUT class=3Dfrmsearch size=3D25 =
+
+                        name=3DSearchString></TD>
+                      <TD style=3D"PADDING-LEFT: 3px"><INPUT =
+type=3Dimage=20
+                        =
+src=3D"http://www.tek-tips.com/images/btn-search.gif"=20
+                        name=3Dsub></TD></TR>
+                    <TR>
+                      <TD style=3D"PADDING-TOP: 10px" colSpan=3D2><INPUT =
+id=3Dsrch1=20
+                        type=3Dradio CHECKED value=3Dforum =
+name=3Dtype><LABEL=20
+                        for=3Dsrch1> Find A Forum</LABEL> <INPUT =
+id=3Dsrch2=20
+                        type=3Dradio value=3Dmember name=3Dtype><LABEL =
+for=3Dsrch2> Find=20
+                        An =
+Expert</LABEL></TD></TR></TBODY></TABLE></FORM></TD>
+                <TD align=3Dmiddle><!-- SiteSearch Google -->
+                  <FORM action=3Dhttp://www.google.com/custom =
+method=3Dget=20
+                  target=3D_blank>
+                  <TABLE style=3D"BORDER-LEFT: #999999 2px solid" =
+cellSpacing=3D0=20
+                  cellPadding=3D0 border=3D0>
+                    <TBODY>
+                    <TR>
+                      <TD vAlign=3Dtop noWrap align=3Dleft =
+height=3D32><A=20
+                        href=3D"http://www.google.com/"><IMG =
+alt=3DGoogle=20
+                        =
+src=3D"http://www.google.com/logos/Logo_25wht.gif"=20
+                        align=3Dmiddle border=3D0></A> </TD>
+                      <TD noWrap><INPUT type=3Dhidden =
+value=3Dtek-tips.com=20
+                        name=3Ddomains> <INPUT maxLength=3D255 size=3D23 =
+name=3Dq> <INPUT type=3Dsubmit value=3DSearch name=3Dsa> </TD></TR>
+                    <TR style=3D"PADDING-TOP: 0px">
+                      <TD style=3D"PADDING-TOP: 0px" noWrap><INPUT =
+type=3Dradio=20
+                        value=3D"" name=3Dsitesearch> Web</TD>
+                      <TD><INPUT type=3Dradio CHECKED =
+value=3Dtek-tips.com=20
+                        name=3Dsitesearch> Tek-Tips=20
+                  Forums</TD></TD></TR></TBODY></TABLE><INPUT =
+type=3Dhidden=20
+                  value=3Dpub-8000425157908189 name=3Dclient> <INPUT =
+type=3Dhidden=20
+                  value=3D1 name=3Dforid> <INPUT type=3Dhidden =
+value=3D4770171969=20
+                  name=3Dchannel> <INPUT type=3Dhidden =
+value=3DISO-8859-1 name=3Die>=20
+                  <INPUT type=3Dhidden value=3DISO-8859-1 name=3Doe> =
+<INPUT=20
+                  type=3Dhidden value=3Dactive name=3Dsafe> <INPUT =
+type=3Dhidden=20
+                  =
+value=3DGALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBG=
+C:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;=20
+                  name=3Dcof> <INPUT type=3Dhidden value=3Den name=3Dhl> =
+</FORM><!-- SiteSearch Google --></TD></TR></TBODY></TABLE></DIV></DIV>
+            <DIV class=3Dtitle>
+            <DIV class=3Dbcrumb><A =
+href=3D"http://www.tek-tips.com/index.cfm"=20
+            name=3Dtop>Home</A> &gt; <A=20
+            href=3D"http://www.tek-tips.com/threadarea.cfm">Forums</A> =
+&gt; <A=20
+            =
+href=3D"http://www.tek-tips.com/threadcategory.cfm?lev2=3D4">Programmers<=
+/A>=20
+            &gt; <A=20
+            =
+href=3D"http://www.tek-tips.com/threadforum.cfm?lev3=3D32">Languages</A> =
+
+            &gt; <A=20
+            =
+href=3D"http://www.tek-tips.com/threadminder.cfm?pid=3D277&amp;page=3D1">=
+REXX=20
+            Forum</A></DIV>
+            <H1>Batch REXX using IDCAMS ALLOC</H1>
+            <DIV class=3Dforumshortcut><A=20
+            =
+href=3D"javascript:openindex(450,450,'http://www.tipmaster.com/includes/r=
+efinfo.cfm?w=3D450&amp;h=3D450')">thread277-1143493</A></DIV></DIV>
+            <DIV id=3Dtabs>
+            <TABLE class=3Db>
+              <TBODY>
+              <TR>
+                <TD><A id=3Dcurrent title=3D"Forum Home Page"=20
+                  =
+href=3D"http://www.tek-tips.com/threadminder.cfm?pid=3D277">Forum</A></TD=
+>
+                <TD><A title=3D"Keyword Search"=20
+                  =
+href=3D"http://www.tek-tips.com/search.cfm?pid=3D277">Search</A></TD>
+                <TD><A title=3D"Forum FAQs"=20
+                  =
+href=3D"http://www.tek-tips.com/faq.cfm?pid=3D277">FAQs</A></TD>
+                <TD><A title=3DLinks=20
+                  =
+href=3D"http://www.tek-tips.com/links.cfm?pid=3D277">Links</A></TD>
+                <TD><A href=3D"http://tek-tips.4jobs.com/"=20
+                target=3Djobs>Jobs</A></TD>
+                <TD><A style=3D"WIDTH: 77px"=20
+                  =
+href=3D"http://www.tek-tips.com/whitepapers">Whitepapers</A></TD></TR></T=
+BODY></TABLE></DIV></TD></TR></TBODY></TABLE>
+      <TABLE style=3D"WIDTH: 100%">
+        <TBODY>
+        <TR>
+          <TD id=3Dcontent>
+            <DIV class=3Dtgml><SPAN id=3DintelliTxt>
+            <TABLE class=3Dpost>
+              <TBODY>
+              <TR bgColor=3D#b5b5ff>
+                <TD>
+                  <TABLE cellSpacing=3D3 cellPadding=3D3>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dhandle=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px"><A=20
+                        =
+href=3D"http://www.tek-tips.com/userinfo.cfm?member=3Drockpainter">rockpa=
+inter</A>=20
+                        (Programmer)</TD>
+                      <TD class=3Ddate=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px">
+                        <DIV title=3D"Current Server Time: 14 Jul 06 =
+7:45">27 Oct=20
+                        05 17:34 </DIV></TD></TR></TBODY></TABLE>
+                  <TABLE>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dtgml>Limiation of IDCAMS ALLOC in=20
+                        batch...<BR><BR>In the "z/OS V1R6.0 DFSMS Access =
+Method=20
+                        Services for Catalogs" <BR>manual, Document =
+Number:=20
+                        SC26-7394-03, topic '4.1 Restrictions'=20
+                        =
+says:&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;.<BR>&nbsp;&nbsp;-&nbsp;&nbsp;If=20
+                        the access method services job step contains =
+either the=20
+                        SYSTSIN <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or =
+SYSTSPRT DD=20
+                        statements, the ALLOCATE command is=20
+                        =
+unsuccessful.&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access=20
+                        method services allocates the SYSTSIN and =
+SYSTSPRT=20
+                        =
+DD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;statements=20
+                        to pass the command to the TMP and to retrieve =
+any=20
+                        error<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages =
+that are=20
+                        issued.&nbsp;&nbsp;This is done for every =
+ALLOCATE=20
+                        command.<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Any =
+TMP error=20
+                        messages appear in the SYSPRINT data set, and =
+access=20
+                        <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;method =
+services prints=20
+                        a summary message to show the final=20
+                        =
+status&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of=20
+                        the=20
+                        =
+command.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;.<BR>However,=20
+                        batch TSO will not run without =
+//SYSTSPRT.&nbsp;&nbsp;So=20
+                        we=20
+                        =
+cannot&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>do=20
+                        IDCAMS ALLOC in batch TSO.<BR><BR>Work Around =
+below...=20
+                        Comments please<BR>Best =
+Regards,<BR>Bruce<BR><BR>Notice=20
+                        the ALLOC is TSO and the new GDG is rolled into =
+the BASE=20
+                        by the&nbsp;&nbsp;&nbsp;&nbsp;<BR>DUMMY REPRO... =
+
+                        =
+<BR><BR>//*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//JS01&nb=
+sp;&nbsp;&nbsp;&nbsp;EXEC=20
+                        =
+PGM=3DIEBGENER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//PR=
+OIGN&nbsp;&nbsp;&nbsp;DD&nbsp;&nbsp;DUMMY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SYSPRI=
+NT=20
+                        =
+DD&nbsp;&nbsp;DUMMY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SYSIN&nbsp;&nbsp;&nbsp;&nbsp=
+;DD&nbsp;&nbsp;DUMMY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SYSUT2&nbsp;&nbsp;&nbsp;DD&=
+nbsp;&nbsp;DSN=3D&amp;&amp;SYSEXEC(TESTREX),DISP=3D(,PASS),UNIT=3DSYSALLD=
+A,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPACE=3D(CYL,(5,5,=
+5))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;<BR>//SYSUT1&nbsp;&nbsp;&nbsp;DD&nbsp;&nbsp;*,DLM=3D@@&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>/=
+*=20
+                        rexx=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<BR>/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>/*=20
+                        House Keeping going into=20
+                        =
+routine...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;msg_stat=
+us=20
+                        =3D=20
+                        =
+MSG("OFF");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&=
+nbsp;&nbsp;&nbsp;address=20
+                        =
+TSO;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nb=
+sp;&nbsp;"FREE=20
+                        DD(INDD=20
+                        =
+OUTDD)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbs=
+p;&nbsp;&nbsp;&nbsp;"FREE=20
+                        FI(SYSIN=20
+                        =
+SYSPRINT)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;"=
+FREE=20
+                        =
+ATTRLIST(DCB01)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&=
+nbsp;&nbsp;msg_status=20
+                        =3D=20
+                        =
+MSG("ON");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nb=
+sp;&nbsp;&nbsp;"ATTRIB=20
+                        DCB01 RECFM(F) LRECL(80)=20
+                        =
+BLKSIZE(80)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;<BR>&nbsp;&nbsp;&nbsp;"ALLOC=20
+                        FILE(SYSIN) UNIT(WORK) SP(5,5) TRACK REUSE=20
+                        =
+USING(DCB01)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;"ALLOC =
+
+                        DD(SYSPRINT)=20
+                        =
+SYSOUT";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;"ALLOC=20
+                        DA('TEST.II.G0019V00') SHR=20
+                        =
+DD(INDD)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;"ALLOC=20
+                        DA('TEST.II.G0020V00')=20
+                        =
+DD(OUTDD)"||,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nb=
+sp;"=20
+                        =
+LIKE('TEST.II.G0019V00')"||,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;<BR>&nbsp;&nbsp;&nbsp;"=20
+                        SPACE(1,0) TRACKS=20
+                        =
+BLKSIZE(6144)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B=
+R>&nbsp;&nbsp;QUEUE=20
+                        ' REPRO -=20
+                        =
+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;QUEUE=20
+                        =
+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INFILE(INDD)=20
+                        =
+-'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;QUEUE=20
+                        =
+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTFILE(OUTDD)=20
+                        =
+-'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;QUEUE=20
+                        =
+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COUNT(0)'&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;QUEUE=20
+                        =
+''&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;<BR>&nbsp;&nbsp;address=20
+                        =
+TSO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbs=
+p;"EXECIO=20
+                        * DISKW SYSIN=20
+                        =
+(FINIS";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;"CALL=20
+                        =
+*(IDCAMS)"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;/*=20
+                        &lt;-- Run IDCAMS=20
+                        =
+*/<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>/*=20
+                        House Keeping going out of=20
+                        =
+routine...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;msg_stat=
+us=20
+                        =3D=20
+                        =
+MSG("OFF");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&=
+nbsp;&nbsp;&nbsp;address=20
+                        =
+TSO;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nb=
+sp;&nbsp;"FREE=20
+                        FI(SYSIN=20
+                        =
+SYSPRINT)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;"=
+FREE=20
+                        =
+ATTRLIST(DCB01)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&=
+nbsp;&nbsp;&nbsp;&nbsp;"FREE=20
+                        DD(INDD=20
+                        =
+OUTDD)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbs=
+p;&nbsp;msg_status=20
+                        =3D=20
+                        =
+MSG("ON");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+<BR>&nbsp;exit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>@@&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//JS02&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;EXEC=20
+                        =
+PGM=3DIKJEFT1B,DYNAMNBR=3D30,REGION=3D0M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//PROIGN=20
+                        DD=20
+                        =
+DUMMY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SYSEXEC=20
+                        DD=20
+                        =
+DSN=3D&amp;&amp;SYSEXEC,DISP=3D(OLD,DELETE)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SY=
+STSPRT=20
+                        DD=20
+                        =
+SYSOUT=3D8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;<BR>//SYSTSIN=20
+                        DD=20
+                        =
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>PROF=20
+                        =
+MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;<BR>%TESTREX</TD></TR></TBODY></TABLE></TD></TR></T=
+BODY></TABLE>
+            <DIV class=3Dplug=20
+            style=3D"FONT-WEIGHT: bold; PADDING-BOTTOM: 5px; COLOR: red; =
+PADDING-TOP: 5px"=20
+            align=3Dcenter><B><FONT color=3Dred>Tek-Tips Forums is =
+Member Supported.=20
+            <A href=3D"http://www.tek-tips.com/supportus.cfm">Click =
+Here</A> to=20
+            donate.</FONT></B></DIV>
+            <TABLE class=3Dpost>
+              <TBODY>
+              <TR bgColor=3D#dedeff>
+                <TD>
+                  <TABLE cellSpacing=3D3 cellPadding=3D3>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dhandle=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px"><A=20
+                        =
+href=3D"http://www.tek-tips.com/userinfo.cfm?member=3Dkevinf2349">kevinf2=
+349</A>=20
+                        (TechnicalUser)</TD>
+                      <TD class=3Ddate=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px">
+                        <DIV title=3D"Current Server Time: 14 Jul 06 =
+7:45">27 Oct=20
+                        05 18:09 </DIV></TD></TR></TBODY></TABLE>
+                  <TABLE>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dtgml>Why not just run REPRO as a tso =
+command?=20
+                        I believe that is acceptable...then there is no =
+need to=20
+                        call IDAMS at all. <BR><BR>I will check it out =
+for sure=20
+                        tomorrow at work, but I believe that should=20
+                    =
+work.<BR></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+            <TABLE class=3Dpost>
+              <TBODY>
+              <TR bgColor=3D#f6f6f6>
+                <TD>
+                  <TABLE cellSpacing=3D3 cellPadding=3D3>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dhandle=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px"><A=20
+                        =
+href=3D"http://www.tek-tips.com/userinfo.cfm?member=3Drexxhead">rexxhead<=
+/A>=20
+                        (Programmer)</TD>
+                      <TD class=3Ddate=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px">
+                        <DIV title=3D"Current Server Time: 14 Jul 06 =
+7:45">28 Oct=20
+                        05 8:31 </DIV></TD></TR></TBODY></TABLE>
+                  <TABLE>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dtgml>--ALL-- IDCAMS commands are also =
+valid=20
+                        TSO (i.e.: CLIST)commands.&nbsp;&nbsp;I wouldn't =
+be=20
+                        surprised to find that IDCAMS and IKJEFT01 share =
+a great=20
+                        deal of code under the covers.&nbsp;&nbsp;Sounds =
+
+                        incestuous, doesn't it?<BR><BR>IKJEFT01 gives =
+you a=20
+                        little more flexibility because it allows you to =
+run=20
+                        CLIST and REXX as well, but anything you can do =
+in=20
+                        IDCAMS you can also do in CLIST/REXX (given the =
+proper=20
+                        environment).<BR>
+                        <P>Frank Clarke<BR>Tampa Area REXX Programmers'=20
+                        Alliance<BR>REXX Language Assn=20
+                    =
+Listmaster</P></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+            <TABLE class=3Dpost>
+              <TBODY>
+              <TR bgColor=3D#dedeff>
+                <TD>
+                  <TABLE cellSpacing=3D3 cellPadding=3D3>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dhandle=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px"><A=20
+                        =
+href=3D"http://www.tek-tips.com/userinfo.cfm?member=3Drockpainter">rockpa=
+inter</A>=20
+                        (Programmer)</TD>
+                      <TD class=3Ddate=20
+                      style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px">
+                        <DIV title=3D"Current Server Time: 14 Jul 06 =
+7:45">28 Oct=20
+                        05 17:06 </DIV></TD></TR></TBODY></TABLE>
+                  <TABLE>
+                    <TBODY>
+                    <TR>
+                      <TD class=3Dtgml>Didn't know that about TSO... =
+have tested=20
+                        several IDCAMS commands without calling it and =
+they work=20
+                        great... Thanks for the tip.<BR><BR>Have refined =
+example=20
+                        Exec (Creating a new GDG) to just the following =
+few=20
+                        lines of =
+REXX:<BR><BR>//JS01&nbsp;&nbsp;&nbsp;&nbsp;EXEC=20
+                        =
+PGM=3DIEBGENER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;<BR>//PROIGN&nbsp;&nbsp;&nbsp;DD&nbsp;&nbsp;DUMMY&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SYSPRINT=20
+                        =
+DD&nbsp;&nbsp;DUMMY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR=
+>//SYSIN&nbsp;&nbsp;&nbsp;&nbsp;DD&nbsp;&nbsp;DUMMY&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SYSUT2&nbsp;&nbsp;&nbsp;DD&nbsp;&nbsp;=
+DSN=3D&amp;&amp;SYSEXEC(TESTREX),DISP=3D(,PASS),UNIT=3DSYSALLDA,<BR>//&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;SPACE=3D(CYL,(5,5,5))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>//SYSU=
+T1&nbsp;&nbsp;&nbsp;DD&nbsp;&nbsp;*,DLM=3D@@&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;<BR>/*=20
+                        rexx=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>trace=20
+                        =
+i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;<BR>&nbsp;/*=20
+                        House Keeping going into=20
+                        =
+routine...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;<BR>&nbsp;/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        =
+*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;<BR>&nbsp;&nbsp;msg_status=20
+                        =3D=20
+                        =
+MSG("OFF");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;address=20
+                        =
+TSO;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;"FREE=20
+                        DD(INDD=20
+                        =
+OUTDD)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;msg_status=20
+                        =3D=20
+                        =
+MSG("ON");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;address=20
+                        =
+TSO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp=
+;&nbsp;"ALLOC=20
+                        DA('TEST.II.G0023V00') SHR=20
+                        =
+DD(INDD)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;"ALLOC=20
+                        DA('TEST.II.G0024V00')=20
+                        =
+DD(OUTDD)"||,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;"=20
+                        =
+LIKE('TEST.II.G0023V00')"||,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;"=20
+                        SPACE(1,0) TRACKS BLKSIZE(6144) NEW CATALOG";=20
+                        <BR><BR>&nbsp;&nbsp;/* coding the NEW CATALOG is =
+key to=20
+                        the process=20
+                        =
+*/&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        */<BR>&nbsp;&nbsp;/* House Keeping going out of=20
+                        =
+routine...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<BR>&nb=
+sp;&nbsp;/*=20
+                        - - - - - - - - - - - - - - - - - - - - - - -=20
+                        */<BR>&nbsp;&nbsp;&nbsp;msg_status =3D=20
+                        =
+MSG("OFF");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;address=20
+                        =
+TSO;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"FREE=20
+                        DD(INDD=20
+                        =
+OUTDD)";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;msg_status=20
+                        =3D=20
+                        =
+MSG("ON");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;exit&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;@@&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;//JS02&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXEC=20
+                        =
+PGM=3DIKJEFT1B,DYNAMNBR=3D30,REGION=3D0M&nbsp;&nbsp;<BR>&nbsp;//PROIGN=20
+                        DD=20
+                        =
+DUMMY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>=
+&nbsp;//SYSEXEC=20
+                        DD=20
+                        =
+DSN=3D&amp;&amp;SYSEXEC,DISP=3D(OLD,DELETE)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;<BR>&nbsp;//SYSTSPRT=20
+                        DD=20
+                        =
+SYSOUT=3D8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;//SYSTSIN=20
+                        DD=20
+                        =
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;<BR>&nbsp;PROF=20
+                        =
+MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;%TESTREX&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;/*&nbsp;&nbsp;<BR><BR>IBM=
+=20
+                        Doc-O on the subject:=20
+                        <BR><BR>3.10.5.3&nbsp;&nbsp;Rolling In a =
+Generation Data=20
+                        Set&nbsp;&nbsp;&nbsp;&nbsp;=C2=A9 Copyright IBM =
+Corp. 1987,=20
+                        =
+200<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Topic=20
+                        lines 1 to 24 of=20
+                        =
+4<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>If=20
+                        you code DISP=3D(NEW,CATLG) for a system-managed =
+GDG, when=20
+                        the system&nbsp;&nbsp;&nbsp;&nbsp;<BR>allocates =
+the data=20
+                        set, the system catalogs a new generation in a=20
+                        deferred<BR>roll-in state. When the system =
+performs=20
+                        end-of-job step processing,=20
+                        the&nbsp;&nbsp;&nbsp;<BR>system rolls the =
+deferred=20
+                        generation data set into the GDG.(very important =
+
+                        statement)<BR><BR>Generation data sets can be in =
+a=20
+                        deferred roll-in state if the job never reached =
+the=20
+                        <BR>end-of-job step or if they were allocated as =
+
+                        DISP=3D(NEW,KEEP) and the data <BR>set is not =
+system=20
+                        managed. Generation data sets in a deferred=20
+                        roll-in&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>state =
+can be=20
+                        referred to by their absolute generation =
+numbers. You=20
+                        can use<BR>the access method services command =
+ALTER=20
+                        ROLLIN to roll in=20
+                        =
+these&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>gene=
+ration=20
+                        data sets. <BR><BR>Best=20
+                    =
+Regards,<BR>Bruce<BR></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>=
+</SPAN></DIV></TD>
+          <TD id=3Drightcol style=3D"WIDTH: 143px" width=3D143>
+            <DIV class=3Dcont>
+            <DIV class=3Dwrapper>
+            <H4>Whitepapers</H4>
+            <DIV class=3Da>
+            <DIV class=3Db>
+            <DIV class=3Dc>
+            <DIV id=3Dwhitepapers>
+            <DIV class=3DhasJS onmouseover=3Djavascript:pauseDOMnews();=20
+            onmouseout=3Djavascript:restartDOMnews();>
+            <DIV id=3Dwpitems>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#25">Application =
+Security=20
+            Assessment As a Managed Service</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#24">Application =
+Security=20
+            for Financial Institutions - Under GLBA, FFIEC, and other=20
+            Laws</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#19">Better =
+security for=20
+            more users</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#26">Building =
+Blocks of=20
+            Transparent Web Security: Server-Gated =
+Cryptography</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#11">Business =
+Enablement=20
+            with On Demand Vulnerability Management</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#23">California =
+Identity=20
+            Theft Laws and Application Security - AB1950, SB1386, and=20
+            Beyond</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#15">CRM Total =
+Cost of=20
+            Ownership - Comparing Open Source Solutions to Proprietary=20
+            Solutions</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#12">Dynamic =
+Best=20
+            Practices of Vulnerability Management</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#17">Managing =
+the Life=20
+            Cycle of Encryption Keys with RSA* Key Manager</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#13">On-Demand =
+Security=20
+            Audits and Vulnerability Management</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#20">Protect =
+your digital=20
+            code and applications</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#16">Running a =
+Business on=20
+            Commercial Open Source Software</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#21">Secure your =
+Apache=20
+            Server - free trial</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#22">Secure your =
+MS IIS=20
+            Server - a How-To Guide </A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#18">SSL - =
+enabling a=20
+            trusted digital future for all</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#14">The Laws of =
+
+            Vulnerabilities: Six Axioms for Understanding Risk</A></DIV>
+            <DIV class=3Dlist><A=20
+            href=3D"http://www.tek-tips.com/whitepapers/#27">What Every =
+E-Business=20
+            Should Know about SSL Security and Consumer Trust=20
+            </A></DIV></DIV></DIV></DIV>
+            <DIV class=3Dlist><A class=3Dattention=20
+            href=3D"http://www.tek-tips.com/whitepapers/" =
+target=3Djobs>(See All=20
+            Whitepapers)</A></DIV></DIV></DIV></DIV></DIV>
+            <DIV class=3Dwrapper>
+            <H4>Tek-Tips Jobs</H4>
+            <DIV class=3Da>
+            <DIV class=3Db>
+            <DIV class=3Dc>
+            <DIV class=3Dlist><A class=3Dattention =
+href=3D"http://tek-tips.4jobs.com/"=20
+            target=3Djobs>Job Search</A></DIV>
+            <DIV class=3Dlist><A class=3Dattention=20
+            href=3D"http://tek-tips.4jobs.com/JS/Form/SignUpForm.asp"=20
+            target=3Djobs>Post Your Resume</A></DIV>
+            <DIV class=3Dlist><A class=3Dattention=20
+            =
+href=3D"http://tek-tips.4jobs.com/MKT/Content/EMP/Default.asp"=20
+            target=3Djobs>Post A Job =
+Opening</A></DIV></DIV></DIV></DIV></DIV>
+            <DIV class=3Dwrapper>
+            <H4>Back To Forum</H4>
+            <DIV class=3Da>
+            <DIV class=3Db>
+            <DIV class=3Dc><A class=3Dlist=20
+            =
+href=3D"http://www.tek-tips.com/threadminder.cfm?pid=3D277">Back To=20
+            REXX</A> </DIV></DIV></DIV></DIV>
+            <DIV class=3Dwrapper>
+            <H4=20
+            title=3D"Members voted most helpful by their peers over the =
+last 6 weeks">MVPs</H4>
+            <DIV class=3Da>
+            <DIV class=3Db>
+            <DIV class=3Dc>
+            <DIV class=3Dlist><A=20
+            =
+href=3D"http://www.tek-tips.com/userinfo.cfm?member=3Drexxhead">rexxhead<=
+/A></DIV>
+            <DIV class=3Dlist><A=20
+            =
+href=3D"http://www.tek-tips.com/userinfo.cfm?member=3Dkevinf2349">kevinf2=
+349</A></DIV>
+            <DIV class=3Dlist><A=20
+            title=3D"Click here to see the full list of MVPs for the =
+REXX forum"=20
+            =
+href=3D"http://www.tek-tips.com/tipmasters.cfm?pid=3D277"><B>(Full=20
+            List)</B></A></DIV></DIV></DIV></DIV></DIV></DIV></TD></TR>
+        <TR>
+          <TD colSpan=3D2>
+            <DIV id=3Dform>
+            <DIV class=3Dwrapper>
+            <H4><A name=3Dpostform>Start A New Thread</A></H4>
+            <DIV class=3Da>
+            <DIV class=3Db>
+            <DIV class=3Dc>
+            <H3>Posting in the Tek-Tips forums is a member-only =
+feature.</H3>
+            <P align=3Dcenter><A=20
+            href=3D"http://www.tek-tips.com/register.cfm"><B>Click Here =
+to join=20
+            Tek-Tips</B></A> and talk with other=20
+            members!</P></DIV></DIV></DIV></DIV>
+            <H5 align=3Dcenter>Promoting, selling, recruiting and =
+student=20
+            posting<BR>are not allowed in the forums.<BR><A=20
+            href=3D"http://www.tek-tips.com/market.cfm">Click here</A> =
+to find out=20
+            why.</H5>
+            <HR width=3D"50%">
+
+            <TABLE=20
+            style=3D"BORDER-RIGHT: black 1px solid; BORDER-TOP: black =
+1px solid; BACKGROUND: #fff; BORDER-LEFT: black 1px solid; =
+BORDER-BOTTOM: black 1px solid"=20
+            width=3D540 align=3Dcenter>
+              <TBODY>
+              <TR>
+                <TD=20
+                style=3D"PADDING-RIGHT: 3px; PADDING-LEFT: 3px; =
+PADDING-BOTTOM: 3px; PADDING-TOP: 3px">
+                  <H5 align=3Dcenter>LINK TO THIS FORUM!</H5>
+                  <DIV style=3D"FONT-SIZE: 9px">(Add Stickiness To Your =
+Site By=20
+                  Linking To This Professionally Managed Technical =
+Forum)</DIV>
+                  <DIV style=3D"FONT-SIZE: 11px"><B>TITLE:</B> REXX =
+Forum at=20
+                  Tek-Tips</DIV>
+                  <DIV style=3D"FONT-SIZE: 11px"><B>URL:</B>=20
+                  =
+http://www.tek-tips.com/threadminder.cfm?pid=3D277</DIV>
+                  <DIV style=3D"FONT-SIZE: 11px"><B>DESCRIPTION:</B> =
+REXX=20
+                  technical support forum and mutual help system for =
+computer=20
+                  professionals. Selling and recruiting=20
+              forbidden.</DIV></TD></TR></TBODY></TABLE><BR>&nbsp;=20
+        </DIV></TD></TR></TBODY></TABLE></TD></TR>
+  <TR vAlign=3Dtop>
+    <TD id=3Dfooter colSpan=3D2>
+      <HR>
+
+      <P style=3D"FONT-WEIGHT: bold; TEXT-ALIGN: center"><A =
+style=3D"COLOR: red"=20
+      href=3D"http://www.tek-tips.com/groups" target=3D_blank>Start A =
+Group</A> | <A=20
+      style=3D"COLOR: red" =
+href=3D"http://www.tecumsehgroup.com/opportunities.cfm"=20
+      target=3D_blank>Advertise With Us</A> | <A style=3D"COLOR: red"=20
+      href=3D"http://www.tecumsehgroup.com/opportunities.cfm" =
+target=3D_blank>E-mail=20
+      Our Members</A> | <A style=3D"COLOR: red"=20
+      href=3D"http://www.tek-tips.com/supportus.cfm">Donate</A> | <A=20
+      style=3D"COLOR: red"=20
+      =
+href=3D"javascript:openindex(600,400,'/pops/whitepaperinfo.cfm?w=3D500&am=
+p;h=3D400')">Publish=20
+      A Whitepaper</A></P>
+      <HR>
+
+      <P style=3D"FONT-SIZE: 10px" align=3Dcenter>Copyright =C2=A9 =
+1998-2006 <A=20
+      href=3D"http://www.tecumsehgroup.com/">Tecumseh Group, Inc.</A> =
+All rights=20
+      reserved.<BR>Unauthorized reproduction or linking forbidden =
+without=20
+      express written permission.</P></TD></TR></TBODY></TABLE>
+<DIV id=3Ddropin>
+<DIV align=3Dright><A onclick=3D"dismissbox();return false"=20
+href=3D"http://www.tek-tips.com/viewthread.cfm?qid=3D1143493&amp;page=3D1=
+#">Close Box=20
+</A></DIV>
+<H1>Join Tek-Tips<SUP>=C2=AE</SUP> Today!</H1>
+<P align=3Dcenter>Join your peers on the Internet's largest technical =
+computer=20
+professional community.<BR>It's easy to <A=20
+href=3D"http://www.tek-tips.com/register.cfm"><B>join</B></A> and it's =
+free.</P>
+<P><B>Here's Why Members Love Tek-Tips Forums:</B></P>
+<UL>
+  <LI><IMG style=3D"MARGIN-RIGHT: 25px" height=3D55 alt=3D"Tek-Tips =
+Forums"=20
+  src=3D"http://www.tek-tips.com/images/droplogo.gif" width=3D100 =
+align=3Dright=20
+  vspace=3D10>Talk To Other Members=20
+  <LI>Notification Of Responses To Questions=20
+  <LI>Favorite Forums One Click Access=20
+  <LI>Keyword Search Of All Posts, And More... </LI></UL>
+<P align=3Dcenter><A=20
+href=3D"http://www.tek-tips.com/register.cfm"><B>Register</B></A> now =
+while it's=20
+still free!</P>
+<P align=3Dcenter>Already a member? <A=20
+href=3D"javascript:dismissbox()"><B>Close</B></A> this window and log =
+in.</P>
+<P align=3Dcenter><FONT size=3D3><A=20
+href=3D"http://www.tek-tips.com/register.cfm"><B>Join=20
+Us</B></A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;<A=20
+href=3D"javascript:dismissbox()"><B>Close</B></A></FONT></P></DIV><!-- =
+start Vibrant Media IntelliTXT Tooltip style sheet -->
+<STYLE type=3Dtext/css>.iTt {
+	BORDER-RIGHT: black 1px solid; PADDING-RIGHT: 2px; BORDER-TOP: black =
+1px solid; PADDING-LEFT: 2px; FONT-WEIGHT: normal; FONT-SIZE: 11px; =
+PADDING-BOTTOM: 2px; BORDER-LEFT: black 1px solid; COLOR: black; =
+PADDING-TOP: 2px; BORDER-BOTTOM: black 1px solid; FONT-STYLE: normal; =
+FONT-FAMILY: Verdana, Arial, Helvetica; BACKGROUND-COLOR: lightyellow
+}
+</STYLE>
+<!-- end Vibrant Media IntelliTXT style sheet --><!-- start Vibrant =
+Media IntelliTXT script section -->
+<SCRIPT language=3Djavascript=20
+src=3D"http://itxt.vibrantmedia.com/intellitxt/front.asp?IPID=3D1109&amp;=
+MK=3D5&amp;SN=3Dwrapper,footer"></SCRIPT>
+<!-- end Vibrant Media IntelliTXT script section -->
+<SCRIPT language=3Djavascript1.2>initDOMnews();</SCRIPT>
+</BODY></HTML>
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.tek-tips.com/images/logo.gif
+
+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
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.tek-tips.com/images/partnerbtn120x60.gif
+
+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
+ERAAOw==
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.google.com/logos/Logo_25wht.gif
+
+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
+5JRXbvnlNAUEADs=
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.tek-tips.com/images/droplogo.gif
+
+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
+UaiZwPKat2rvBAQAOw==
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.tek-tips.com/images/btn-login.gif
+
+R0lGODlhLQAWALMAAAAAACwaGkRERI4AANcAAP8AAP0FBf8dHf9JSf9kZAD/AP+MjP+urv/Q0P//
+///w8CH5BAkAAAoALAAAAAAtABYAAAj+ABUIFCgggMGDCBMqXJhQwMCHCgoOIFCgosWLGDNqrEiA
+wIAADh8GGLCxpEmTHwcKIHmypcuKA0IGeEmzZYCILE0eOKBxp4GLPwsErTi0QMwAFAsceLAAowEG
+Dhw8SGDxaVQHTQsscGAgAdaKXndyNJj0wNeLUBssaOCAaoG0DB601crV64OfYXkWIBAAgEWzWSua
+ZfBz6V0EDhgI/rq1a9SmYS8C8Ls4cAGvCCxuPbA1M9GKje3ejWxx8t+zoB3ovewAAVSeCBLIput4
+6wLSFU1XvrjZIubeW6XSDtuAqWrJlJWiZu2WLufWShEUH64asdzVBXQrt2y2QeEHhxNm/zQwPfRx
+tsdLJ+/OoD3VrQ3izn3rID7bBtRhR8UOAOniq18ZENxUVUElFQM8macXW6vxtVJLBmBXlYQuxaTA
+TDVlqNFNOGnoIUwhXZjThy+lJNJISZGoUUcfcQjRhQzFKONCEAUEADs=
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.tek-tips.com/images/btn-join.gif
+
+R0lGODlhOQAWALMAAAAAACwaGkRERI4AANcAAP8AAP0FBf8dHf9JSf9kZAD/AP+MjP+urv/Q0P//
+///w8CH5BAkAAAoALAAAAAA5ABYAAAj+ABUIFCgggMGDCBMqXMiwoYCBEBUUHECggMWLBQxoxJjR
+AMeOGT+KtEiAwIAADyEGGDDSokaPGDdy3Aiz5ciTAwWwtPlyZs2LNG3aHJAygNCOP0H6DHl0ZACJ
+O4HGPHBAJs2fHq/GnFpTZgGiASpePOBggUUEDxw4aHDAYoMGBRY4SGBRbk8DDhhYJGvWAAO1DxC4
+fdC2AAGDYveWLUD2AYO/Dzy+jbvWo12aeRWblctgwQPCBRqANhwAAEe+Bf4KNpBg8WS5cynfzcx4
+MYMHFhMEDo37IgDTGFE/gNvRcWi4cocbuJyVNmrOgi8yIG7x9+myePV2nPy67FzmGZ3nLz6Qdi3d
+1NqrAx+LnbZG7sgdGBgOPrvmvQkaqBW8IH0B64wJhkBskxWnV3esOZDWXcbVloABCETX2mZm+Qbc
+bQW0JphqGU14nGzzqXWXaB61RtdnHg1o1gHRqVdXXvq1RVZekEkWX4ki0vRXA7c50JZcDXjmwIbU
+/RcWY/o9cF4BCOi3VmEIZrQgTQf8peB5VQJ23nQXHabTWEkxVlVSXgGV1V5VzZSmSEQpYJRQPcUU
+ZlBNifQUVHCWqZScTNWJUZsCrcSTnnqCFGZTOKm0UmJykjnnmXWWdNKdEbnZ0KWYZopQRAEBADs=
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www.tek-tips.com/images/btn-search.gif
+
+R0lGODlhOQAWALMAAAAAACwaGkRERI4AANcAAP8AAP0FBf8dHf9JSf9kZAD/AP+MjP+urv/Q0P//
+///w8CH5BAkAAAoALAAAAAA5ABYAAAj+ABUIFCggAICDCBMqXMiw4cIAAQQMnKig4AACBTJq3Mix
+o8ePHQkQGBCRYoABIFOqXOmR5EABKFnKnPlxgEQFAWjq3JkxQMWYGw8c0GigqFEDRJEmLepR6Eal
+BZhmtBkAo0YEDxw4YIB0gdavCTQ2cIBA7NcHXDMeGLt1aAKyGb0OLUAAotWoDx4sGLuggFcGgBmU
+LXBAa9+MDdAy4IsX7VgGBd4OlpuxLoCNCBwkMLAWMmWObxMrbdAAqYEHDSJrRvzggOS4DuYWOBjU
+gV7ZcoUeGN3gdQHSSA+gLsDggdLdqhEI/Tz78kavttNC/zq08ALrrElnDUu649uvWmW20+aIoPhW
+vw4WqL+e3ED336htD36/8W3gseKdq91MWLRXqBkxYFtWsf1W2luHFacUApv5xtx4Gb0VlnvGMUcY
+aoDx5V5q7sElYVSiOVhgRhBeqNdj6AXGQAIf4lXae5lxmNdi6SUHm3hVYUZgA0NNZ5iAuMVGn4Bl
+raVVWiLOVRdMHHEmG08fIbeSTThBaeVKPv105ZYdUSnQSVyG6dJEEF0Upk4ikZQlRTgZ5NCbcMIJ
+0ZoCBQQAOw==
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: text/css;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.tek-tips.com/css/frame.css
+
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; PADDING-TOP: 0px
+}
+H1 {
+	MARGIN: 0px
+}
+H2 {
+	MARGIN: 0px
+}
+H3 {
+	MARGIN: 0px
+}
+H4 {
+	MARGIN: 0px
+}
+H5 {
+	MARGIN: 0px
+}
+H6 {
+	MARGIN: 0px
+}
+TABLE {
+	BORDER-COLLAPSE: collapse
+}
+TD {
+	BORDER-TOP-WIDTH: 0px; PADDING-RIGHT: 0px; PADDING-LEFT: 0px; =
+BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; PADDING-BOTTOM: 0px; =
+MARGIN: 0px; PADDING-TOP: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+TH {
+	BORDER-TOP-WIDTH: 0px; PADDING-RIGHT: 0px; PADDING-LEFT: 0px; =
+BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; PADDING-BOTTOM: 0px; =
+MARGIN: 0px; PADDING-TOP: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: =
+0px; BORDER-RIGHT-WIDTH: 0px
+}
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: text/css;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.tek-tips.com/css/main.css
+
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; PADDING-TOP: 0px; BACKGROUND-COLOR: #fcfcfc
+}
+BODY {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+TD {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+TH {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+DIV {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+H1 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H2 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H3 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H4 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H5 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H6 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H6 {
+	WHITE-SPACE: nowrap
+}
+A {
+	COLOR: #00074f
+}
+IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: =
+0px; BORDER-RIGHT-WIDTH: 0px
+}
+FORM {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; PADDING-TOP: 0px
+}
+TABLE {
+	BORDER-COLLAPSE: collapse
+}
+.instructions {
+	FONT-WEIGHT: normal; MARGIN: 5px; TEXT-ALIGN: center
+}
+#header {
+	BACKGROUND: url(/images/hdr-bg.gif) #647ec4 repeat-x left top; WIDTH: =
+100%; HEIGHT: 114px
+}
+#header .logo {
+	WIDTH: 210px; HEIGHT: 114px
+}
+#header .links {
+	BACKGROUND: url(/images/hdr-links-bg.gif) repeat-x; FLOAT: right; =
+TEXT-ALIGN: right
+}
+#header .links DIV {
+	PADDING-RIGHT: 10px; PADDING-LEFT: 20px; BACKGROUND: =
+url(/images/hdr-links-left.gif) no-repeat; PADDING-BOTTOM: 10px; COLOR: =
+#00074f; PADDING-TOP: 11px
+}
+#header .links A {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #fff; TEXT-DECORATION: none
+}
+#header .promo {
+	FONT-WEIGHT: bold; COLOR: #00074f; PADDING-TOP: 15px; TEXT-ALIGN: left
+}
+#header .promo A {
+	FONT-SIZE: 12px; COLOR: #f33
+}
+#header .links A:hover {
+	COLOR: #00074f
+}
+#header .promo A:hover {
+	COLOR: #647ec4
+}
+.banner {
+	CLEAR: both; MARGIN-TOP: 5px
+}
+#bodycontent {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; =
+PADDING-TOP: 5px
+}
+H2 {
+	FONT-SIZE: 16px
+}
+H3 {
+	FONT-SIZE: 14px
+}
+H4 {
+	FONT-SIZE: 12px
+}
+TABLE#main {
+	WIDTH: 100%
+}
+TABLE#main TD {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; VERTICAL-ALIGN: top; PADDING-TOP: 0px
+}
+#pagetitle H1 {
+	FONT-SIZE: 20px; COLOR: #00074f
+}
+#pagetitle .title {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; =
+PADDING-TOP: 5px
+}
+#search {
+	BORDER-TOP: #000 1px solid; BACKGROUND: url(/images/srchfrm-bg2.gif) =
+#999999 repeat-x 50% bottom
+}
+#search .s {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; PADDING-BOTTOM: 10px; =
+PADDING-TOP: 3px
+}
+#search TD {
+	PADDING-RIGHT: 6px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; =
+VERTICAL-ALIGN: middle; PADDING-TOP: 1px
+}
+#tabs {
+	BACKGROUND: url(/images/conthead.gif) #f6f6f6 repeat-x 50% bottom; =
+HEIGHT: 24px
+}
+#tabs .b {
+	BORDER-RIGHT: #fff 1px solid; DISPLAY: inline; FLOAT: left; MARGIN: 0px =
+0px 0px 5px; BORDER-LEFT: #666 1px solid
+}
+#tabs A {
+	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 15px; DISPLAY: block; =
+PADDING-LEFT: 15px; FONT-WEIGHT: bold; FONT-SIZE: 12px; FLOAT: left; =
+PADDING-BOTTOM: 6px; BORDER-LEFT: #fff 1px solid; WIDTH: 40px; COLOR: =
+#111; PADDING-TOP: 4px; TEXT-DECORATION: none
+}
+#tabs A:hover {
+	PADDING-RIGHT: 15px; PADDING-LEFT: 15px; BACKGROUND: =
+url(/images/conthead-over.gif) repeat-x 50% bottom; PADDING-BOTTOM: 7px; =
+COLOR: #666; PADDING-TOP: 3px; TEXT-DECORATION: none
+}
+#tabs #current {
+	BACKGROUND-IMAGE: url(/images/conthead-over.gif)
+}
+#tabs #current A {
+	COLOR: #999
+}
+.tagline {
+	PADDING-RIGHT: 2px; FONT-WEIGHT: bold; FONT-SIZE: 9px; MARGIN-BOTTOM: =
+8px; COLOR: #fff; LINE-HEIGHT: 1em; FONT-FAMILY: Arial, Helvetica, =
+sans-serif
+}
+#leftcol {
+	BORDER-RIGHT: #000 1px solid; PADDING-RIGHT: 10px; PADDING-LEFT: 5px; =
+BACKGROUND: url(/images/lcol-bg.gif) #f6f6f6 repeat-y left top; =
+PADDING-BOTTOM: 0px; WIDTH: 185px; PADDING-TOP: 0px; BORDER-BOTTOM: #000 =
+2px solid
+}
+#leftcol .cont {
+	BORDER-RIGHT: #000 1px solid; PADDING-RIGHT: 5px; PADDING-LEFT: 2px; =
+PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+#rightcol {
+	BACKGROUND: url(/images/rcol-bg.gif) #647ec4 repeat-y right 50%; WIDTH: =
+143px! important; BORDER-BOTTOM: #000 1px solid; max-width: 143px
+}
+#rightcol .cont {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 7px; BACKGROUND: =
+url(/images/coltop.gif) repeat-x 50% top; PADDING-BOTTOM: 0px; =
+BORDER-LEFT: #000 1px solid; PADDING-TOP: 13px
+}
+.wrapper {
+	LINE-HEIGHT: 1
+}
+.wrapper DIV {
+	FONT-SIZE: 11px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-ALIGN: =
+center
+}
+.wrapper TD {
+	FONT-SIZE: 11px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-ALIGN: =
+center
+}
+UNKNOWN {
+	LINE-HEIGHT: 1
+}
+#leftcol .wrapper {
+	BACKGROUND: url(/images/lcontbdr-r.gif) #ebf0ff repeat-y right top
+}
+#leftcol .wrapper .a {
+	BACKGROUND: url(/images/rcontbdr-l.gif) repeat-y left top
+}
+#leftcol .wrapper .b {
+	BACKGROUND: url(/images/lcontbdr-b.gif) repeat-x left bottom
+}
+#leftcol .wrapper .c {
+	PADDING-RIGHT: 8px; PADDING-LEFT: 2px; BACKGROUND: =
+url(/images/lcontbdr-br.gif) no-repeat right bottom; PADDING-BOTTOM: =
+10px; PADDING-TOP: 0px
+}
+#rightcol .wrapper {
+	BACKGROUND: url(/images/rcontbdr-l.gif) #ebf0ff repeat-y left top
+}
+#rightcol .wrapper .a {
+	BACKGROUND: url(/images/rcontbdr-l.gif) repeat-y right top
+}
+#rightcol .wrapper .b {
+	BACKGROUND: url(/images/lcontbdr-b.gif) repeat-x left bottom
+}
+#rightcol .wrapper .c {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 4px; BACKGROUND: =
+url(/images/rcontbdr-bl.gif) no-repeat left bottom; PADDING-BOTTOM: =
+10px; PADDING-TOP: 0px
+}
+.wrapper .list {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-SIZE: 11px; PADDING-BOTTOM: =
+2px; PADDING-TOP: 2px; FONT-FAMILY: Arial, Helvetica, sans-serif; =
+voice-family: inherit
+}
+UNKNOWN {
+	LINE-HEIGHT: 1
+}
+.wrapper H4 {
+	BORDER-RIGHT: #000 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #000 1px =
+solid; PADDING-LEFT: 5px; FONT-WEIGHT: bold; FONT-SIZE: 12px; =
+BACKGROUND: url(/images/conthead.gif) repeat-x; PADDING-BOTTOM: 5px; =
+BORDER-LEFT: #000 1px solid; CURSOR: default; COLOR: #111; PADDING-TOP: =
+3px; BORDER-BOTTOM: #000 0px solid; TEXT-ALIGN: left
+}
+#leftcol .wrapper H4 {
+	MARGIN-RIGHT: 6px
+}
+.wrapper A {
+	FONT-WEIGHT: bold; COLOR: #10296b; TEXT-DECORATION: none
+}
+.wrapper A:visited {
+	FONT-WEIGHT: bold; COLOR: #10296b; TEXT-DECORATION: none
+}
+.wrapper A:active {
+	FONT-WEIGHT: bold; COLOR: #10296b; TEXT-DECORATION: none
+}
+.wrapper A:hover {
+	COLOR: #c33; TEXT-DECORATION: underline
+}
+.wrapper UL {
+	PADDING-LEFT: 0px; MARGIN: 0px 0px 0px 15px; TEXT-ALIGN: left
+}
+.threadlist H5 {
+	COLOR: #000; PADDING-TOP: 5px; TEXT-ALIGN: left
+}
+.threadlist DIV {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 5px; FONT-WEIGHT: normal; =
+PADDING-BOTTOM: 1px; MARGIN-LEFT: 12px; TEXT-INDENT: -12px; PADDING-TOP: =
+1px; TEXT-ALIGN: left
+}
+#pass TD {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-SIZE: 7pt; PADDING-BOTTOM: =
+2px; MARGIN: 0px; PADDING-TOP: 2px; TEXT-ALIGN: center
+}
+#form {
+	BORDER-BOTTOM: #000 2px solid; BACKGROUND-COLOR: #ebf0ff
+}
+#form H3 {
+	TEXT-ALIGN: center
+}
+#form .c {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; =
+PADDING-TOP: 5px
+}
+.threads {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 3px; PADDING-BOTTOM: 3px; =
+PADDING-TOP: 3px
+}
+.threads .row {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; PADDING-BOTTOM: 0px; =
+PADDING-TOP: 0px
+}
+.threads .handle {
+	FLOAT: left
+}
+.threads .responses {
+	PADDING-LEFT: 5px; FLOAT: right; WIDTH: 80px; WHITE-SPACE: nowrap; =
+TEXT-ALIGN: right
+}
+.threads .votes {
+	CLEAR: right; FLOAT: right
+}
+.threads .date {
+	FLOAT: right; TEXT-ALIGN: right
+}
+.r1 {
+	BACKGROUND-COLOR: #ebf0ff
+}
+.title0 {
+	FLOAT: left; PADDING-TOP: 2px
+}
+.title1 {
+	FLOAT: left; PADDING-TOP: 2px
+}
+.title0 A {
+	FONT-SIZE: 16px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.title1 A {
+	FONT-SIZE: 16px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.title0 A {
+	FONT-WEIGHT: bold
+}
+.title1 A {
+	FONT-WEIGHT: normal
+}
+.nextlink {
+	MARGIN-TOP: 10px; TEXT-ALIGN: center
+}
+.nextlink A {
+	FONT-WEIGHT: bold; FONT-SIZE: 18px; COLOR: #f00
+}
+#footer {
+	CLEAR: both; MARGIN: 0px; TEXT-ALIGN: center
+}
+#footer .cont {
+	PADDING-BOTTOM: 5px; TEXT-ALIGN: center
+}
+#footer DIV {
+	FONT-SIZE: 8pt; TEXT-ALIGN: center
+}
+#footer HR {
+	MARGIN: 0px 200px
+}
+.new {
+	FONT-WEIGHT: bold; COLOR: #f00
+}
+.error {
+	FONT-WEIGHT: bold; COLOR: #f00
+}
+.attention {
+	FONT-WEIGHT: bold; COLOR: #f00
+}
+.attention:link {
+	FONT-WEIGHT: bold; COLOR: #f00
+}
+.post {
+	WIDTH: 100%; BORDER-COLLAPSE: collapse
+}
+.post TABLE {
+	WIDTH: 100%; BORDER-COLLAPSE: collapse
+}
+.post TABLE .date {
+	WIDTH: 100px; TEXT-ALIGN: right
+}
+.post TABLE .handle A {
+	FONT-WEIGHT: bold
+}
+.post TABLE TD {
+	PADDING-RIGHT: 10px; PADDING-LEFT: 10px; PADDING-BOTTOM: 10px; =
+PADDING-TOP: 10px
+}
+.postinst TD {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; WIDTH: 33%; TEXT-ALIGN: center
+}
+.posttable {
+	BORDER-RIGHT: gray 1px inset; BORDER-TOP: gray 1px inset; BACKGROUND: =
+#eee; BORDER-LEFT: gray 1px inset; WIDTH: 565px; BORDER-BOTTOM: gray 1px =
+inset
+}
+.posttable TH {
+	BORDER-RIGHT: #ddd 1px solid; BORDER-TOP: #ddd 1px solid; PADDING-LEFT: =
+5px; VERTICAL-ALIGN: top; BORDER-LEFT: #ddd 1px solid; COLOR: #f00; =
+BORDER-BOTTOM: #ddd 1px solid; TEXT-ALIGN: left
+}
+.posttable TD {
+	BORDER-RIGHT: #ddd 1px solid; BORDER-TOP: #ddd 1px solid; FONT-SIZE: =
+11px; VERTICAL-ALIGN: top; BORDER-LEFT: #ddd 1px solid; BORDER-BOTTOM: =
+#ddd 1px solid
+}
+.posttable A {
+	TEXT-DECORATION: underline
+}
+.posttable TABLE TD {
+	BORDER-TOP-WIDTH: 0px; PADDING-LEFT: 10px; FONT-WEIGHT: bold; =
+BORDER-LEFT-WIDTH: 0px; FONT-SIZE: 13px; BORDER-BOTTOM-WIDTH: 0px; =
+WIDTH: 50%; TEXT-ALIGN: left; BORDER-RIGHT-WIDTH: 0px
+}
+#dropin {
+	BORDER-RIGHT: black 4px solid; PADDING-RIGHT: 5px; BORDER-TOP: black =
+4px solid; PADDING-LEFT: 5px; LEFT: 150px; VISIBILITY: hidden; =
+PADDING-BOTTOM: 5px; BORDER-LEFT: black 4px solid; WIDTH: 400px; =
+PADDING-TOP: 5px; BORDER-BOTTOM: black 4px solid; POSITION: absolute; =
+TOP: 50px; HEIGHT: 300px; BACKGROUND-COLOR: #ffffee
+}
+#dropin H1 {
+	FONT-SIZE: 18px; TEXT-ALIGN: center
+}
+#dropin P {
+	FONT-SIZE: 10px
+}
+#dropin LI {
+	FONT-SIZE: 10px
+}
+#dropin A {
+	COLOR: #cc0000
+}
+TABLE.threads {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; WIDTH: 100%; PADDING-TOP: 0px; BORDER-COLLAPSE: collapse
+}
+TABLE.threads TD DIV {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 2px; PADDING-BOTTOM: 2px; MARGIN: =
+0px; PADDING-TOP: 2px
+}
+#whitepapers .hasJS {
+	MARGIN-BOTTOM: 3px; OVERFLOW: hidden; POSITION: relative; HEIGHT: 120px
+}
+#whitepapers #wpitems {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; LEFT: 0px; PADDING-BOTTOM: 0px; =
+MARGIN: 0px 0.5em; PADDING-TOP: 0px; POSITION: absolute; TOP: 120px
+}
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: text/css;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.tek-tips.com/css/tgml.css
+
+.post TABLE TD.tgml {
+	PADDING-RIGHT: 5px! important; PADDING-LEFT: 5px! important; =
+PADDING-BOTTOM: 3px! important; PADDING-TOP: 3px! important
+}
+.tgml #code {
+	BORDER-RIGHT: 2px inset; BORDER-TOP: 2px inset; MARGIN: 15px 20px; =
+BORDER-LEFT: 2px inset; BORDER-BOTTOM: 2px inset
+}
+.tgml #code H4 {
+	BORDER-TOP-WIDTH: 0px; PADDING-RIGHT: 2px; PADDING-LEFT: 4px; =
+FONT-WEIGHT: bold; BORDER-LEFT-WIDTH: 0px; FONT-SIZE: 10px; =
+BORDER-BOTTOM-WIDTH: 0px; PADDING-BOTTOM: 2px; MARGIN: 0px; =
+TEXT-TRANSFORM: uppercase; COLOR: white; PADDING-TOP: 1px; =
+BACKGROUND-COLOR: #777! important; BORDER-RIGHT-WIDTH: 0px
+}
+.tgml #code .body {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; =
+PADDING-TOP: 5px; FONT-STYLE: normal; FONT-FAMILY: monospace; =
+BACKGROUND-COLOR: #ffffff
+}
+.tgml #code .body DIV {
+	FONT-STYLE: normal; FONT-FAMILY: monospace
+}
+#code .body SPAN {
+	FONT-STYLE: normal; FONT-FAMILY: monospace
+}
+.tgml BLOCKQUOTE {
+	BORDER-RIGHT: 2px inset; BORDER-TOP: 2px inset; MARGIN: 15px 20px; =
+BORDER-LEFT: 2px inset; BORDER-BOTTOM: 2px inset; FONT-STYLE: italic; =
+FONT-FAMILY: serif; BACKGROUND-COLOR: #ffffff
+}
+.tgml BLOCKQUOTE H4 {
+	BORDER-TOP-WIDTH: 0px; PADDING-RIGHT: 2px; PADDING-LEFT: 4px; =
+FONT-WEIGHT: bold; BORDER-LEFT-WIDTH: 0px; FONT-SIZE: 11px; =
+BORDER-BOTTOM-WIDTH: 0px; PADDING-BOTTOM: 2px; MARGIN: 0px; COLOR: #00c; =
+PADDING-TOP: 1px; FONT-STYLE: normal; FONT-FAMILY: =
+Tahoma,Geneva,Arial,sans-serif; BACKGROUND-COLOR: #9ff! important; =
+BORDER-RIGHT-WIDTH: 0px
+}
+.tgml BLOCKQUOTE .body {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; FONT-SIZE: 1.2em; =
+PADDING-BOTTOM: 5px; PADDING-TOP: 5px; FONT-STYLE: italic; FONT-FAMILY: =
+serif
+}
+.tgml BLOCKQUOTE .body .body {
+	FONT-SIZE: 100%
+}
+.tgml BLOCKQUOTE DIV {
+	FONT-STYLE: italic; FONT-FAMILY: serif
+}
+.tgml BLOCKQUOTE SPAN {
+	FONT-STYLE: italic; FONT-FAMILY: serif
+}
+.tgml .signature {
+	MARGIN-LEFT: 25px
+}
+UNKNOWN {
+	LIST-STYLE-POSITION: inside
+}
+UNKNOWN {
+	LIST-STYLE-POSITION: outside
+}
+.tgml A {
+	FONT-WEIGHT: bold
+}
+.tgml A:hover {
+	COLOR: #cc3333
+}
+.tgml .small {
+	FONT-SIZE: 7pt
+}
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: text/css;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.tek-tips.com/css/printthread.css
+
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; PADDING-TOP: 0px
+}
+BODY {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+TD {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+TH {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+DIV {
+	FONT-SIZE: 10pt; FONT-FAMILY: Tahoma,Arial, Helvetica, sans-serif
+}
+H1 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H2 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H3 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H4 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H5 {
+	MARGIN: 0px; COLOR: #00074f
+}
+H6 {
+	MARGIN: 0px; COLOR: #00074f
+}
+A {
+	COLOR: #0000cc
+}
+IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: =
+0px; BORDER-RIGHT-WIDTH: 0px
+}
+FORM {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; PADDING-TOP: 0px
+}
+TABLE {
+	BORDER-COLLAPSE: collapse
+}
+.instructions {
+	FONT-WEIGHT: normal; MARGIN: 5px; TEXT-ALIGN: center
+}
+#header {
+	DISPLAY: none! important
+}
+header  {
+	DISPLAY: none! important
+}
+#search {
+	DISPLAY: none! important
+}
+#tabs {
+	DISPLAY: none! important
+}
+#leftcol {
+	DISPLAY: none! important
+}
+#rightcol {
+	DISPLAY: none! important
+}
+#form {
+	DISPLAY: none! important
+}
+.posttable {
+	DISPLAY: none! important
+}
+.cfdebug {
+	DISPLAY: none! important
+}
+.cfdebuglge {
+	DISPLAY: none! important
+}
+.tools {
+	DISPLAY: none! important
+}
+.postinst {
+	DISPLAY: none! important
+}
+#footer HR {
+	DISPLAY: none! important
+}
+#footer IMG {
+	DISPLAY: none! important
+}
+.plug {
+	DISPLAY: none! important
+}
+#bodycontent {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; =
+PADDING-TOP: 5px
+}
+H3 {
+	FONT-SIZE: 14px
+}
+H4 {
+	FONT-SIZE: 12px
+}
+TABLE#main {
+	WIDTH: 100%
+}
+TABLE#main TD {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: =
+0px; VERTICAL-ALIGN: top; PADDING-TOP: 0px
+}
+#pagetitle H2 {
+	FONT-SIZE: 25px
+}
+#pagetitle H1 {
+	FONT-SIZE: 20px; COLOR: #00074f
+}
+#pagetitle .title {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; =
+PADDING-TOP: 5px
+}
+.threads {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 3px; PADDING-BOTTOM: 3px; =
+PADDING-TOP: 3px
+}
+.threads .row {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; PADDING-BOTTOM: 0px; =
+PADDING-TOP: 0px
+}
+.threads .handle {
+	FLOAT: left
+}
+.threads .responses {
+	PADDING-LEFT: 5px; FLOAT: right; WIDTH: 80px; WHITE-SPACE: nowrap; =
+TEXT-ALIGN: right
+}
+.threads .votes {
+	CLEAR: right; FLOAT: right
+}
+.threads .date {
+	CLEAR: left; FLOAT: right; TEXT-ALIGN: right
+}
+.r1 {
+	BACKGROUND-COLOR: #ebf0ff
+}
+.title0 {
+	FLOAT: left; PADDING-TOP: 2px
+}
+.title1 {
+	FLOAT: left; PADDING-TOP: 2px
+}
+.title0 A {
+	FONT-SIZE: 16px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.title1 A {
+	FONT-SIZE: 16px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.title0 A {
+	FONT-WEIGHT: bold
+}
+.title1 A {
+	FONT-WEIGHT: normal
+}
+.post {
+	MARGIN: 20px 0px; BORDER-BOTTOM: silver 1px solid
+}
+.post {
+	WIDTH: 100%; BORDER-COLLAPSE: collapse
+}
+.post TABLE {
+	WIDTH: 100%; BORDER-COLLAPSE: collapse
+}
+.post TABLE .date {
+	WIDTH: 90px; TEXT-ALIGN: right
+}
+.post TABLE .handle A {
+	FONT-WEIGHT: bold
+}
+.post TABLE TD {
+	PADDING-RIGHT: 10px; PADDING-LEFT: 10px; PADDING-BOTTOM: 10px; =
+PADDING-TOP: 10px
+}
+.post TABLE TD.tgml {
+	PADDING-RIGHT: 5px! important; PADDING-LEFT: 5px! important; =
+PADDING-BOTTOM: 20px! important; PADDING-TOP: 3px! important
+}
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.tek-tips.com/jsource.js
+
+// FRAME BUSTER
+  if (window.top !=3D window) {
+      window.top.location.replace (window.location.href);
+  }
+
+function updateWin(url) {
+	updateWindow =3D =
+window.open(url,'update','toolbar=3D0,location=3D0,directories=3D0,status=
+=3D0,menubar=3D0,scrollbars=3D0,resizable=3D1,width=3D455,height=3D570');=
+
+ }
+/* OPENS A POPUP WINDOW OF A SPECIFIED SIZE */
+function openindex(width,height,theurl,scrollbars) {=20
+	OpenWindow=3Dwindow.open(theurl, "newwin", "height=3D"+height+", =
+width=3D" + width + ",toolbar=3Dno,scrollbars=3D" + scrollbars + =
+",menubar=3Dno,resizable=3Dyes");
+self.name=3D"main";
+}
+
+function popforgotpassword () {
+	openindex(430,200,'/pops/forgotpassword.cfm',0);
+}
+function rememberme () {
+	openindex(430,255,'/pops/rememberme.cfm',0);
+}
+function poparchive(qid,turn) {
+	openindex(480,360,'/pops/archive.cfm?qid=3D' + qid + '&turn=3D' + =
+turn,1);
+}
+
+function cont(email) {
+	var qry =3D "";
+	var win =3D "/pops/contact.cfm";
+	var left =3D (screen.width/2) - 300;
+	var top =3D (screen.height/2) - 215;
+	if (email.length > 0) qry =3D "?email=3D" + email;=20
+	OpenWindow =3D null;
+	OpenWindow =3D window.open(win + qry, "newwin", 'height=3D430, =
+width=3D600,toolbar=3Dno,scrollbars=3D' + 1 + =
+',menubar=3Dno,resizable=3Dyes,status=3Dno,left=3D'+left+',top=3D'+top+',=
+screenX=3D'+left+',screenY=3D'+top);
+	OpenWindow.focus();
+	self.name =3D "main";
+}
+
+function conterr() {
+	var win =3D "/pops/contacterr.cfm";
+	var left =3D (screen.width/2) - 300;
+	var top =3D (screen.height/2) - 215;
+	OpenWindow =3D null;
+	OpenWindow =3D window.open(win, "newwin", 'height=3D430, =
+width=3D600,toolbar=3Dno,scrollbars=3D' + 1 + =
+',menubar=3Dno,resizable=3Dyes,status=3Dno,left=3D'+left+',top=3D'+top+',=
+screenX=3D'+left+',screenY=3D'+top);
+	OpenWindow.focus();
+	self.name =3D "main";
+}
+
+// Drop-in content box- By Dynamic Drive
+// For full source code and more DHTML scripts, visit =
+http://www.dynamicdrive.com
+// This credit MUST stay intact for use
+
+var ie=3Ddocument.all
+var dom=3Ddocument.getElementById
+var ns4=3Ddocument.layers
+var calunits=3Ddocument.layers? "" : "px"
+
+var bouncelimit=3D32 //(must be divisible by 8)
+var direction=3D"up"
+
+function initbox(){
+if (!dom&&!ie&&!ns4)
+return
+crossobj=3D(dom)?document.getElementById("dropin").style : ie? =
+document.all.dropin : document.dropin
+scroll_top=3D(ie)? truebody().scrollTop : window.pageYOffset
+crossobj.top=3Dscroll_top-250+calunits
+crossobj.visibility=3D(dom||ie)? "visible" : "show"
+dropstart=3DsetInterval("dropin()",50)
+}
+
+function dropin(){
+scroll_top=3D(ie)? truebody().scrollTop : window.pageYOffset
+if (parseInt(crossobj.top)<80+scroll_top)
+crossobj.top=3DparseInt(crossobj.top)+40+calunits
+else{
+clearInterval(dropstart)
+bouncestart=3DsetInterval("bouncein()",50)
+}
+}
+
+function bouncein(){
+crossobj.top=3DparseInt(crossobj.top)-bouncelimit+calunits
+if (bouncelimit<0)
+bouncelimit+=3D8
+bouncelimit=3Dbouncelimit*-1
+if (bouncelimit=3D=3D0){
+clearInterval(bouncestart)
+}
+}
+
+function dismissbox(){
+if (window.bouncestart) clearInterval(bouncestart)
+crossobj.visibility=3D"hidden"
+}
+
+function truebody(){
+return (document.compatMode && document.compatMode!=3D"BackCompat")? =
+document.documentElement : document.body
+}
+
+
+
+function doPopup() {
+	initbox();
+}
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.tek-tips.com/domnews.js
+
+/*
+	DOMnews 1.0=20
+	homepage: http://www.onlinetools.org/tools/domnews/
+	released 11.07.05
+*/
+
+/* Variables, go nuts changing those! */
+	// initial position=20
+	var dn_startpos=3D118; 		=09
+	// end position
+	var dn_endpos=3D-680; 		=09
+	// Speed of scroller higher number =3D slower scroller=20
+	var dn_speed=3D200;			=09
+	// ID of the news box
+	var dn_newsID=3D'whitepapers';		=09
+	// class to add when JS is available
+	var dn_classAdd=3D'hasJS';	=09
+	// Message to stop scroller
+	var dn_stopMessage=3D'';=09
+	// ID of the generated paragraph
+	var dn_paraID=3D'DOMnewsstopper';
+	var dn_interval =3D 0;
+
+	/* Initialise scroller when window loads */
+	window.onload=3Dfunction()
+	{
+		// check for DOM
+		if(!document.getElementById || !document.createTextNode){return;}
+		initDOMnews();
+		// add more functions as needed
+	}
+	/* stop scroller when window is closed */
+	window.onunload=3Dfunction()
+	{	try {
+		clearInterval(dn_interval);
+		}
+		catch (err) {}
+	}
+
+/*
+	This is the functional bit, do not press any buttons or flick any =
+switches
+	without knowing what you are doing!
+*/
+
+	var dn_scrollpos=3Ddn_startpos;
+	/* Initialise scroller */
+	function initDOMnews()
+	{
+		dn_interval=3DsetInterval('scrollDOMnews()',dn_speed);
+		/*
+		var n=3Ddocument.getElementById(dn_newsID);
+		n.onmouseover=3Dfunction()
+		{	=09
+			clearInterval(dn_interval);
+		}
+		n.onmouseout=3Dfunction()
+		{
+			dn_interval=3DsetInterval('scrollDOMnews()',dn_speed);
+		}var n=3Ddocument.getElementById(dn_newsID);
+		if(!n){return;}
+		n.className=3Ddn_classAdd;
+		var newa=3Ddocument.createElement('a');
+		var newp=3Ddocument.createElement('p');
+		newp.setAttribute('id',dn_paraID);
+		newa.href=3D'#';
+		newa.appendChild(document.createTextNode(dn_stopMessage));
+		newa.onclick=3DstopDOMnews;
+		newp.appendChild(newa);
+		n.parentNode.insertBefore(newp,n.nextSibling);*/
+	}
+=09
+	function restartDOMnews() {
+		dn_interval=3DsetInterval('scrollDOMnews()',dn_speed);
+	}
+=09
+	function pauseDOMnews() {
+		clearInterval(dn_interval);
+	}
+
+	function stopDOMnews()
+	{
+		try {
+		clearInterval(dn_interval);
+		var n=3Ddocument.getElementById(dn_newsID);
+		n.className=3D'';
+		n.parentNode.removeChild(n.nextSibling);
+		}
+		catch (err) {}
+		return false;
+	}
+	function scrollDOMnews()
+	{
+		var n=3Ddocument.getElementById('wpitems');
+		n.style.top=3Ddn_scrollpos+'px';=09
+		if(dn_scrollpos=3D=3Ddn_endpos){dn_scrollpos=3Ddn_startpos;}
+		dn_scrollpos--;=09
+	}
+
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://pagead2.googlesyndication.com/pagead/show_ads.js
+
+(function(){=0A=
+function m(b){return b!=3Dnull?'"'+b+'"':'""'}=0A=
+function B(b){if(typeof encodeURIComponent=3D=3D"function"){return =
+encodeURIComponent(b)}else{return escape(b)}}=0A=
+function c(b,a){if(a){window.google_ad_url+=3D"&"+b+"=3D"+a}}=0A=
+function f(b,a){if(a){c(b,B(a))}}=0A=
+function l(b,a,d){if(a&&typeof =
+a=3D=3D"object"){a=3Da[d%a.length]}c("color_"+b,a)}=0A=
+function D(b,a){var d=3Db.screen;var g=3Dnavigator.javaEnabled();var =
+e=3D-a.getTimezoneOffset();if(d){c("u_h",d.height);c("u_w",d.width);c("u_=
+ah",d.availHeight);c("u_aw",d.availWidth);c("u_cd",d.colorDepth)}c("u_tz"=
+,e);c("u_his",history.length);c("u_java",g);if(navigator.plugins){c("u_np=
+lug",navigator.plugins.length)}if(navigator.mimeTypes){c("u_nmime",naviga=
+tor.mimeTypes.length)}}=0A=
+function =
+y(b){b=3Db.toLowerCase();if(b.substring(0,3)!=3D"ca-"){b=3D"ca-"+b}return=
+ b}=0A=
+function =
+G(b,a,d){d=3Dd.substring(0,1000);d=3Dd.replace(/%\w?$/,"");if(b.google_ad=
+_output=3D=3D"js"&&(b.google_ad_request_done||b.google_radlink_request_do=
+ne)){a.write('<script language=3D"JavaScript1.1" =
+src=3D'+m(d)+"><\/script>")}else =
+if(b.google_ad_output=3D=3D"html"){if(b.name!=3D"google_ads_frame"){a.wri=
+te('<iframe name=3D"google_ads_frame" width=3D'+m(b.google_ad_width)+" =
+height=3D"+m(b.google_ad_height)+" =
+frameborder=3D"+m(b.google_ad_frameborder)+" src=3D"+m(d)+' =
+marginwidth=3D"0" marginheight=3D"0" vspace=3D"0" hspace=3D"0" =
+allowtransparency=3D"true" scrolling=3D"no">'=0A=
+);a.write("</iframe>")}}else =
+if(b.google_ad_output=3D=3D"textlink"){a.write('<script =
+language=3D"JavaScript1.1" src=3D'+m(d)+"><\/script>")}}=0A=
+function F(b){var =
+a=3Dnull;b.google_ad_frameborder=3Da;b.google_ad_format=3Da;b.google_page=
+_url=3Da;b.google_language=3Da;b.google_gl=3Da;b.google_country=3Da;b.goo=
+gle_region=3Da;b.google_city=3Da;b.google_hints=3Da;b.google_safe=3Da;b.g=
+oogle_encoding=3Da;b.google_ad_output=3Da;b.google_max_num_ads=3Da;b.goog=
+le_ad_channel=3Da;b.google_contents=3Da;b.google_alternate_ad_url=3Da;b.g=
+oogle_alternate_color=3Da;b.google_color_bg=3Da;b.google_color_text=3Da;b=
+.google_color_link=3Da;b.google_color_url=3Da;b.google_color_border=3Da;b=
+.google_color_line=3D=0A=
+a;b.google_adtest=3Da;b.google_kw_type=3Da;b.google_kw=3Da;b.google_num_r=
+adlinks=3Da;b.google_max_radlink_len=3Da;b.google_rl_filtering=3Da;b.goog=
+le_rl_mode=3Da;b.google_rt=3Da;b.google_ad_type=3Da;b.google_image_size=3D=
+a;b.google_feedback=3Da;b.google_skip=3Da;b.google_page_location=3Da;b.go=
+ogle_referrer_url=3Da;b.google_ad_region=3Da;b.google_ad_section=3Da;b.go=
+ogle_bid=3Da;b.google_cpa_choice=3Da;b.google_cust_age=3Da;b.google_cust_=
+gender=3Da;b.google_cust_interests=3Da;b.google_cust_id=3Da;b.google_cust=
+_job=3Da}=0A=
+function A(){var b=3Dnull;var a=3Dwindow;var d=3Ddocument;var g=3Dnew =
+Date;var e=3Dg.getTime();var =
+j=3Da.google_ad_format;if(a.google_cpa_choice){a.google_ad_url=3D"http://=
+pagead2.googlesyndication.com/cpa/ads?";a.google_ad_url+=3D"client=3D"+es=
+cape(y(a.google_ad_client));a.google_ad_region=3D"_google_cpa_region_";c(=
+"cpa_choice",a.google_cpa_choice);if(typeof =
+d.characterSet!=3D"undefined"){f("oe",d.characterSet)}else if(typeof =
+d.charset!=3D"undefined"){f("oe",d.charset)}}else{a.google_ad_url=3D"http=
+://pagead2.googlesyndication.com/pagead/ads?"=0A=
+;a.google_ad_url+=3D"client=3D"+escape(y(a.google_ad_client))}var =
+k=3Da.google_num_slots_by_client;var =
+w=3Da.google_num_slots_by_channel;var =
+i=3Da.google_prev_ad_formats_by_region;a.onerror=3Da.google_org_error_han=
+dler;if(a.google_ad_region=3D=3Db&&a.google_ad_section!=3Db){a.google_ad_=
+region=3Da.google_ad_section}var =
+h=3Da.google_ad_region=3D=3Db?"":a.google_ad_region;var =
+q=3Dfalse;if(j){q=3Dj.indexOf("_0ads")>0}if(q){if(a.google_num_0ad_slots)=
+{a.google_num_0ad_slots=3Da.google_num_0ad_slots+1}else{a.google_num_0ad_=
+slots=3D1}if(=0A=
+a.google_num_0ad_slots>1){return}}else =
+if(!a.google_cpa_choice){if(a.google_num_ad_slots){a.google_num_ad_slots=3D=
+a.google_num_ad_slots+1}else{a.google_num_ad_slots=3D1}if(a.google_num_sl=
+ots_to_rotate){i[h]=3Db;if(a.google_num_slot_to_show=3D=3Db){a.google_num=
+_slot_to_show=3De%a.google_num_slots_to_rotate+1}if(a.google_num_slot_to_=
+show!=3Da.google_num_ad_slots){return}}else =
+if(a.google_num_ad_slots>3&&h=3D=3D""){return}}c("dt",g.getTime());c("hl"=
+,a.google_language);if(a.google_country){c("gl",a.google_country)}else{=0A=
+c("gl",a.google_gl)}c("gr",a.google_region);f("gcs",a.google_city);f("hin=
+ts",a.google_hints);c("adsafe",a.google_safe);c("oe",a.google_encoding);c=
+("lmt",a.google_last_modified_time);f("alternate_ad_url",a.google_alterna=
+te_ad_url);c("alt_color",a.google_alternate_color);c("skip",a.google_skip=
+);var =
+n=3Da.google_ad_client;if(!k[n]){k[n]=3D1;k.length+=3D1}else{k[n]+=3D1}if=
+(i[h]){f("prev_fmts",i[h].toLowerCase());if(k.length>1){c("slot",k[n])}}i=
+f(j){f("format",j.toLowerCase());if(i[h]){i[h]=3Di[h]+","+j}else{i[=0A=
+h]=3Dj}}c("num_ads",a.google_max_num_ads);c("output",a.google_ad_output);=
+c("adtest",a.google_adtest);if(a.google_ad_channel){var =
+r=3Da.google_ad_channel.toLowerCase();f("channel",r);var s=3D"";var =
+t=3Dr.split("+");for(var o=3D0;o<t.length;o++){var =
+p=3Dt[o];if(!w[p]){w[p]=3D1}else{s+=3Dp+"+"}}f("pv_ch",s)}f("url",a.googl=
+e_page_url);l("bg",a.google_color_bg,e);l("text",a.google_color_text,e);l=
+("link",a.google_color_link,e);l("url",a.google_color_url,e);l("border",a=
+.google_color_border,e);l("line",a.google_color_line,=0A=
+e);c("kw_type",a.google_kw_type);f("kw",a.google_kw);f("contents",a.googl=
+e_contents);c("num_radlinks",a.google_num_radlinks);c("max_radlink_len",a=
+.google_max_radlink_len);c("rl_filtering",a.google_rl_filtering);c("rl_mo=
+de",a.google_rl_mode);c("rt",a.google_rt);c("ad_type",a.google_ad_type);c=
+("image_size",a.google_image_size);c("region",a.google_ad_region);c("feed=
+back_link",a.google_feedback);f("ref",a.google_referrer_url);f("loc",a.go=
+ogle_page_location);c("bid",a.google_bid);c("cust_age",a.google_cust_age)=0A=
+;c("cust_gender",a.google_cust_gender);c("cust_interests",a.google_cust_i=
+nterests);c("cust_id",a.google_cust_id);c("cust_job",a.google_cust_job);i=
+f(z(a,d)&&d.body){var u=3Dd.body.scrollHeight;var =
+v=3Dd.body.clientHeight;if(v&&u){f("cc",Math.round(v*100/u))}}D(a,g);G(a,=
+d,a.google_ad_url);F(a)}=0A=
+function C(b,a,d){A();return true}=0A=
+function z(b,a){return b.top.location=3D=3Da.location}=0A=
+function x(b,a){var d=3Da.documentElement;if(z(b,a))return =
+false;if(b.google_ad_width&&b.google_ad_height){var g=3D1;var =
+e=3D1;if(b.innerHeight){g=3Db.innerWidth;e=3Db.innerHeight}else =
+if(d&&d.clientHeight){g=3Dd.clientWidth;e=3Dd.clientHeight}else =
+if(a.body){g=3Da.body.clientWidth;e=3Da.body.clientHeight}if(e>2*b.google=
+_ad_height||g>2*b.google_ad_width){return false}}return true}=0A=
+function E(){var b=3Dwindow;var a=3Ddocument;var d=3Da.location;var =
+g=3Da.referrer;var =
+e=3Dnull;b.google_org_error_handler=3Db.onerror;b.onerror=3DC;if(b.google=
+_ad_frameborder=3D=3De){b.google_ad_frameborder=3D0}if(b.google_ad_output=
+=3D=3De){b.google_ad_output=3D"html"}if(b.google_ad_format=3D=3De&&b.goog=
+le_ad_output=3D=3D"html"){b.google_ad_format=3Db.google_ad_width+"x"+b.go=
+ogle_ad_height}if(b.google_page_url=3D=3De){b.google_page_url=3Dg;if(!x(b=
+,a)){b.google_page_url=3Dd;b.google_last_modified_time=3DDate.parse(a.las=
+tModified)/1000;b.google_referrer_url=3D=0A=
+g}}else{b.google_page_location=3Dg;if(!x(b,a)){b.google_page_location=3Dd=
+}}if(b.google_num_slots_by_channel=3D=3De){b.google_num_slots_by_channel=3D=
+new =
+Array}if(b.google_num_slots_by_client=3D=3De){b.google_num_slots_by_clien=
+t=3Dnew =
+Array}if(b.google_prev_ad_formats_by_region=3D=3De){b.google_prev_ad_form=
+ats_by_region=3Dnew Array}}=0A=
+E();A();=0A=
+=0A=
+})()
+------=_NextPart_000_0000_01C6A768.96820AA0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://itxt.vibrantmedia.com/intellitxt/front.asp?IPID=1109&MK=5&SN=wrapper,footer
+
+var itxturl=3D'http://itxt.vibrantmedia.com/v3/door.jsp?ts=3D'+(new =
+Date()).getTime()+'&IPID=3D1109&MK=3D5&SN=3Dwrapper,footer&refurl=3D'+doc=
+ument.location.href.replace(/\&/g,'%26').replace(/\'/g, =
+'%27').replace(/\"/g, '%22');
+try {
+document.write('<s'+'cript language=3D"javascript" =
+src=3D"'+itxturl+'"></s'+'cript>');
+}catch(e){}
+
+------=_NextPart_000_0000_01C6A768.96820AA0--

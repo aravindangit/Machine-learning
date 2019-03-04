@@ -1,0 +1,35 @@
+/******************************* REXX ********************************/ 
+"ALLOC DA('N4341A.TEST.SORT6') F(INFILE) SHR REUSE"                     
+"ALLOC DA('N4341A.TEST.SORT6') F(OUTFILE) SHR REUSE"
+"EXECIO *  DISKR INFILE (STEM INP. FINIS)"
+"FREE DDN(INFILE)" 
+ COUNT = 0  
+ I = 1 
+DO I=1 TO INP.0
+   IF SUBSTR(INP.I,3,7) = 'CMFROOT'  THEN 
+    do                         
+        CALL CHANGELOAD 
+    end
+END
+"EXECIO *  DISKW OUTFILE(STEM WRITE. FINIS)"
+EXIT
+/*********************************************************************/
+/*       CHANGE STEPLIB TO POINT TO STAGE 6 LIBRARY                  */
+/*********************************************************************/
+CHANGELOAD:                                                             
+   trace ?i                                                             
+   CLAIMNBR = SUBSTR(INP.I,19,7)
+   DO I=I + 1 TO INP.0
+     IF SUBSTR(INP.I,3,7) = 'CMFROOT'  THEN                             
+        DO                                                              
+          I = I - 1
+          LEAVE                                                         
+                                                     
+        END                                                             
+     ELSE IF SUBSTR(INP.I,3,7) = 'CMFPOLY' THEN                         
+        DO                                                              
+          COUNT = COUNT + 1                                             
+          WRITE.COUNT = CLAIMNBR||SUBSTR(INP.I,19)                      
+        END 
+   END                                                                  
+RETURN                                                               

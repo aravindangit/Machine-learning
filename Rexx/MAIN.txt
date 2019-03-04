@@ -1,0 +1,144 @@
+/******************************* REXX ********************************/ 00010003
+                                                                        00011002
+/**********************VARIABLE INITIALISATION ***********************/ 00011103
+/******** IN FUTURE ALL THESE VARIABLES WOULD COME FROM USER *********/ 00011203
+REGION = 'VT'                                                           00011302
+STEPL  = ''                                                             00012002
+PARML  = 'ENDH1.B06CL002.SPARMLIB'                                      00013002
+                                                                        00014002
+"ALLOC DA('E2158.TEST.JCL.VT.test') F(INFILE) SHR REUSE"                00020005
+"ALLOC DA('E2158.TEST.JCL.PROD') F(OUTFILE) SHR REUSE"                  00030000
+"EXECIO *  DISKR INFILE (STEM INP. FINIS)"                              00040000
+"FREE DDN(INFILE)"                                                      00050000
+                                                                        00051002
+CALL INITIALISE                                                         00060002
+DO I=I TO INP.0                                                         00061002
+   IF SUBSTR(INP.I,3,8) = 'SYSIN'     THEN                              00062002
+        CALL CHANGEME                                                   00062102
+   ELSE IF SUBSTR(INP.I,3,8) = 'SYSTSIN'   THEN                         00063002
+        CALL CHANGEME                                                   00063102
+   ELSE IF SUBSTR(INP.I,3,8) = 'MACLIB'   THEN                          00063202
+        CALL CHANGEME                                                   00064002
+   ELSE IF SUBSTR(INP.I,3,8) = 'STEPLIB'  THEN                          00064103
+    do                                                                  00064205
+        CALL CHANGELOAD                                                 00064303
+        i=i-1                                                           00064405
+    end                                                                 00064505
+   ELSE                                                                 00065002
+     DO                                                                 00065105
+        CALL FILENAME                                                   00065202
+        COUNT = COUNT + 1                                               00065302
+        WRITE.COUNT = LINE                                              00065402
+     END                                                                00065505
+END                                                                     00066002
+                                                                        00070002
+"EXECIO *  DISKW OUTFILE(STEM WRITE. FINIS)"                            00160000
+EXIT                                                                    00170000
+                                                                        00171002
+                                                                        00174002
+/*********************************************************************/ 00180001
+/* THIS FUNCTION WILL PLACE THE APPROPRIATE  PROC STATEMENT          */ 00190001
+/*********************************************************************/ 00191001
+INITIALISE:                                                             00200002
+PARSE VAR INP.1 PART1 'T' PART2 ' '                                     00201002
+COUNT = 1                                                               00210000
+WRITE.COUNT=PART1||'K'PART2 ' PROC'                                     00220002
+DO I = 1 TO INP.0                                                       00230000
+ IF (SUBSTR(INP.I,1,3) = "//*")  THEN                                   00240000
+ DO                                                                     00250000
+       COUNT = COUNT + 1                                                00260000
+       WRITE.COUNT = INP.I                                              00270000
+ END                                                                    00280000
+ IF (SUBSTR(INP.I,1,2) = "/*")  THEN                                    00290000
+ DO                                                                     00300000
+       COUNT = COUNT + 1                                                00310000
+       WRITE.COUNT = INP.I                                              00320000
+ END                                                                    00330000
+ val2=''                                                                00340000
+ IF (WORDPOS('EXEC',INP.I) \=0  & SUBSTR(INP.I,3,1) \='*' )THEN         00350000
+    LEAVE                                                               00360000
+END                                                                     00370000
+RETURN                                                                  00380000
+                                                                        00390002
+                                                                        00400002
+/*********************************************************************/ 00410003
+/*      CHAGES THE DSN NAMES OF MACLIB, SYSIN AND SYSTSIN            */ 00411003
+/*********************************************************************/ 00412003
+CHANGEME:                                                               00420002
+   PARSE VAR INP.I WASTE1 '(' CHANGE4 ')'                               00430002
+   CHANGE1='//'                                                         00440002
+   CHANGE2= SUBSTR(INP.I,3,8)                                           00450002
+   CHANGE3=' DD  DSN='PARML'('                                          00460002
+   CHANGE5='),DISP=SHR'                                                 00470002
+   COUNT = COUNT + 1                                                    00480002
+   WRITE.COUNT = CHANGE1||CHANGE2||CHANGE3||CHANGE4||CHANGE5            00490002
+   RETURN                                                               00510002
+                                                                        00520002
+                                                                        00530002
+/*********************************************************************/ 00531003
+/*       CHAGES TEST FILE NAEMS TO PRODCUTION FILES                  */ 00532003
+/*********************************************************************/ 00533003
+FILENAME:                                                               00540002
+   FILE1 = ' '                                                          00541002
+   FILE2 = ' '                                                          00542002
+   LINE=INP.I                                                           00543002
+   PARSE VAR INP.I WASTE 'DSN=T'  FILE1 '.VT.' FILE2 ',' FILE3          00550002
+   IF FILE1 \= ' ' & FILE2 \=' ' THEN                                   00551002
+      DO                                                                00551102
+        LINE = WASTE||'DSN=P'||FILE1'.'||FILE2','||FILE3                00552002
+      END                                                               00554002
+   RETURN                                                               00560002
+                                                                        00570003
+                                                                        00580003
+/*********************************************************************/ 00581006
+/*       CHANGE STEPLIB TO POINT TO STAGE 6 LIBRARY                  */ 00582007
+/*********************************************************************/ 00583006
+CHANGELOAD:                                                             00590003
+   DSN2=' '                                                             00600105
+   SEE3=' '                                                             00600205
+   PARSE VAR INP.I PART1 'DSN=' DSN1 '.B06' DSN2 '.'  PART2             00600305
+   PARSE VAR INP.I SEE1  'DSN=' SEE2 '.' SEE3 ',' SEE4                  00600405
+   /******************  RETAIN SYS1 LIBRARIES *************************/00600506
+   IF FIND(INP.I,'DSN=SYS1.LE.SCEERUN,DISP=SHR')\=0  then               00600605
+    DO                                                                  00600704
+      COUNT = COUNT + 1                                                 00600804
+      WRITE.COUNT = INP.I                                               00600904
+    END                                                                 00601004
+   /******************  RETAIN STAGE 6 LIBRARIEs **********************/00601106
+   ELSE IF DSN2 \= ' ' THEN                                             00601205
+    DO                                                                  00601304
+      COUNT = COUNT + 1                                                 00601404
+      WRITE.COUNT = INP.I                                               00601504
+    END                                                                 00601604
+   /******************  CHANGE SYS**DH1 TO SYSPPDH1********************/00601706
+   ELSE IF SEE3 = 'DSNLOAD ' THEN                                       00601805
+    DO                                                                  00601905
+      COUNT = COUNT + 1                                                 00602005
+      WRITE.COUNT = SEE1'DSN=SYSPPDH1.'SEE3',' SEE4                     00602105
+    END                                                                 00602205
+   I=I+1                                                                00602304
+                                                                        00603004
+   DO I=I TO INP.0                                                      00610003
+     IF SUBSTR(INP.I,4,8) \= '        ' THEN                            00620005
+        LEAVE                                                           00621003
+     DSN2=' '                                                           00622005
+     SEE3=' '                                                           00623005
+     PARSE VAR INP.I PART1 'DSN=' DSN1 '.B06' DSN2 '.'  PART2           00624005
+     PARSE VAR INP.I SEE1  'DSN=' SEE2 '.' SEE3 ',' SEE4                00625005
+     IF FIND(INP.I,'DSN=SYS1.LE.SCEERUN,DISP=SHR')\=0 then              00626005
+      DO                                                                00627005
+        COUNT = COUNT + 1                                               00628005
+        WRITE.COUNT = INP.I                                             00629005
+      END                                                               00629105
+     ELSE IF DSN2 \= ' ' THEN                                           00629205
+      DO                                                                00629305
+        COUNT = COUNT + 1                                               00629405
+        WRITE.COUNT = INP.I                                             00629505
+      END                                                               00629605
+     ELSE IF SEE3 = 'DSNLOAD ' THEN                                     00629705
+      do                                                                00629805
+        COUNT = COUNT + 1                                               00629905
+        WRITE.COUNT = SEE1'DSN=SYSPPDH1.'SEE3','SEE4                    00630105
+      END                                                               00630205
+   END                                                                  00631003
+   RETURN                                                               00640003

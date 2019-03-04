@@ -1,0 +1,321 @@
+EDIT Command  !EDCHEK                                      EDIT Command  !EDCHEK
+
+                                                Author: Computer Associates<R>
+                                                   formatted on  1995/04/01 06:54
+         for assistance contact your local technical support staff
+         this summary created by David McRitchie
+--------------------------------------------------------------------------------
+Command NAME. !EDCHEK
+ users.      PDF EDIT users with JCL
+ type.       command
+
+--------------------------------------------------------------------------------
+!EDCHEK Checks JCL -- JCL CHECK
+--------------------------------------------------------------------------------
+    related   (none)
+    alias     !JCK
+--------------------------------------------------------------------------------
+
+                                    !EDCHEK
+
+               The exclamation point (!) used with !EDCHEK is re-
+               quired and denotes usage as a program macro.
+
+!EDCHEK helps you avoid JCL errors.  Like a TYPRUN=SCAN it will  check  syntax
+   errors in JCL including the expansion of cataloged JCL procedures.   Unlike
+   a SCAN, EDITCHEK will also check dataset usage.
+
+   New datasets to disk volumes are checked to make sure that a duplicate does
+   not  already  exist in the catalog or on the disk volume.  Besides checking
+   the catalog, dataset usage is tracked within a job to  check  for  consist-
+   ency.    A DISP=(OLD,DELETE) for a dataset not cataloged and not created in
+   the job will be flagged.
+
+At this point I would suggest that you try out !EDCHEK on  some  of  your  own
+JCL.    !EDCHEK  will not affect the content of your JCL, it will add NOTE and
+MESSAGE lines which you can remove by using RESET after you have  checked  the
+messages.    Be sure to check the return code shown in the upper right corner.
+Return codes issued by CA-JCLCHECK:
+
+     0  Normal end of CA-JCLCHECK; only informational messages issued.
+     4  Normal end of CA-JCLCHECK; only warning messages issued.
+     8  Normal end of CA-JCLCHECK; error messages issued.
+    12  Normal end of CA-JCLCHECK; with serious messages issued.
+higher  abnormal return codes, or special options in effect.
+
+--------------------------------------------------------------------------------
+
+Please check out !EDCHEK on your own at this point
+
+1.  Get into PDF EDIT of a member containing the JCL that you you would submit
+    for a job.
+2.  on the command line enter  ====> !EDCHEK
+3.  Check the messages, you may afterwards enter ===> RESET
+4.  Try some other members, you should choose a good one, one  with  a  syntax
+    error  (misplaced  parenthesis,  or comma), one with inconsistent usage or
+    perhaps a misspelled dataset name.
+
+--------------------------------------------------------------------------------
+
+ After you have made your own checks, this is what I found, when
+ I tried !EDCHEK.
+
+
+     Among the things that are checked by JCL CHECK using the  !EDCHEK  PDF
+     edit command are:
+
+     1.  Syntax  errors  in JCL like missing commas, unmatched parentheses,
+         incorrect continuation.
+
+     2.  Duplicate stepnames in job are flagged.
+
+     3.  Cataloged procedures used within JCL are included as part  of  the
+         examination.
+
+     4.  Datasets which are accessed from the catalog are checked that they
+         can in fact be found in the catalog.
+
+     5.  Datasets  on  disk  volumes,  as  determined  by the catalog or by
+         VOL=SER=  or VOL=REF= specified in the JCL  are  checked  to  make
+         sure  that  they are in fact on-line.  This feature can be used to
+         determine whether or not a volume is currently  available  on  the
+         system.
+
+     6.  Datasets  are tracked in JCL, checking whether they exist prior to
+         the start of an imaginary run through the job, checking when  they
+         get  deleted  and  when  they get created.   If JCL usage does not
+         match what it should be then EDCHEK will so inform.
+
+     7.  IDCAMS (AMS)  DEFINE files and DELETE files are taken into consid-
+         eration as to whether a dataset will be found later on.  Any  men-
+         tion to a specific catalog though is ignored.
+
+     8.  Our use of PGM=BPDELETE does not give an indication to EDCHEK that
+         the  dataset  is  deleted, so EDCHEK will indicate in a later step
+         that the dataset being created already exits  when,  if  fact,  it
+         won't.
+
+     9.  Warnings are issued on the use of DD DUMMY, you can usually ignore
+         such warnings.
+
+     10. Warnings  are issued that //SYSIN DD *   is generated.  I see lit-
+         tle value in this particular indication, especially since it takes
+         5 lines to tell you this.
+
+     11. The order of JCL overrides to a cataloged procedure is checked.
+
+     12. Datasets in a concatenation are checked for compatibility with one
+         another.  If a dataset that has a larger blocksize appears later a
+         warning is issued.  Ignore blocksize warnings in a link-edit step.
+
+     13. Overrides made incorrectly will result in such  errors  indicating
+         an  incorrect UNIT= and/or DISP=, as their misplacement will cause
+         them to be incomplete; or !EDCHEK may indicate errors such as Null
+         Operand Field Invalid,  Statements  Out  of  Order,  or  Duplicate
+         ddname.
+
+--------------------------------------------------------------------------------
+
+  ISREDIT  !EDCHEK
+--------------------------------------------------------------------------------
+         ===>     !EDCHEK
+
+--------------------------------------------------------------------------------
+
+                                            no options invoked as a command
+
+Examples
+
+There  are some examples in is03.SHARE.cntl(jclchk...), which you can exam-
+ine using the following command, which will edit each member and do  a  JCL
+CHECK:
+    ===> @DIR 'is03.share.cntl' from(jclchk) to(jclchk) macro(!EDCHEK)
+
+If you do not have sufficient space to type the above line on your terminal
+you may instead do the following.
+     - get into PDF edit of 'is03.share.cntl(jclchk1)', and then enter
+    ===> @DIR from(jclchk) to(jclchk) macro(!EDCHEK)
+
+Should  you  need to terminate the @DIR clist when you are within edit of a
+member, enter the following commands:
+    ===> @DIRPARM abort
+    ===> CANCEL
+
+Suggested invocation using program function keys, if you use mainly
+PF1-PF12
+
+         PF22 ===> loc 0\!edchek      (where \ is your command delimiter)
+         PF23 ===> print
+         PF24 ===> RETRIEVE
+
+The following techniques may also prove useful with large members.
+
+1.  Use LOC SPECIAL to quickly get to the next special line.  Special lines
+    are NOTELINE and MSGLINE.   (HELP from EDIT, 13  --  Primary  commands,
+    then 1 -- Miscellaneous commands).
+2.  To see only the special lines use X ALL ' ' to undisplay all lines that
+    contain  a  blank  --  in other words all datalines.  Then use the line
+    commands Lnn and Fnn to redisplay the last and first nn lines.    (HELP
+    from EDIT -- 12 Edit line commands).
+
+Internal Aspects, wonders and worriments
+
+     Product  features  NOT  installed or for which I don't know how to use
+     yet (D.McRitchie).
+
+     Don't know if there is any user control  over  what  error  should  or
+     should  not  be flagged in using the simple command.  There is a panel
+     that can be invoked to provide lots of control, and this  panel  might
+     possibly set up your own defaults.
+
+     JCLTLMS  was not assembled, so it is not available.  JCLTLMS is sensi-
+     tive to the release level of TLMS and must be reassembled with  a  new
+     TLMS release.
+
+     JCL can be flowcharted on a printer and better on a page printer.
+--------------------------------------------------------------------------------
+CA-JCLCHECK<TM>  is  licensed from Computer Associates<R>, Garden City, New
+York.   Components of  CA-JCLCHECK  include:   EDCHEK,  JCK,  SUBCHEK,  and
+JCLNEAT.
+
+
+JCL-CHECK run in batch
+
+There are various reports that can be produced in Batch.
+
+Options for JCLCHECK,    (REPORTS page 75, Abbreviations page 111)
+ J      JOB          #1 Listing of Jobstream JCL
+ F      FULLLIST     #2 Listing of merged JCL
+                        Report contains either all of the job's JCL
+                        or only those statements flagged with error
+                        messages depending on setting fo FULLLIST option.
+ X      XREF         #3 Data Set Cross Reference
+ PX     PXREF        #4 Program Cross Reference
+                        Includes 2nd parm option of PGM=DFSRRC00
+ RP     RPTRPT       #5 Report Report
+ ER     ERROR        #6 Error Messages
+ =========================================================
+ SX -- Summary Reports
+       Reports on a group of jobs within a production system
+ =========================================================
+ SX,X   SXREF/XREF   #7 Summary Data Set Cross Reference
+ SX,PX  SXREF/PXREF  #8 Summary Program Cross Reference
+ SX,RP  SXREF/RPTRPT #9 Summary Report, produced only if SXREF,RPTRPT
+ GR     GRAPH        #10 Flow Diagram Report
+ PROCX  PROCXREF     #11 Symbolic Cross Reference
+
+Typical JCL
+
+// EXEC CAZ1JCHK
+//SYSIN DD DSN=TSOPROD.PROD01.CNTL(ZD2E15),DISP=SHR
+
+//****  JCL IS03.SHARE.CNTL(JC002) 1990/07/10 10:40:33
+// EXEC JCHKG,PARM=('NOJOB,NOXR,NOPX,NOF,NORP,ER,GRAPH')
+//SYSIN DD DSN=TSOPROD.PROD01.CNTL(IV3B05),DISP=SHR
+
+//****  JCL IS03.SHARE.CNTL(JC003) 1990/07/10 11:24:36
+// EXEC CAZ1JCHK,PARM=('RPTRPT,SX,PROCX')
+//SYSIN DD DSN=TSOPROD.PROD01.CNTL(IV3B05),DISP=SHR
+
+//****  JCL IS03.SHARE.CNTL(JC004) 1990/07/10 11:37:09
+// EXEC CAZ1JCHK,OPTION='J,NOF,NOPX,SEV(8),SXREF,RPTRPT'
+//SYSIN DD DSN=TSOPROD.PROD01.CNTL(ZD2E15),DISP=SHR
+
+//****  JCL IS03.SHARE.CNTL(JC005) 1990/07/10 16:43:44
+// EXEC CAZ1JCHK,OPTION='NOJ,NOF,NOPX,SEV(8),PDS,OPTION'
+//SYSIN DD DSN=TSOPROD.PROD01.CNTL,DISP=SHR
+//JCLOPTS  DD *
+INCLUDE(ZD2E15,ZD2E22,ZD2E23)
+SX
+X,PX,RPTRPT
+
+
+ From: David McRitchie
+ To:   Technical Support
+
+ Subject: CA-JCLCHECK<TM>  from Computer Associates<R>
+
+If  any  changes  are  made to JES for PROC=PROCxx,  changes should also be
+made to  CAI.PPOPTION(CAZ1SEDP)
+
+We have the following problems with !EDCHEK  CA-JCLCHECK at  our  installa-
+tion, some are related to ESA, some to our own usage.
+
+1.  With  ESA,  specification  of BLKSIZE=0 will allow the system to choose
+    the best blocksize for the device.  We want to eliminate  CAY6045E.
+      CAY6045E 0 IS TOO SMALL A VALUE FOR BLKSIZE PARAMETER OF DCB
+
+2.  The use of DUMMY is normally used without a  BLKSIZE.  Since  DUMMY  is
+    usually by specific design, would like to eliminate for DUMMY.
+
+    CAY6087W BLKSIZE NOT SPECIFIED FOR NEW OR DUMMY DATA SET -POTENTIALS013
+    in EXECUTION.
+
+3.  Beginning with our conversion to OS JCL in 1970, we have always specif-
+    ically  requested that the  //SYSIN DD * cards not be included when not
+    necessary.  Later when JCL was submitted from terminals  we  also  dis-
+    courage  the use of null JCL cards.  Both cards being completely unnec-
+    essary and wasteful.  JCLCHECK flags the missing //SYSIN DD *    as  an
+    error.   We would like to keep only the  //SYSIN DD *  GENERATED STATE-
+    MENT   line,  and eliminate the  return code of 4, and all of the other
+    associated CAY6073W lines,
+
+4.  We have a site specific program used to delete datasets.   It is  coded
+    as follows:
+         // EXEC PGM=BPDELETE,PARM='level1.level2.level3'
+
+    This is equivalent to:
+
+         // EXEC PGM=IDCAMS
+         //SYSPRINT DD DUMMY
+          DEL level1.level2.level3
+          SET MAXCC = 0
+
+    Likewise  NOSCRATCH  multiple  datasets can also be included on the JCL
+    PARM as long as it results in a single card image presented to  IDCAMS.
+    It would be nice if CA-JCLCHECK could make a provision for this program
+    since  it  would  be useful in any shop, especially since it allows for
+    use in a cataloged JCL procedure without requiring use of external  da-
+    tasets for SYSIN control cards.
+
+Problem Resolutions
+
+1.  CAY6087W -- encountered using PROC=SAS
+
+    :resolution:    message  eliminated  reassigning symbolic that can be a
+    temporary dataset name to LIBRARY='&&LIBRARY' so that is is  definitely
+    a temporary datasetname unless reassigned.
+
+2.  Failure S80A caused by close parenthesis in column 72.
+
+3.  Failure S80A caused by region size < 4092K, doing large member of JCL.
+
+JCL checking in Batch
+
+The  use  of !EDCHEK (Jun '92 ART001 in CIS Newsletter) is extremely useful
+but sometimes a hardcopy is wanted.  There are a couple of methods.
+
+1.  Run a job in BATCH
+
+    The following will not provide the same style as you get using  !EDCHEK
+    online,  but  it  can prove interesting in that the results are are way
+    beyond what you might expect.  For more information see online documen-
+    tation for EDCHEK (Dec '92).
+
+        // EXEC CAZ1JCHK
+        //SYSIN DD DSN=userid.LIBR.CNTL(xxxxxx),DISP=SHR
+
+2.  Use EDCHEK and modify content in edit
+
+    This method will change your data so you should only work within a tem-
+    porary file or copy your data to another member and work with it there.
+
+    *   Enter  !EDCHEK
+    *   Enter  X all ' '       to undisplay all data lines
+    *   Enter  MDD  on the first and last NOTE or MSG lines.
+    *   Enter  TAGX NX
+    *   Enter  C 1 all % '---------------'
+    *   Enter  REMDUPS NX
+    *   Enter  RESET
+    *   Enter  @PRINTNX DEST(dest)
+
