@@ -1,0 +1,126 @@
+CDI:
+*****
+
+Communicate confidently in status calls and effective in conveying information Average client delight (testing) must be 9 above Review comments should be minimal. Providing innovative ideas in a effective way.  
+1-Unsatisfactory2-Needs Improvement3-Meets All, Exceeds Some4-Exceeds Expectations Consistently5-Outstanding 
+
+Comments:
+---------
+1.Efficiently and confidently providing the thoughts in status call
+2.Providing inputs to team members on how to better themself and suggestion to attain the same.
+3.Taking extra care on deliverables to keep the success rate 100%.
+4.providing guidance on area of of improvement both on process and deliverables.
+5.Suggested areas of automation and actively participate on the same.
+6.proactively setup with call clients and make sure zero communication gap.    
+
+
+
+Career Compass:
+*******************
+
+Efficient and effective team member Capable of completing the assigned task with the state of quality work and well with in the stipulated time. Ability to perform the given role efficiently within the specified time. ability to improve the process where ever applicable.  
+1-Unsatisfactory2-Needs Improvement3-Meets All, Exceeds Some4-Exceeds Expectations Consistently5-Outstanding 
+
+Comments:
+---------
+
+1.Efficiently complete the assigned task with minimal or zero dependencies.
+2.Lead the team from the front to success.
+3.Support team members if they are strucked on a task.
+4.Complete the assigned task well ahead of the stipulated time to get rid of last minute mistakes.
+5.Automate things where ever getting seeing a scope.
+6.Will my diverse knowledge able to address the issues on time. 
+7.Provided mainframe training for freshers.
+8.Actively conducted L1 and L2 interview for CA-7 and Endevor.
+
+
+
+Code Quality:
+*************
+
+Ensure Lead/Peer Review is done before moving the code to Testing Unit Testing need to be reviewed by the Peer members within the Team Unit Test and its Results need to be posted in common repository Review comments need to captured as well. Providing the required peripherals to the team and motivating them to explore more and give a better ways on scripting and Automating.  
+1-Unsatisfactory2-Needs Improvement3-Meets All, Exceeds Some4-Exceeds Expectations Consistently5-Outstanding  
+
+Comments:
+---------
+
+1.we always do self review and rectify if at all it need changes.
+2.peer review is done at the second to make sure we dont do any mistakes.
+3.We follow a specific coding standard to make sure its understandable to other team members.
+4.Also we develop the code in such a way that the code can be rebuildable for future changes.
+5.Test results are well maintained in the MFT portal itself instead of going for a seperate repository.This MFT portal is accessible to all people.
+6.Exhaustive testing with all scenarios to ensure 100% success and deployment rate.
+7.Follow the checklist to make sure we follow the coding standard and to minimize the testing errors
+
+
+How millennial Are you?
+
+confident, self-expressive, liberal, upbeat and open to change 
+1-Unsatisfactory2-Needs Improvement3-Meets All, Exceeds Some4-Exceeds Expectations Consistently5-Outstanding  
+
+Comments:
+---------
+
+
+
+On Time Delivery:
+*****************
+
+Design/Code/Scripting preparation should be completed on time with high quality (with minimum review comments) Developing the code should be completed as per the work allocations on time Maintains completeness and accuracy of work OTD should be always 100% Extremely fast learner & the daily task should be done quickly  
+
+1-Unsatisfactory2-Needs Improvement3-Meets All, Exceeds Some4-Exceeds Expectations Consistently5-Outstanding  
+
+
+Comments:
+---------
+Personal Utilization:
+**********************
+
+Spending the work time in a quality Manner, learning and exploring new technology. Implementing the new technologies/innovative ideas in the project or within the organisation to achieve greater heights. Imprinting those aspects in the team members mindset and motivating them to follow the same. 
+ 
+1-Unsatisfactory2-Needs Improvement3-Meets All, Exceeds Some4-Exceeds Expectations Consistently5-Outstanding  
+
+Comments:
+---------
+1.Provided VBA solution to automate the evaluation procedure and report creation for Ezhil(Virtusa communication team)
+a.How this works  - Using VB,Macros,Excel forms,Mail
+b.Calculation of grade for learning,reading,listening and writing.
+c.calculation of over all grade 
+d.Arriving at the grade comments and suitable remarks to the user.
+e.Creating a front end Excel form application to maintain this.
+f.Admin functionality to modify the data directly form excel database.
+g.Finally creating reports for individuals and sending their report card through mail.
+2.Provided rexx automation for bulk creation of JCL and transmission cards. This saves huge time and the best part is its reusablility with minimum tweaking. 
+a.How this works  - Using File tailoring concepts in rexx
+b.Format the data provided by the reqeustor and upload the data to mainframe in pnr format to ensure there is no formatting changes while transfering.
+c. provide the the mainframe file as input to rexx script 
+d.It will create all the necessary script and place them in their respective members.
+e.The max run time of this script is less than a minute.
+3.Groomed myself on Cross platform scheduling on CA-7,Shell scripting, R language,phython.
+4.Provided inputs on CA-7 to few resources.
+5.Next traget is to get more knowlege on any scripting and implementing the same.
+6.Interested in learning Mongo-Db and creating we based pages.
+
+
+Productivity:
+*************
+ 
+Effective use of work time. Showing high success rate is all the tasks. Effective Task Utilization. Being example to other. Risk and Issues escalation promptly. Ensure that daily you are productive on team tasks for 7.5 hrs. If there is no tasks you are involved in grooming technically and share the learning with TL Need to proactively highlight all concerns/issues/dependencies in the tasks assigned upfornt to your leads or mentors  
+
+1-Unsatisfactory2-Needs Improvement3-Meets All, Exceeds Some4-Exceeds Expectations Consistently5-Outstanding  
+
+Comments:
+---------
+
+1.We interact regularly with our onsite leads and manager and get ample amount of work to keep our utilization and productivity high.
+2.Actively providing inputs to fix frequently occuring problems.
+3.Created a screen using rexx panels which act as a once stop solution to access all the necessary libraries of a particular region. This gives quick access to all 
+essential libaries instantly.
+ 	a.How this works  - using following thisngs ISPF panels,ISPF macros,Rexx
+4.Proactively address all the issues coming up during our time without involving onsite folks.
+5.Keeps the onsite folks posted regarding issues/Follow up during their work hours.
+6.Keeps sharing the technical expertise to keep peers on track and on speed.
+7.All major issues are highlighted then and there.
+8.Got outstanding award from KR and be the motivating factor to others.
+9.our proven success rate is more than 99%.
+10.Currently we are learing on SFG & B2Bi and parellely taken up half a dozen of request and gaining our expertise on these.
