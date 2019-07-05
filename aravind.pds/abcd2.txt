@@ -1,0 +1,3349 @@
+MEMBER NAME   ACCESSP2
+/**********************************************************************/
+
+/* BASEGWE3          : Transmit to FDFG UAT node                       */
+
+/* Creation Date     : February 2017                                   */
+
+/* Created by        : Stuart Dolman                                   */
+
+/* Receiving OS      : UNIX                                            */
+
+/* note              :                                                 */
+
+/**********************************************************************/
+
+BASEGWE3 PROCESS SNODE=TESTGWEMEA MAXDELAY=0                            -
+
+                  &TYPE=,                                               -
+
+                  &SO=':DATATYPE=TEXT:XLATE=NO:STRIP.BLANKS=NO:'        -
+
+                  &DISP=RPL
+
+           SYMBOL &DSNTO=/mailbox/&UID..&DSN02
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR)                       -
+
+                  COMPRESS EXT                                          -
+
+                  TO(SNODE DSN=&DSNTO TYPE=&TYPE DISP=&DISP SYSOPTS=&SO)
+
+MEMBER NAME   ACCESSP3
+/**********************************************************************/
+
+/* BASEGWE3          : Transmit to FDFG UAT node                       */
+
+/* Creation Date     : February 2017                                   */
+
+/* Created by        : Stuart Dolman                                   */
+
+/* Receiving OS      : UNIX                                            */
+
+/* note              :                                                 */
+
+/**********************************************************************/
+
+BASEGWE3 PROCESS SNODE=TESTGWEMEA MAXDELAY=0                            -
+
+                  &FNODE=%PNODE                                         -
+
+                  &TYPE=,                                               -
+
+                  &SO=':DATATYPE=TEXT:XLATE=NO:STRIP.BLANKS=NO:'        -
+
+                  &DISP=RPL
+
+           SYMBOL &DSNTO=/mailbox/&UID..&DSN02
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR)                       -
+
+                  COMPRESS EXT                                          -
+
+                  TO(SNODE DSN=&DSNTO TYPE=&TYPE DISP=&DISP SYSOPTS=&SO)
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASED2E1
+BASEE2A3 PROCESS SNODE=SIG.BAS.TCB                                 -
+
+                  &FNODE=FDC_CDIND2                                -
+
+                  &COMPRESS=,                                      -
+
+                  &UNIT=,                                          -
+
+                  &DISP=RPL
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR)                  -
+
+                  &COMPRESS                                        -
+
+                  TO(SNODE DSN=&DSN02 UNIT=&UNIT                   -
+
+                  DISP=&DISP)
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP05
+
+         EIF
+
+STEP03   RUN TASK (PGM=U7SVC,-
+
+         PARM=(\'TEST=YES;/LOGON \ || &CA7DET || -
+
+         \DEMAND,JOB=\ || &PARM1 || \,SCHID=1\ || -
+
+         \;/LOGOFF'\)) -
+
+         SNODE
+
+STEP04   IF (STEP03 NE 0) THEN
+
+                  GOTO STEP05
+
+         EIF
+
+         EXIT
+
+ /********************************************************************/
+
+ /* SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB                     /
+
+ /********************************************************************/
+
+STEP05   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)   -
+
+                SNODE=&FNODE                      -
+
+                &CA7DET=&CA7DET                   -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASED2H1
+/**********************************************************************/
+
+/* BASED2H1          : Transmit to IND2 H/S transmissions              */
+
+/* Creation Date     : November 2018                                   */
+
+/* Created by        : Stuart Dolman                                   */
+
+/* Receiving OS      : ZOS                                             */
+
+/* note              :                                                 */
+
+/**********************************************************************/
+
+BASED2H1 PROCESS SNODE=FDC_CDIND2 MAXDELAY=0
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR)                       -
+
+                  COMPRESS EXT                                          -
+
+                  TO(SNODE DSN=&DSN02 DISP=RPL)
+
+MEMBER NAME   BASED2P2
+/*********************************************************************/
+
+/* BASED2P2 : THIS BASE PROCESS IS USED TO TRANSMIT TO NODE           */
+
+/*             FDI.HOT.IP HELLABY USE WITH MAXDELAY=0                 */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/* @ @ @ @ DO NOT AMEND THIS PROCESS WITHOUT PRIOR AUTHORITY @ @ @ @ */
+
+/* @ @ @ @        FROM PIMS.  LAST UPDATE: MARCH 1998 B BROWN @ @ @ @ */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/*********************************************************************/
+
+BASED2P2 PROCESS SNODE=FDC_CDINP2,                                 -
+
+                  &COMPRESS=,                                      -
+
+                  &BLKSIZE=,                                       -
+
+                  &UNIT=,                                          -
+
+                  &DATACLAS=,                                      -
+
+                  &RECFM=,                                         -
+
+                  &DISP=RPL
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR,&RECFM)           -
+
+                  &COMPRESS                                        -
+
+                  TO(SNODE DSN=&DSN02,                             -
+
+                  &UNIT                                            -
+
+                  &DATACLAS                                        -
+
+                  &BLKSIZE                                         -
+
+                  DISP=&DISP)
+
+MEMBER NAME   BASEE2I5
+/*********************************************************************/
+
+/* BASEE2I5 : THIS BASE PROCESS IS USED TO TRANSMIT TO NODE           */
+
+/*             FDI.HOT.IP HELLABY USE WITH MAXDELAY=0                 */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/* @ @ @ @ DO NOT AMEND THIS PROCESS WITHOUT PRIOR AUTHORITY @ @ @ @ */
+
+/* @ @ @ @        FROM PIMS.  LAST UPDATE: MARCH 1998 B BROWN @ @ @ @ */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/*********************************************************************/
+
+BASEE2I5 PROCESS SNODE=FDC_CDINP2,                                 -
+
+                  &COMPRESS=,                                      -
+
+                  &BLKSIZE=,                                       -
+
+                  &UNIT=,                                          -
+
+                  &DATACLAS=,                                      -
+
+                  &RECFM=,                                         -
+
+                  &DISP=RPL
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR,&RECFM)           -
+
+                  &COMPRESS                                        -
+
+                  TO(SNODE DSN=&DSN02,                             -
+
+                  &UNIT                                            -
+
+                  &DATACLAS                                        -
+
+                  &BLKSIZE                                         -
+
+                  DISP=&DISP)
+
+MEMBER NAME   BASEFAI2
+BASEFAI2   PROCESS  SNODE=FICO.CD.BP PNODE=FDC_CDIND2  HOLD=NO
+
+STEP1      COPY     FROM(PNODE DSN=&DSN01 DISP=SHR)    -
+
+                             COMPRESS EXT  -
+
+                    TO  (SNODE DSN=&DSN02   -
+
+                             DISP=NEW  -
+
+         SYSOPTS=":DATATYPE=BINARY:XLATE=NO:STRIP.BLANKS=NO:") -
+
+                    CKPT=20K
+
+MEMBER NAME   BASEFEC1
+/**********************************************************************/
+
+/* BASENBD1          : TRANSMIT TO FEC UAT NODE                        */
+
+/* CREATION DATE     : DEC  2018                                       */
+
+/* CREATED BY        : ARAVINDAN                                       */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=FECDUAT                                         -
+
+                  &FNODE=%PNODE                                        -
+
+                  &D=TEXT                                              -
+
+                  &S=NO                                                -
+
+                  &X=YES                                               -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS=':XLATE=YES:DATATYPE=TEXT:STRIP.BLANKS=NO:')               -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASEFEC2
+/**********************************************************************/
+
+/* BASENBD1          : TRANSMIT TO FEC UAT NODE                        */
+
+/* CREATION DATE     : DEC  2018                                       */
+
+/* CREATED BY        : ARAVINDAN                                       */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=FECDUAT                                         -
+
+                  &FNODE=%PNODE                                        -
+
+                  &D=TEXT                                              -
+
+                  &S=NO                                                -
+
+                  &X=NO                                                -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS=':XLATE=NO:DATATYPE=TEXT:STRIP.BLANKS=NO:')                -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASEINS1
+/**********************************************************************/
+
+/* BASEINS1          : TRANSMIT TO INS UAT NODE                        */
+
+/* CREATION DATE     : JULY 2018                                       */
+
+/* CREATED BY        : TOM WILLIAMSON                                  */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=TESTGWEMEA                                      -
+
+                  &FNODE=%PNODE                                        -
+
+                  &D=TEXT                                              -
+
+                  &S=NO                                                -
+
+                  &X=YES                                               -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS="DATATYPE(&D) STRIP.BLANKS(&S) XLATE(&X)")                 -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASEMCI1
+/*********************************************************************/
+
+/* BASEMCI1 : THIS BASE PROCESS IS USED TO TRANSMIT TO NODE           */
+
+/*             MCCDPVPN - MASTERCARD                                  */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/* @ @ @ @ DO NOT AMEND THIS PROCESS WITHOUT PRIOR AUTHORITY @ @ @ @ */
+
+/* @ @ @ @        FROM INT MNGMNT. UPDATE: OCT 2011 S DOLMAN  @ @ @ @ */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/*********************************************************************/
+
+BASEMCI1 PROCESS SNODE=MCCDMMGR                                        -
+
+                  &FNODE=%PNODE                                        -
+
+                  &TYPE=,                                              -
+
+                  &DISP=RPL
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR)                      -
+
+                  COMPRESS EXT                                         -
+
+                  TO(SNODE DSN=&DSN02,                                 -
+
+                  TYPE=&TYPE                                           -
+
+                  DISP=&DISP)
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+                  EXIT
+
+/*********************************************************************/
+
+/*         SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB             */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASERBL1
+/**********************************************************************/
+
+/* BASENBD1          : TRANSMIT TO RBL UAT NODE                        */
+
+/* CREATION DATE     : JULY 2018                                       */
+
+/* CREATED BY        : TOM WILLIAMSON                                  */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=MUNMVS1950                                      -
+
+                  &FNODE=%PNODE                                        -
+
+                  &D=TEXT                                              -
+
+                  &S=NO                                                -
+
+                  &X=YES                                               -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS="DATATYPE(&D) STRIP.BLANKS(&S) XLATE(&X)")                 -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASERBL2
+/**********************************************************************/
+
+/* BASENBD1          : TRANSMIT TO FEC UAT NODE                        */
+
+/* CREATION DATE     : DEC  2018                                       */
+
+/* CREATED BY        : ARAVINDAN                                       */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=FECDUAT                                         -
+
+                  &FNODE=%PNODE                                        -
+
+                  &D=TEXT                                              -
+
+                  &S=NO                                                -
+
+                  &X=NO                                                -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS="DATATYPE(&D) STRIP.BLANKS(&S) XLATE(&X)")                 -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASERBL3
+/**********************************************************************/
+
+/* BASERBL3          : TRANSMIT TO RBL PROD NODE                       */
+
+/* CREATION DATE     : FEBRUARY 2016                                   */
+
+/* CREATED BY        : TOM WILLIAMSON                                  */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              : END OF DAY PROCESS                              */
+
+/**********************************************************************/
+
+BASERBL3 PROCESS SNODE=MUNMVS1950                                  -
+
+                  &FNODE=%PNODE                                    -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                       -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                     -
+
+    SYSOPTS="DATATYPE(TEXT) STRIP.BLANKS(NO) XLATE(YES)")          -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 EQ 0) THEN
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+ \POST,JOB=\ || &PARM1 || \,USR=WAITING FOR NDM TRANS \ || &FAILJOB || -
+
+    \;/LOGOFF'\))
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+    \;POST,JOB=\ || &PARM1 || \,USR=NDM TRANS FAILED \ || &FAILJOB ||   -
+
+    \;/LOGOFF'\))
+
+    EXIT
+
+    EIF
+
+/**********************************************************************/
+
+/* IF ANY STEP FAILS ADD FAILED USER REQUIREMENT TO JOB FAILJOB        */
+
+/**********************************************************************/
+
+STEP03 RUN TASK (PGM=U7SVC,                                             -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+    \ADDRQ,JOB=\ || &PARM1 || \,USR=NDM TRANS FAILED \ || &FAILJOB ||   -
+
+    \;/LOGOFF'\))
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+ \POST,JOB=\ || &PARM1 || \,USR=WAITING FOR NDM TRANS \ || &FAILJOB || -
+
+    \;/LOGOFF'\))
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP04   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASERBL4
+/**********************************************************************/
+
+/* BASERBL4          : TRANSMIT TO RBL PROD NODE                       */
+
+/* CREATION DATE     : FEBRUARY 2016                                   */
+
+/* CREATED BY        : TOM WILLIAMSON                                  */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              : END OF DAY PROCESS                              */
+
+/**********************************************************************/
+
+BASERBL4 PROCESS SNODE=MUNMVS1950                                  -
+
+                  &FNODE=%PNODE                                    -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                       -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                     -
+
+    SYSOPTS="DATATYPE(TEXT) STRIP.BLANKS(NO) XLATE(YES)")         -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 EQ 0) THEN
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+ \POST,JOB=\ || &PARM1 || \,USR=WAITING FOR NDM TRANS \ || &FAILJOB || -
+
+    \;/LOGOFF'\))
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+    \;POST,JOB=\ || &PARM1 || \,USR=NDM TRANS FAILED \ || &FAILJOB ||   -
+
+    \;/LOGOFF'\))
+
+    EXIT
+
+    EIF
+
+/**********************************************************************/
+
+/* IF ANY STEP FAILS ADD FAILED USER REQUIREMENT TO JOB FAILJOB        */
+
+/**********************************************************************/
+
+STEP03 RUN TASK (PGM=U7SVC,                                             -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+    \ADDRQ,JOB=\ || &PARM1 || \,USR=NDM TRANS FAILED \ || &FAILJOB ||   -
+
+    \;/LOGOFF'\))
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+ \POST,JOB=\ || &PARM1 || \,USR=WAITING FOR NDM TRANS \ || &FAILJOB || -
+
+    \;/LOGOFF'\))
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP04   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASERBL5
+/**********************************************************************/
+
+/* BASERBL5          : TRANSMIT TO RBL PROD NODE                       */
+
+/* CREATION DATE     : FEBRUARY 2016                                   */
+
+/* CREATED BY        : TOM WILLIAMSON                                  */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              : END OF DAY PROCESS                              */
+
+/**********************************************************************/
+
+BASERBL5 PROCESS SNODE=FDC_CDIND2                                  -
+
+                  &FNODE=%PNODE                                    -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                       -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                     -
+
+    SYSOPTS="DATATYPE(TEXT) STRIP.BLANKS(YES) XLATE(YES)")         -
+
+             COMPRESS EXT = ( CMP=4 WIN=12 MEM=9  )
+
+STEP02   IF (STEP01 EQ 0) THEN
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+ \POST,JOB=\ || &PARM1 || \,USR=WAITING FOR NDM TRANS \ || &FAILJOB || -
+
+    \;/LOGOFF'\))
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+    \;POST,JOB=\ || &PARM1 || \,USR=NDM TRANS FAILED \ || &FAILJOB ||   -
+
+    \;/LOGOFF'\))
+
+    EXIT
+
+    EIF
+
+/**********************************************************************/
+
+/* IF ANY STEP FAILS ADD FAILED USER REQUIREMENT TO JOB FAILJOB        */
+
+/**********************************************************************/
+
+STEP03 RUN TASK (PGM=U7SVC,                                             -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+    \ADDRQ,JOB=\ || &PARM1 || \,USR=NDM TRANS FAILED \ || &FAILJOB ||   -
+
+    \;/LOGOFF'\))
+
+    RUN TASK (PGM=U7SVC,                                                -
+
+    PARM=(\'/LOGON \ || &CA7DET ||                             -
+
+ \POST,JOB=\ || &PARM1 || \,USR=WAITING FOR NDM TRANS \ || &FAILJOB || -
+
+    \;/LOGOFF'\))
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP04   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASETEST
+BASEFAI2   PROCESS  SNODE=FECDUAT    PNODE=FDC_CDIND2  HOLD=NO
+
+STEP1      COPY     FROM(PNODE DSN=&DSN01 DISP=SHR)    -
+
+                             COMPRESS EXT  -
+
+                    TO  (SNODE DSN=&DSN02   -
+
+                             DISP=NEW  -
+
+         SYSOPTS=":DATATYPE=BINARY:XLATE=NO:STRIP.BLANKS=NO:") -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASEYBL1
+/**********************************************************************/
+
+/* BASEINS1          : TRANSMIT TO YBL UAT NODE                        */
+
+/* CREATION DATE     : JULY 2018                                       */
+
+/* CREATED BY        : TOM WILLIAMSON                                  */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=YBLUVDAKCRECAPP                                 -
+
+                  &FNODE=%PNODE                                        -
+
+                  &D=TEXT                                              -
+
+                  &S=NO                                                -
+
+                  &X=YES                                               -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS="DATATYPE(&D) STRIP.BLANKS(&S) XLATE(&X)")                 -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASEYBL2
+/**********************************************************************/
+
+/* BASEINS1          : TRANSMIT TO YES UAT NODE                        */
+
+/* CREATION DATE     : JUN 2019                                        */
+
+/* CREATED BY        : ARAVINDAN TK                                    */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=YBLUVDAKCRECAPP                                 -
+
+                  &FNODE=%PNODE                                        -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS=":DATATYPE=BINARY:XLATE=NO:STRIP.BLANKS=NO:")              -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BASEYES1
+/**********************************************************************/
+
+/* BASEINS1          : TRANSMIT TO INS UAT NODE                        */
+
+/* CREATION DATE     : JULY 2018                                       */
+
+/* CREATED BY        : TOM WILLIAMSON                                  */
+
+/* RECEIVING OS      : ZOS                                             */
+
+/* NOTE              :                                                 */
+
+/**********************************************************************/
+
+BASENBD1 PROCESS SNODE=NEED TO PROVIDE THE NODE NAME                   -
+
+                  &FNODE=%PNODE                                        -
+
+                  &D=TEXT                                              -
+
+                  &S=NO                                                -
+
+                  &X=YES                                               -
+
+                  &DISP=RPL
+
+STEP01 COPY FROM (PNODE DSN=&DSN01 DISP=SHR)                           -
+
+             TO   (SNODE DSN=&DSN02 DISP=&DISP                         -
+
+    SYSOPTS="DATATYPE(&D) STRIP.BLANKS(&S) XLATE(&X)")                 -
+
+             COMPRESS EXT
+
+STEP02   IF (STEP01 NE 0) THEN
+
+                  GOTO STEP03
+
+         EIF
+
+         EXIT
+
+/*********************************************************************/
+
+/*            SUBMIT NDM PROCESS TO FLAG CA7 WITH DOWNED JOB          */
+
+/*********************************************************************/
+
+STEP03   SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                        -
+
+                SNODE=&FNODE                                           -
+
+                &SI=&SI                                                -
+
+                &CA7DET=&CA7DET                                        -
+
+                &JOB=&FAILJOB
+
+    EXIT
+
+MEMBER NAME   BKP
+********************************************************************
+
+********************************************************************
+
+*     NDM0063                                                       *
+
+********************************************************************
+
+********************************************************************
+
+NDM0063 PROCESS &UNIT='PROD'                       -
+
+                 &NEWNAME=,                        -
+
+                 &CKPT=10M                         -
+
+                 &IDSN=,                           -
+
+                 &IUNIT=,                          -
+
+                 &IVOLSER=,                        -
+
+                 &ILABEL=,                         -
+
+                 &IDISP=(OLD,DELETE,KEEP),         -
+
+                 &IDCB=,                           -
+
+                 &IPARM=,                          -
+
+                 &JOBNAME=,                        -
+
+                 &DATE=,                           -
+
+                 &TIME=,                           -
+
+                 &ODSN=,                           -
+
+                 &OUNIT=,                          -
+
+                 &OVOLSER=,                        -
+
+                 &OLABEL=,                         -
+
+                 &ODISP=,                          -
+
+                 &ODCB=,                           -
+
+                 &OSPACE=,                         -
+
+                 &MGMTCLAS=,                       -
+
+                 &FILENAME=,                       -
+
+                 &DATACLAS=,                       -
+
+                 &STORCLAS=,                       -
+
+                 &OPARM=,                          -
+
+                 &SYSOPTS=,                        -
+
+                 &SNODEID=,                        -
+
+                 CLASS=2                           -
+
+                 PRTY=1
+
+*
+
+STEP1   COPY FROM (PNODE                 -
+
+                   DSN=&IDSN             -
+
+                   VOL=SER=&IVOLSER      -
+
+                   UNIT=&IUNIT           -
+
+                   LABEL=&ILABEL         -
+
+                   DISP=&IDISP           -
+
+        SYSOPTS="DATATYPE=BINARY XLATE=NO CODEPAGE=(01130,UTF-8)"  -
+
+                   DCB=&IDCB             -
+
+                   &IPARM)               -
+
+                   CKPT=&CKPT            -
+
+                   COMPRESS EXT          -
+
+             TO   (SNODE                 -
+
+                   DSN=&ODSN             -
+
+                   DCB=&ODCB             -
+
+                   UNIT=&OUNIT           -
+
+                   VOL=&OVOLSER          -
+
+                   LABEL=&OLABEL         -
+
+                   MGMTCLAS=&MGMTCLAS    -
+
+                   STORCLAS=&STORCLAS    -
+
+                   DATACLAS=&DATACLAS    -
+
+                    DISP=&ODISP           -
+
+                    SPACE=&OSPACE         -
+
+         SYSOPTS=":datatype=binary:STRIP.BLANKS=NO:" -
+
+                    &OPARM)
+
+STEP2   IF (STEP1 < 4) THEN
+
+      EXIT
+
+      EIF
+
+STEP3   RUN TASK -
+
+      (PGM = CESNOTE, - 4
+
+      PARM = ('FAIL',&IDSN) -
+
+      ) PNODE
+
+*
+
+MEMBER NAME   CGUTEST
+/*********************************************************************/
+
+/* BASEE2I5 : THIS BASE PROCESS IS USED TO TRANSMIT TO NODE           */
+
+/*             FDI.HOT.IP HELLABY USE WITH MAXDELAY=0                 */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/* @ @ @ @ DO NOT AMEND THIS PROCESS WITHOUT PRIOR AUTHORITY @ @ @ @ */
+
+/* @ @ @ @        FROM PIMS.  LAST UPDATE: MARCH 1998 B BROWN @ @ @ @ */
+
+/* @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ */
+
+/*********************************************************************/
+
+BASEE2I5 PROCESS SNODE=FDC_CDINP2,                                 -
+
+                  &FNODE=%PNODE                                    -
+
+                  &COMPRESS=,                                      -
+
+                  &BLKSIZE=,                                       -
+
+                  &UNIT=,                                          -
+
+                  &DATACLAS=,                                      -
+
+                  &RECFM=,                                         -
+
+                  &DISP=RPL
+
+STEP01    COPY    FROM(PNODE DSN=&DSN01,DISP=SHR,&RECFM)           -
+
+                  &COMPRESS                                        -
+
+                  TO(SNODE DSN=&DSN02,                             -
+
+                  &UNIT                                            -
+
+                  &DATACLAS                                        -
+
+                  &BLKSIZE                                         -
+
+                  DISP=&DISP)
+
+MEMBER NAME   KASACDRG
+CDIRCOPY -
+
+   PROCESS -
+
+     PNODE=FDC_CDIND2 -
+
+     SNODE=MCCDMMGR -
+
+     SNODEID=(RCE1297S,SKE1010A)
+
+STEP1 COPY -
+
+   FROM -
+
+     (PNODE -
+
+     DSN=&FROMDSN -
+
+     DISP=SHR) -
+
+   COMPRESS EXT -
+
+   TO -
+
+     (SNODE -
+
+     DSN=&TODSN -
+
+     DISP=(NEW,CATLG,DELETE) -
+
+     UNIT=DISK)
+
+MEMBER NAME   MCSEND
+MCSEND PROCESS PNODE=&PNODE             -
+
+                SNODE=&SNODE
+
+
+
+STEP01 COPY     FROM (PNODE DSN=&DSN1)  -
+
+                TO   (SNODE DSN=&DSN2 DISP=(NEW,CATLG,DELETE))
+
+MEMBER NAME   NDM00XX
+********************************************************************
+
+********************************************************************
+
+*     NDM00XX                                                       *
+
+********************************************************************
+
+********************************************************************
+
+NDM00XX PROCESS &UNIT='PROD'                       -
+
+                 &NEWNAME=,                        -
+
+                 &CKPT=10M                         -
+
+                 &IDSN=,                           -
+
+                 &IUNIT=,                          -
+
+                 &IVOLSER=,                        -
+
+                 &ILABEL=,                         -
+
+                 &IDISP=(OLD,DELETE,KEEP),         -
+
+                 &IDCB=,                           -
+
+                 &IPARM=,                          -
+
+                 &JOBNAME=,                        -
+
+                 &DATE=,                           -
+
+                 &TIME=,                           -
+
+                 &ODSN=,                           -
+
+                 &OUNIT=,                          -
+
+                 &OVOLSER=,                        -
+
+                 &OLABEL=,                         -
+
+                 &ODISP=,                          -
+
+                 &ODCB=,                           -
+
+                 &OSPACE=,                         -
+
+                 &MGMTCLAS=,                       -
+
+                 &FILENAME=,                       -
+
+                 &DATACLAS=,                       -
+
+                 &STORCLAS=,                       -
+
+                 &OPARM=,                          -
+
+                 &SYSOPTS=,                        -
+
+                 &SNODEID=,                        -
+
+                 CLASS=2                           -
+
+                 PRTY=1
+
+*
+
+STEP1   COPY FROM (PNODE                 -
+
+                   DSN=&IDSN             -
+
+                   VOL=SER=&IVOLSER      -
+
+                   UNIT=&IUNIT           -
+
+                   LABEL=&ILABEL         -
+
+                   DISP=&IDISP           -
+
+     SYSOPTS="CODEPAGE=(IBM-1137,UTF-8):" -
+
+                   DCB=&IDCB             -
+
+                   &IPARM)               -
+
+                   CKPT=&CKPT            -
+
+                   COMPRESS EXT          -
+
+             TO   (SNODE                 -
+
+                   DSN=&ODSN             -
+
+                   DCB=&ODCB             -
+
+                   UNIT=&OUNIT           -
+
+                   VOL=&OVOLSER          -
+
+                   LABEL=&OLABEL         -
+
+                   MGMTCLAS=&MGMTCLAS    -
+
+                   STORCLAS=&STORCLAS    -
+
+                   DATACLAS=&DATACLAS    -
+
+                    DISP=&ODISP           -
+
+     SYSOPTS='"CODEPAGE=(UTF-8,CP1130)":STRIP.BLANKS=NO:' -
+
+                    SPACE=&OSPACE         -
+
+                    &OPARM)
+
+STEP2   IF (STEP1 < 4) THEN
+
+      EXIT
+
+      EIF
+
+STEP3   RUN TASK -
+
+      (PGM = CESNOTE, - 4
+
+      PARM = ('FAIL',&IDSN) -
+
+      ) PNODE
+
+*
+
+MEMBER NAME   NDM0062
+********************************************************************
+
+********************************************************************
+
+*     NDM0062                                                       *
+
+********************************************************************
+
+********************************************************************
+
+NDM0062 PROCESS &UNIT='PROD'                       -
+
+                 &NEWNAME=,                        -
+
+                 &CKPT=10M                         -
+
+                 &IDSN=,                           -
+
+                 &IUNIT=,                          -
+
+                 &IVOLSER=,                        -
+
+                 &ILABEL=,                         -
+
+                 &IDISP=(OLD,DELETE,KEEP),         -
+
+                 &IDCB=,                           -
+
+                 &IPARM=,                          -
+
+                 &JOBNAME=,                        -
+
+                 &DATE=,                           -
+
+                 &TIME=,                           -
+
+                 &ODSN=,                           -
+
+                 &OUNIT=,                          -
+
+                 &OVOLSER=,                        -
+
+                 &OLABEL=,                         -
+
+                 &ODISP=,                          -
+
+                 &ODCB=,                           -
+
+                 &OSPACE=,                         -
+
+                 &MGMTCLAS=,                       -
+
+                 &FILENAME=,                       -
+
+                 &DATACLAS=,                       -
+
+                 &STORCLAS=,                       -
+
+                 &OPARM=,                          -
+
+                 &SYSOPTS=,                        -
+
+                 &SNODEID=,                        -
+
+                 CLASS=2                           -
+
+                 PRTY=1
+
+*
+
+STEP1   COPY FROM (PNODE                 -
+
+                   DSN=&IDSN             -
+
+                   VOL=SER=&IVOLSER      -
+
+                   UNIT=&IUNIT           -
+
+                   LABEL=&ILABEL         -
+
+                   DISP=&IDISP           -
+
+                   DCB=&IDCB             -
+
+                   &IPARM)               -
+
+                   CKPT=&CKPT            -
+
+                   COMPRESS EXT          -
+
+             TO   (SNODE                 -
+
+                   DSN=&ODSN             -
+
+                   DCB=&ODCB             -
+
+                   UNIT=&OUNIT           -
+
+                   VOL=&OVOLSER          -
+
+                   LABEL=&OLABEL         -
+
+                   MGMTCLAS=&MGMTCLAS    -
+
+                   STORCLAS=&STORCLAS    -
+
+                   DATACLAS=&DATACLAS    -
+
+                    DISP=&ODISP           -
+
+                    SPACE=&OSPACE         -
+
+                    SYSOPTS=&SYSOPTS      -
+
+                    &OPARM)
+
+STEP2   IF (STEP1 < 4) THEN
+
+      EXIT
+
+      EIF
+
+STEP3   RUN TASK -
+
+      (PGM = CESNOTE, -
+
+      PARM = ('FAIL',&IDSN) -
+
+      ) PNODE
+
+*
+
+MEMBER NAME   NDM0063
+********************************************************************
+
+********************************************************************
+
+*     NDM0063                                                       *
+
+********************************************************************
+
+********************************************************************
+
+NDM0063 PROCESS &UNIT='PROD'                       -
+
+                 &NEWNAME=,                        -
+
+                 &CKPT=10M                         -
+
+                 &IDSN=,                           -
+
+                 &IUNIT=,                          -
+
+                 &IVOLSER=,                        -
+
+                 &ILABEL=,                         -
+
+                 &IDISP=(OLD,DELETE,KEEP),         -
+
+                 &IDCB=,                           -
+
+                 &IPARM=,                          -
+
+                 &JOBNAME=,                        -
+
+                 &DATE=,                           -
+
+                 &TIME=,                           -
+
+                 &ODSN=,                           -
+
+                 &OUNIT=,                          -
+
+                 &OVOLSER=,                        -
+
+                 &OLABEL=,                         -
+
+                 &ODISP=,                          -
+
+                 &ODCB=,                           -
+
+                 &OSPACE=,                         -
+
+                 &MGMTCLAS=,                       -
+
+                 &FILENAME=,                       -
+
+                 &DATACLAS=,                       -
+
+                 &STORCLAS=,                       -
+
+                 &OPARM=,                          -
+
+                 &SYSOPTS=,                        -
+
+                 &SNODEID=,                        -
+
+                 CLASS=2                           -
+
+                 PRTY=1
+
+*
+
+STEP1   COPY FROM (PNODE                 -
+
+                   DSN=&IDSN             -
+
+                   VOL=SER=&IVOLSER      -
+
+                   UNIT=&IUNIT           -
+
+                   LABEL=&ILABEL         -
+
+                   DISP=&IDISP           -
+
+        SYSOPTS="DATATYPE=TEXT XLATE=NO CODEPAGE=(01130,UTF-8)"  -
+
+                   DCB=&IDCB             -
+
+                   &IPARM)               -
+
+                   CKPT=&CKPT            -
+
+                   COMPRESS EXT          -
+
+             TO   (SNODE                 -
+
+                   DSN=&ODSN             -
+
+                   DCB=&ODCB             -
+
+                   UNIT=&OUNIT           -
+
+                   VOL=&OVOLSER          -
+
+                   LABEL=&OLABEL         -
+
+                   MGMTCLAS=&MGMTCLAS    -
+
+                   STORCLAS=&STORCLAS    -
+
+                   DATACLAS=&DATACLAS    -
+
+                    DISP=&ODISP           -
+
+                    SPACE=&OSPACE         -
+
+         SYSOPTS=":DATATYPE=TEXT:XLATE=NO:STRIP.BLANKS=NO:" -
+
+                    &OPARM)
+
+STEP2   IF (STEP1 < 4) THEN
+
+      EXIT
+
+      EIF
+
+STEP3   RUN TASK -
+
+      (PGM = CESNOTE, - 4
+
+      PARM = ('FAIL',&IDSN) -
+
+      ) PNODE
+
+*
+
+MEMBER NAME   NDM0064
+********************************************************************
+
+********************************************************************
+
+*     NDM0064                                                       *
+
+********************************************************************
+
+********************************************************************
+
+NDM0064 PROCESS &UNIT='PROD'                       -
+
+                 &NEWNAME=,                        -
+
+                 &CKPT=10M                         -
+
+                 &IDSN=,                           -
+
+                 &IUNIT=,                          -
+
+                 &IVOLSER=,                        -
+
+                 &ILABEL=,                         -
+
+                 &IDISP=(OLD,DELETE,KEEP),         -
+
+                 &IDCB=,                           -
+
+                 &IPARM=,                          -
+
+                 &JOBNAME=,                        -
+
+                 &DATE=,                           -
+
+                 &TIME=,                           -
+
+                 &ODSN=,                           -
+
+                 &OUNIT=,                          -
+
+                 &OVOLSER=,                        -
+
+                 &OLABEL=,                         -
+
+                 &ODISP=,                          -
+
+                 &ODCB=,                           -
+
+                 &OSPACE=,                         -
+
+                 &MGMTCLAS=,                       -
+
+                 &FILENAME=,                       -
+
+                 &DATACLAS=,                       -
+
+                 &STORCLAS=,                       -
+
+                 &OPARM=,                          -
+
+                 &SYSOPTS=,                        -
+
+                 &SNODEID=,                        -
+
+                 CLASS=2                           -
+
+                 PRTY=1
+
+*
+
+STEP1   COPY FROM (PNODE                 -
+
+                   DSN=&IDSN             -
+
+                   VOL=SER=&IVOLSER      -
+
+                   UNIT=&IUNIT           -
+
+                   LABEL=&ILABEL         -
+
+                   DISP=&IDISP           -
+
+        SYSOPTS=":DATATYPE=TEXT:XLATE=NO:CODEPAGE=(01130,UTF-8):"  -
+
+                   DCB=&IDCB             -
+
+                   &IPARM)               -
+
+                   CKPT=&CKPT            -
+
+                   COMPRESS EXT          -
+
+             TO   (SNODE                 -
+
+                   DSN=&ODSN             -
+
+                   DCB=&ODCB             -
+
+                   UNIT=&OUNIT           -
+
+                   VOL=&OVOLSER          -
+
+                   LABEL=&OLABEL         -
+
+                   MGMTCLAS=&MGMTCLAS    -
+
+                   STORCLAS=&STORCLAS    -
+
+                   DATACLAS=&DATACLAS    -
+
+                    DISP=&ODISP           -
+
+                    SPACE=&OSPACE         -
+
+         SYSOPTS="DATATYPE=TEXT XLATE=NO" -
+
+                    &OPARM)
+
+STEP2   IF (STEP1 < 4) THEN
+
+      EXIT
+
+      EIF
+
+STEP3   RUN TASK -
+
+      (PGM = CESNOTE, - 4
+
+      PARM = ('FAIL',&IDSN) -
+
+      ) PNODE
+
+*
+
+MEMBER NAME   NDM0065
+********************************************************************
+
+********************************************************************
+
+*     NDM0065                                                       *
+
+********************************************************************
+
+********************************************************************
+
+NDM0065 PROCESS &UNIT='PROD'                       -
+
+                 &NEWNAME=,                        -
+
+                 &CKPT=10M                         -
+
+                 &IDSN=,                           -
+
+                 &IUNIT=,                          -
+
+                 &IVOLSER=,                        -
+
+                 &ILABEL=,                         -
+
+                 &IDISP=(OLD,DELETE,KEEP),         -
+
+                 &IDCB=,                           -
+
+                 &IPARM=,                          -
+
+                 &JOBNAME=,                        -
+
+                 &DATE=,                           -
+
+                 &TIME=,                           -
+
+                 &ODSN=,                           -
+
+                 &OUNIT=,                          -
+
+                 &OVOLSER=,                        -
+
+                 &OLABEL=,                         -
+
+                 &ODISP=,                          -
+
+                 &ODCB=,                           -
+
+                 &OSPACE=,                         -
+
+                 &MGMTCLAS=,                       -
+
+                 &FILENAME=,                       -
+
+                 &DATACLAS=,                       -
+
+                 &STORCLAS=,                       -
+
+                 &OPARM=,                          -
+
+                 &SYSOPTS=,                        -
+
+                 &SNODEID=,                        -
+
+                 CLASS=2                           -
+
+                 PRTY=1
+
+*
+
+STEP1   COPY FROM (PNODE                 -
+
+                   DSN=&IDSN             -
+
+                   VOL=SER=&IVOLSER      -
+
+                   UNIT=&IUNIT           -
+
+                   LABEL=&ILABEL         -
+
+                   DISP=&IDISP           -
+
+                   DCB=&IDCB             -
+
+                   &IPARM)               -
+
+                   CKPT=&CKPT            -
+
+                   COMPRESS EXT          -
+
+             TO   (SNODE                 -
+
+                   DSN=&ODSN             -
+
+                   DCB=&ODCB             -
+
+                   UNIT=&OUNIT           -
+
+                   VOL=&OVOLSER          -
+
+                   LABEL=&OLABEL         -
+
+                   MGMTCLAS=&MGMTCLAS    -
+
+                   STORCLAS=&STORCLAS    -
+
+                   DATACLAS=&DATACLAS    -
+
+                    DISP=&ODISP           -
+
+                    SPACE=&OSPACE         -
+
+                    SYSOPTS=&SYSOPTS      -
+
+                    &OPARM)
+
+STEP2   IF (STEP1 < 4) THEN
+
+      EXIT
+
+      EIF
+
+STEP3   RUN TASK -
+
+      (PGM = CESNOTE, -
+
+      PARM = ('FAIL',&IDSN) -
+
+      ) PNODE
+
+*
+
+MEMBER NAME   NDM0066
+********************************************************************
+
+********************************************************************
+
+*     NDM0066                                                       *
+
+********************************************************************
+
+********************************************************************
+
+NDM0066 PROCESS &UNIT='PROD'                       -
+
+                 &NEWNAME=,                        -
+
+                 &CKPT=10M                         -
+
+                 &IDSN=,                           -
+
+                 &IUNIT=,                          -
+
+                 &IVOLSER=,                        -
+
+                 &ILABEL=,                         -
+
+                 &IDISP=(OLD,DELETE,KEEP),         -
+
+                 &IDCB=,                           -
+
+                 &IPARM=,                          -
+
+                 &JOBNAME=,                        -
+
+                 &DATE=,                           -
+
+                 &TIME=,                           -
+
+                 &ODSN=,                           -
+
+                 &OUNIT=,                          -
+
+                 &OVOLSER=,                        -
+
+                 &OLABEL=,                         -
+
+                 &ODISP=,                          -
+
+                 &ODCB=,                           -
+
+                 &OSPACE=,                         -
+
+                 &MGMTCLAS=,                       -
+
+                 &FILENAME=,                       -
+
+                 &DATACLAS=,                       -
+
+                 &STORCLAS=,                       -
+
+                 &OPARM=,                          -
+
+                 &SYSOPTS=,                        -
+
+                 &SNODEID=,                        -
+
+                 CLASS=2                           -
+
+                 PRTY=1
+
+*
+
+STEP1   COPY FROM (PNODE                 -
+
+                   DSN=&IDSN             -
+
+                   VOL=SER=&IVOLSER      -
+
+                   UNIT=&IUNIT           -
+
+                   LABEL=&ILABEL         -
+
+                   DISP=&IDISP           -
+
+     SYSOPTS=":CODEPAGE=(IBM-01130,UTF8):" -
+
+                   DCB=&IDCB             -
+
+                   &IPARM)               -
+
+                   CKPT=&CKPT            -
+
+                   COMPRESS EXT          -
+
+             TO   (SNODE                 -
+
+                   DSN=&ODSN             -
+
+                   DCB=&ODCB             -
+
+                   UNIT=&OUNIT           -
+
+                   VOL=&OVOLSER          -
+
+                   LABEL=&OLABEL         -
+
+                   MGMTCLAS=&MGMTCLAS    -
+
+                   STORCLAS=&STORCLAS    -
+
+                   DATACLAS=&DATACLAS    -
+
+                    DISP=&ODISP           -
+
+                    SPACE=&OSPACE         -
+
+    SYSOPTS=":CODEPAGE=(UTF8,IBM-01130):" -
+
+                    &OPARM)
+
+STEP2   IF (STEP1 < 4) THEN
+
+      EXIT
+
+      EIF
+
+STEP3   RUN TASK -
+
+      (PGM = CESNOTE, - 4
+
+      PARM = ('FAIL',&IDSN) -
+
+      ) PNODE
+
+*
+
+MEMBER NAME   NDM0185
+********************************************************************
+
+*     NDM0185                                                       *
+
+********************************************************************
+
+NDM0185   PROCESS  HOLD=NO                    -
+
+                   &CKPT=50M                  -
+
+                   &IDSN=,                    -
+
+                   &IDISP=(OLD,DELETE,KEEP)   -
+
+                   &FILENAME=,                -
+
+                   &ODSN=,                    -
+
+                   &ODCB=,                    -
+
+                   &IDCB=,                    -
+
+                   &MOVE=mv                   -
+
+                   &ODISP=,                   -
+
+                   &SYSOPTS=,
+
+*
+
+STEP01 COPY FROM (PNODE                       -
+
+                   DSN=&IDSN                  -
+
+                   DCB=&IDCB                  -
+
+                   DISP=&IDISP)               -
+
+                   COMPRESS EXT               -
+
+                   CKPT=&CKPT                 -
+
+*
+
+             TO   (SNODE                      -
+
+                   DSN=&ODSN                  -
+
+                   DCB=&ODCB                  -
+
+                   SYSOPTS=&SYSOPTS           -
+
+                   DISP=&ODISP)
+
+*
+
+STEP02   IF  (STEP01 NE 0) THEN
+
+               GOTO STEP04
+
+        EIF
+
+********************************************************************
+
+*** HERE WE TRIGGER THE APPROPRIATE UNIX FILE PROCESSING SCRIPT.   **
+
+********************************************************************
+
+STEP03   RUN TASK (PGM=UNIX,SYSOPTS="&MOVE &ODSN &NEWFILE") SNODE
+
+          EXIT
+
+STEP04   RUN TASK (PGM=DMNOTIFY,PARM=(FAIL,'STEP01')) PNODE
+
+MEMBER NAME   TRANFAIL
+TRANFAIL PROCESS
+
+/**********************************************************************/
+
+/***      @@@@@@@@   BASILDON TEST VERSION  @@@@@@@@@@@@@@@@       *****/
+
+/***   @@@@  THE SNODE SPECIFIED BY THE SUBMITTING PROCESS  @@@@   *****/
+
+/***   @@@@  MUST BE A MC A NODE.  EG SIG.SND.SERV          @@@@   *****/
+
+/***                   @@@@@@@@@@@@@@@@@@@@@                       *****/
+
+/***   THIS PROCESS IS USED BY VARIOUS PRODUCTION TRANSMIT JOBS    *****/
+
+/***   IT WILL PLACE THE JOB SPECIFIED BY &JOB ONTO THE RESTART Q  *****/
+
+/***   ON CA7.  THIS IS A BASIC WAY OF NOTIFYING THE BRIDGE THAT A *****/
+
+/***   CRITICAL NDM PROCESS HAS FAILED                             *****/
+
+/**********************************************************************/
+
+STEP01 RUN TASK (PGM=U7SVC,-
+
+        PARM=(\'/LOGON \ || &CA7DET || -
+
+        \DEMANDH,JOB=\ || &JOB ||  \,SCHID=1,TYPE=RES;/LOGOFF'\)) -
+
+        PNODE
+
+MEMBER NAME   W4PTRID2
+/**********************************************************************/
+
+/* VHJTRID2                 Copy of TLANTRI2            CMR # 00705623 */
+
+/**********************************************************************/
+
+VHJTRID2 PROCESS SNODE=w4pvir022                                        -
+
+                  CLASS=2                                               -
+
+                  PNODE=SIG.BAS.TCB                                     -
+
+                  &DTYPE=TEXT                                           -
+
+                  &STRIP=NO                                             -
+
+                  &XLATE=YES                                            -
+
+                  &DISP=RPL                                             -
+
+                  &FNODE=%PNODE
+
+/**********************************************************************/
+
+/*                      Copy from Mainframe to LAN                     */
+
+/**********************************************************************/
+
+STEP01 COPY FROM (SNODE                                                 -
+
+   DSN=&F                                                               -
+
+                   DISP=SHR                                             -
+
+   SYSOPTS="DATATYPE(&DTYPE) STRIP.BLANKS(&STRIP) XLATE(&XLATE)")       -
+
+                   COMPRESS EXT                                         -
+
+               TO (PNODE                                                -
+
+   DSN=&T1                                                              -
+
+   DCB=(LRECL=&LRECL,BLKSIZE=&BLKSIZE,RECFM=&RECFM)                     -
+
+                   DISP=&DISP)
+
+STEP02 IF (STEP01 NE 0) THEN
+
+     GOTO STEP100
+
+     ELSE
+
+     EXIT
+
+    EIF
+
+/**********************************************************************/
+
+/*                      Copy from LAN to Mainframe                     */
+
+/**********************************************************************/
+
+STEP03 COPY TO (SNODE DSN=&F,DISP=&DISP,TYPE=&TYPE)                     -
+
+       FROM (PNODE DSN=&B1,DISP=SHR                                     -
+
+    SYSOPTS="DATATYPE(&DTYPE) STRIP.BLANKS(&STRIP) XLATE(&XLATE)")      -
+
+            COMPRESS EXT
+
+STEP04 IF (STEP03 NE 0) THEN
+
+        GOTO STEP100
+
+        ELSE
+
+        EXIT
+
+        EIF
+
+/**********************************************************************/
+
+/*            Submit C:D Process to Flag CA7 with Downed Job           */
+
+/**********************************************************************/
+
+STEP100 SUBMIT DSN=CDIRECT.TEST.BASE(TRANFAIL)                          -
+
+                SNODE=&FNODE                                            -
+
+                &CA7DET=&CA7DET                                         -
+
+                &JOB=&FAILJOB
+
+/**********************************************************************/
+
+/*                          Failed WTO                                 */
+
+/**********************************************************************/
+
+STEP101 RUN TASK (PGM=WTOPARM                                           -
+
+ PARM=(\'SIGNDM01 \ || &FAILJOB || \ NDM PROCESS FAILED ON NDMTCB'\))   -
+
+                  PNODE
+
+MEMBER NAME   ZLAN0269
+ZLAN0269 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TRMRLOD2.CLTA.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TRMRLOD2.CLTA.CRFADEFN.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TRMRLOD2.CLTA.CRFASCEN.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TRMRLOD2.CLTA.ECOLDEFN.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TRMRLOD2.CLTA.ECOLSCEN.S0FA(0)
+
+ SYMBOL &DSF06=VPCN.GA.TRMRLOD2.CLTA.CNFGDEFN.S0FA(0)
+
+ SYMBOL &DSF07=VPCN.GA.TRMRLOD2.CLTA.CNFGSCEN.S0FA(0)
+
+ SYMBOL &DSF08=VPCN.GA.TRMRLOD2.CLTA.KEYDEFN.S0FA(0)
+
+ SYMBOL &DSF09=VPCN.GA.TRMRLOD2.CLTA.LIBRARY.S0FA(0)
+
+ SYMBOL &DSF10=VPCN.GA.TRMRLOD2.CLTA.SCORTYPE.S0FA(0)
+
+ SYMBOL &DSF11=VPCN.GA.TRMRLOD2.CLTA.SCRDDEFN.S0FA(0)
+
+ SYMBOL &DSF12=VPCN.GA.TRMRLOD2.CLTA.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF13=VPCN.GA.TRMRLOD2.CLTA.SYSCNTL.S0FA(0)
+
+ SYMBOL &DSF14=VPCN.GA.TRMRLOD2.CLTA.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF15=VPCN.GA.TRMRLOAD.CLTA.CONSOLID.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\RABKU8\Data\Standard\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\RABKU8\Data\Standard\Control\CRFADEFN.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\RABKU8\Data\Standard\Control\CRFASCEN.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\RABKU8\Data\Standard\Control\ECOLDEFN.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\RABKU8\Data\Standard\Control\ECOLSCEN.dat'
+
+ SYMBOL &DST06='\\W4PVFS1008\RABKU8\Data\Standard\Control\CNFGDEFN.dat'
+
+ SYMBOL &DST07='\\W4PVFS1008\RABKU8\Data\Standard\Control\CNFGSCEN.dat'
+
+ SYMBOL &DST08='\\W4PVFS1008\RABKU8\Data\Standard\Control\KEYDEFN.dat'
+
+ SYMBOL &DST09='\\W4PVFS1008\RABKU8\Data\Standard\Control\LIBRARY.dat'
+
+ SYMBOL &DST10='\\W4PVFS1008\RABKU8\Data\Standard\Control\SCORTYPE.dat'
+
+ SYMBOL &DST11='\\W4PVFS1008\RABKU8\Data\Standard\Control\SCRDDEFN.dat'
+
+ SYMBOL &DST12='\\W4PVFS1008\RABKU8\Data\Standard\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST13='\\W4PVFS1008\RABKU8\Data\Standard\Control\SYSCNTL.dat'
+
+ SYMBOL &DST14='\\W4PVFS1008\RABKU8\Data\Standard\Control\LANGUAGE.txt'
+
+ SYMBOL &DST15='\\W4PVFS1008\RABKU8\Data\Standard\Tally\STANDARD.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP06 COPY FROM (PNODE DSN=&DSF06,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST06,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP07 COPY FROM (PNODE DSN=&DSF07,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST07,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP08 COPY FROM (PNODE DSN=&DSF08,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST08,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP09 COPY FROM (PNODE DSN=&DSF09,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST09,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP10 COPY FROM (PNODE DSN=&DSF10,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST10,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP11 COPY FROM (PNODE DSN=&DSF11,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST11,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP12 COPY FROM (PNODE DSN=&DSF12,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST12,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP13 COPY FROM (PNODE DSN=&DSF13,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST13,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP14 COPY FROM (PNODE DSN=&DSF14,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST14,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP15 COPY FROM (PNODE DSN=&DSF15,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST15,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP16   IF (STEP15 EQ 0) THEN
+
+                  GOTO STEP17
+
+                  ELSE
+
+                  EXIT
+
+STEP17 COPY FROM (PNODE DSN=P.NDM.TRIGGER.FILE,DISP=SHR)    -
+
+                  COMPRESS EXT                              -
+
+   TO (SNODE DSN='\\W4PVFS1008\RABKU8\Data\Standard\Tally\TRIGGER.dat', -
+
+      DISP=RPL SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+         EIF
+
+MEMBER NAME   ZLAN0270
+ZLAN0270 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TRMRLOD2.CLTA.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TRMRLOD2.CLTA.SCORTYPE.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TRMRLOD2.CLTA.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TRMRLOD2.CLTA.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TRMRLOAD.CLTA.CAOTALLY.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\RABKU8\Data\AuthOut\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\RABKU8\Data\AuthOut\Control\SCORTYPE.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\RABKU8\Data\AuthOut\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\RABKU8\Data\AuthOut\Control\LANGUAGE.txt'
+
+ SYMBOL &DST05='\\W4PVFS1008\RABKU8\Data\AuthOut\Tally\CAOTALLY.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+MEMBER NAME   ZLAN0271
+ZLAN0271 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TREDRVER.CLTA.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TREDRVER.CLTA.ECOLDEFN.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TREDRVER.CLTA.ECOLSTGY.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TREDRVER.CLTA.KEYDEFN.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TREDRVER.CLTA.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF06=VPCN.GA.TREDRVER.CLTA.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF07=VPCN.GA.TREDRVER.CLTA.ESTECOL.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\RABKU8\Data\Estimator\Control\ECOLDEFN.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\RABKU8\Data\Estimator\Control\ECOLSTGY.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\RABKU8\Data\Estimator\Control\KEYDEFN.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\RABKU8\Data\Estimator\Control\LANGUAGE.txt'
+
+ SYMBOL &DST06='\\W4PVFS1008\RABKU8\Data\Estimator\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST07='\\W4PVFS1008\RABKU8\Data\Estimator\Tally\ESTECOL.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP06 COPY FROM (PNODE DSN=&DSF06,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST06,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP07 COPY FROM (PNODE DSN=&DSF07,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST07,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+MEMBER NAME   ZLAN0272
+ZLAN0272 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TREDRVER.CLTA.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TREDRVER.CLTA.CNFGDEFN.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TREDRVER.CLTA.CNFGSCEN.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TREDRVER.CLTA.CNFGSTGY.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TREDRVER.CLTA.KEYDEFN.S0FA(0)
+
+ SYMBOL &DSF06=VPCN.GA.TREDRVER.CLTA.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF07=VPCN.GA.TREDRVER.CLTA.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF08=VPCN.GA.TREDRVER.CLTA.ESTCNFG.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CNFGDEFN.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CNFGSCEN.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CNFGSTGY.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\RABKU8\Data\Estimator\Control\KEYDEFN.dat'
+
+ SYMBOL &DST06='\\W4PVFS1008\RABKU8\Data\Estimator\Control\LANGUAGE.txt'
+
+ SYMBOL &DST07='\\W4PVFS1008\RABKU8\Data\Estimator\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST08='\\W4PVFS1008\RABKU8\Data\Estimator\Tally\ESTCNFG.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP06 COPY FROM (PNODE DSN=&DSF06,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST06,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP07 COPY FROM (PNODE DSN=&DSF07,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST07,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP08 COPY FROM (PNODE DSN=&DSF08,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST08,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+MEMBER NAME   ZLAN0273
+ZLAN0273 PROCESS SNODE=W4PVIR022
+
+ SYMBOL &DSF01=VPCN.GA.TREDRVER.CLTA.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TREDRVER.CLTA.CRFADEFN.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TREDRVER.CLTA.CRFASTGY.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TREDRVER.CLTA.KEYDEFN.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TREDRVER.CLTA.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF06=VPCN.GA.TREDRVER.CLTA.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF07=VPCN.GA.TREDRVER.CLTA.ESTCRFA.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CRFADEFN.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CRFASTGY.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\RABKU8\Data\Estimator\Control\KEYDEFN.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\RABKU8\Data\Estimator\Control\LANGUAGE.txt'
+
+ SYMBOL &DST06='\\W4PVFS1008\RABKU8\Data\Estimator\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST07='\\W4PVFS1008\RABKU8\Data\Estimator\Tally\ESTCRFA.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP06 COPY FROM (PNODE DSN=&DSF06,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST06,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP07 COPY FROM (PNODE DSN=&DSF07,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST07,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+MEMBER NAME   ZLAN0274
+ZLAN0274 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TREDRVER.CLTA.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TREDRVER.CLTA.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TREDRVER.CLTA.SCORTYPE.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TREDRVER.CLTA.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TREDRVER.CLTA.ESTSCOR.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\RABKU8\Data\Estimator\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\RABKU8\Data\Estimator\Control\LANGUAGE.txt'
+
+ SYMBOL &DST03='\\W4PVFS1008\RABKU8\Data\Estimator\Control\SCORTYPE.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\RABKU8\Data\Estimator\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\RABKU8\Data\Estimator\Tally\ESTSCOR.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+MEMBER NAME   ZLAN0275
+ZLAN0275 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TREAUTHS.CLTA.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TREAUTHS.CLTA.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TREAUTHS.CLTA.AUTHSTGY.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TREAUTHS.CLTA.AUTHDEFN.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TREAUTHS.CLTA.AKEYDEFN.S0FA(0)
+
+ SYMBOL &DSF06=VPCN.GA.TREAUTHS.CLTA.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF07=VPCN.GA.TREAUTHS.CLTA.AETL3EDR.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\RABKU8\Data\AuthEst\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\RABKU8\Data\AuthEst\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\RABKU8\Data\AuthEst\Control\AUTHSTGY.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\RABKU8\Data\AuthEst\Control\AUTHDEFN.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\RABKU8\Data\AuthEst\Control\AKEYDEFN.dat'
+
+ SYMBOL &DST06='\\W4PVFS1008\RABKU8\Data\AuthEst\Control\LANGUAGE.txt'
+
+ SYMBOL &DST07='\\W4PVFS1008\RABKU8\Data\AuthEst\Tally\AETL3EDR.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP06 COPY FROM (PNODE DSN=&DSF06,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST06,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP07 COPY FROM (PNODE DSN=&DSF07,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST07,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+MEMBER NAME   ZLAN0369
+ZLAN0369 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TRMRLOD2.CLTB.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TRMRLOD2.CLTB.CRFADEFN.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TRMRLOD2.CLTB.CRFASCEN.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TRMRLOD2.CLTB.ECOLDEFN.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TRMRLOD2.CLTB.ECOLSCEN.S0FA(0)
+
+ SYMBOL &DSF06=VPCN.GA.TRMRLOD2.CLTB.CNFGDEFN.S0FA(0)
+
+ SYMBOL &DSF07=VPCN.GA.TRMRLOD2.CLTB.CNFGSCEN.S0FA(0)
+
+ SYMBOL &DSF08=VPCN.GA.TRMRLOD2.CLTB.KEYDEFN.S0FA(0)
+
+ SYMBOL &DSF09=VPCN.GA.TRMRLOD2.CLTB.LIBRARY.S0FA(0)
+
+ SYMBOL &DSF10=VPCN.GA.TRMRLOD2.CLTB.SCORTYPE.S0FA(0)
+
+ SYMBOL &DSF11=VPCN.GA.TRMRLOD2.CLTB.SCRDDEFN.S0FA(0)
+
+ SYMBOL &DSF12=VPCN.GA.TRMRLOD2.CLTB.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF13=VPCN.GA.TRMRLOD2.CLTB.SYSCNTL.S0FA(0)
+
+ SYMBOL &DSF14=VPCN.GA.TRMRLOD2.CLTB.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF15=VPCN.GA.TRMRLOAD.CLTB.CONSOLID.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\YSBKU8\Data\Standard\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\YSBKU8\Data\Standard\Control\CRFADEFN.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\YSBKU8\Data\Standard\Control\CRFASCEN.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\YSBKU8\Data\Standard\Control\ECOLDEFN.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\YSBKU8\Data\Standard\Control\ECOLSCEN.dat'
+
+ SYMBOL &DST06='\\W4PVFS1008\YSBKU8\Data\Standard\Control\CNFGDEFN.dat'
+
+ SYMBOL &DST07='\\W4PVFS1008\YSBKU8\Data\Standard\Control\CNFGSCEN.dat'
+
+ SYMBOL &DST08='\\W4PVFS1008\YSBKU8\Data\Standard\Control\KEYDEFN.dat'
+
+ SYMBOL &DST09='\\W4PVFS1008\YSBKU8\Data\Standard\Control\LIBRARY.dat'
+
+ SYMBOL &DST10='\\W4PVFS1008\YSBKU8\Data\Standard\Control\SCORTYPE.dat'
+
+ SYMBOL &DST11='\\W4PVFS1008\YSBKU8\Data\Standard\Control\SCRDDEFN.dat'
+
+ SYMBOL &DST12='\\W4PVFS1008\YSBKU8\Data\Standard\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST13='\\W4PVFS1008\YSBKU8\Data\Standard\Control\SYSCNTL.dat'
+
+ SYMBOL &DST14='\\W4PVFS1008\YSBKU8\Data\Standard\Control\LANGUAGE.txt'
+
+ SYMBOL &DST15='\\W4PVFS1008\YSBKU8\Data\Standard\Tally\STANDARD.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP06 COPY FROM (PNODE DSN=&DSF06,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST06,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP07 COPY FROM (PNODE DSN=&DSF07,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST07,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP08 COPY FROM (PNODE DSN=&DSF08,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST08,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP09 COPY FROM (PNODE DSN=&DSF09,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST09,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP10 COPY FROM (PNODE DSN=&DSF10,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST10,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP11 COPY FROM (PNODE DSN=&DSF11,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST11,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP12 COPY FROM (PNODE DSN=&DSF12,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST12,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP13 COPY FROM (PNODE DSN=&DSF13,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST13,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP14 COPY FROM (PNODE DSN=&DSF14,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST14,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP15 COPY FROM (PNODE DSN=&DSF15,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST15,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP16   IF (STEP15 EQ 0) THEN
+
+                  GOTO STEP17
+
+                  ELSE
+
+                  EXIT
+
+STEP17 COPY FROM (PNODE DSN=P.NDM.TRIGGER.FILE,DISP=SHR)    -
+
+                  COMPRESS EXT                              -
+
+   TO (SNODE DSN='\\W4PVFS1008\YSBKU8\Data\Standard\Tally\TRIGGER.dat', -
+
+      DISP=RPL SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+         EIF
+
+MEMBER NAME   ZLAN0370
+ZLAN0370 PROCESS SNODE=w4pvir022
+
+ SYMBOL &DSF01=VPCN.GA.TRMRLOD2.CLTB.CLTCNTL.S0FA(0)
+
+ SYMBOL &DSF02=VPCN.GA.TRMRLOD2.CLTB.SCORTYPE.S0FA(0)
+
+ SYMBOL &DSF03=VPCN.GA.TRMRLOD2.CLTB.SPIDCNTL.S0FA(0)
+
+ SYMBOL &DSF04=VPCN.GA.TRMRLOD2.CLTB.SYSCNTL.S0FA(0)
+
+ SYMBOL &DSF05=VPCN.GA.TRMRLOD2.CLTB.LANGUAGE.S0FA(0)
+
+ SYMBOL &DSF06=VPCN.GA.TRMRLOAD.CLTB.CAOTALLY.S0FA(0)
+
+ SYMBOL &DST01='\\W4PVFS1008\YSBKU8\Data\AuthOut\Control\CLTCNTL.dat'
+
+ SYMBOL &DST02='\\W4PVFS1008\YSBKU8\Data\AuthOut\Control\SCORTYPE.dat'
+
+ SYMBOL &DST03='\\W4PVFS1008\YSBKU8\Data\AuthOut\Control\SPIDCNTL.dat'
+
+ SYMBOL &DST04='\\W4PVFS1008\YSBKU8\Data\AuthOut\Control\SYSCNTL.dat'
+
+ SYMBOL &DST05='\\W4PVFS1008\YSBKU8\Data\AuthOut\Control\LANGUAGE.txt'
+
+ SYMBOL &DST06='\\W4PVFS1008\YSBKU8\Data\AuthOut\Tally\CAOTALLY.dat'
+
+STEP01 COPY FROM (PNODE DSN=&DSF01,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST01,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP02 COPY FROM (PNODE DSN=&DSF02,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST02,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP03 COPY FROM (PNODE DSN=&DSF03,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST03,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP04 COPY FROM (PNODE DSN=&DSF04,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST04,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP05 COPY FROM (PNODE DSN=&DSF05,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST05,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+STEP06 COPY FROM (PNODE DSN=&DSF06,DISP=SHR)                -
+
+                  COMPRESS EXT                              -
+
+             TO   (SNODE DSN=&DST06,DISP=RPL                -
+
+      SYSOPTS="DATATYPE(BINARY) STRIP.BLANKS(NO) XLATE(NO)")
+
+MEMBER NAME   ZLAN8850
+ZLAN8850 PROCESS SNODE=W4PVIR022 MAXDELAY=0
+
+ SYMBOL &DF01='\\W4PVFS1008\RABKP8\REPORTS\DATAVIEW\TRIAD8REPORTS.TXT'
+
+ SYMBOL &DT01=VPCN.GA.TRIAD8.RABK.REPORTS.S0FA(+1)
+
+STEP01 COPY FROM (SNODE DSN=&DF01,DISP=SHR)                           -
+
+                  COMPRESS EXT                                        -
+
+             TO   (PNODE DSN=&DT01,DISP=(NEW,CATLG,DELETE)            -
+
+        DCB=(LRECL=500,RECFM=FB))
+
