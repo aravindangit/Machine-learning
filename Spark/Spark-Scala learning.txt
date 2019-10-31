@@ -1,0 +1,666 @@
+Download and Install Apache Spark 2 x
+
+1. Go to apache spark page for download
+		-->cd bin
+
+Go to spark installation directory and navigate to bin and type ./spark-shell
+     spark context as sc
+     spark session as spark
+
+:help --> for getting help
+:type sc -->getting type
+:type spark -->spark session(new wrapper available from spark 2)
+:history
+
+spark --> press tab it will fill all the function starting with spark
+
+spark. --> press tab and it will list all the methods available
+
+spark.emptyDataFrame --> create empty dataframe
+
+Spark RDD: -->immutable collection of objects
+---------------------------------------------
+
+RDD with parallelize method:
+****************************
+val intarray = Array(1,2,3,4,5)
+val intrdd = sc.Parellize(intarray)
+	or 
+More the number the partitions and core better the parellism of the work
+val intrdd = sc.Parellize(intarray,2)  --> passing the no of partitions
+
+intrdd.first()--> to get first element
+intrdd.take(2)--> first two elements
+intrdd.collect()--> entired rdd(return array of elements)
+intrdd.collect().foreach(println)-->print all elements in array
+intrdd.partitions.size
+
+RDD with text file:
+********************
+
+val filerdd = sc.textFile("/users/setup/rotten.tsv")
+filerdd.first()
+filerdd.take(10)
+filerdd.collect()
+filerdd.take(30).foreach(println)
+filerdd.partitions.size
+
+val filerddnew = sc.textFile("/users/setup/rotten.tsv",5)
+filerddnew.partitions.size --> five partitions will be created
+
+
+Operations with RDD:
+--------------------
+
+filter
+********
+val data = Array("hello how are you cour","welcome","spark","happy coding")
+val datardd = sc.parallelize(data)
+val filterrdd = datardd.filter(line => line.length > 15)
+filterrdd.collect() 
+filterrdd.collect.foreach(println)
+
+
+map ==> return array of array(returning iterators)
+**************************************************
+val maprdd = datardd.map(line => line.split(""))
+maprdd.collect.foreach(println)
+
+flatmap==> array of all the rows and flatten out.
+**************************************************
+val flatmaprdd = datardd.flatMap(line => line.split(""))
+
+distinct==> collect the distinct element
+****************************************
+
+val distrdd = datardd.distinct()
+distrdd.collect()
+
+
+Maven project with Intellij:
+----------------------------
+
+intellij idea download
+download community edition
+go to configure at down and in plugins search for scala and install it.
+Create new project
+	select maven and click next
+	give group id and artifact
+	update project name
+
+by default it support java project and we need to add scala nature
+
+select project and right click and add frame work support as scala
+
+scala sdk is added now
+
+src/main/java(either rename java folder or create a scala folder)
+test/java(either rename java folder or create a scala folder)
+
+open pom.xml and add dependencies from maven repository
+
+based on spark version select and paste under dependencies.
+
+spark-core
+spark-sql
+spark-hive
+spark-Streaming
+spark-mllib
+
+<dependencies>
+
+</dependencies>
+
+SBT project with Intellij
+---------------------------
+
+Go to configure at down and in plugins search for scala and install it.
+
+select scala with sbt --> next --> project name,scala ver, sbt version--> finish
+
+src/main/scala
+under ext dependencies scala plugins are there
+
+got to build.sbt and update the dependencies
+
+
+spark-core
+spark-sql
+spark-hive
+spark-Streaming
+spark-mllib
+
+
+Maven project with eclipse(eclipse is betterfit for maven projects)
+--------------------------------------------------------------------
+
+download scala eclipse ide download
+
+select workspace --> click ok
+
+top New --> other --> search for maven and select maven project--> next
+create simple project -->fill groupid and artifact id
+
+right click on project and go to configure and add the scala nature
+not the icon is changed from j to s
+
+directory structure
+
+src/main/scala
+src/main/resources
+src/test/scala
+src/test/resources
+
+open pom.xml and add the dependencies from maven repository.
+
+spark-core
+spark-sql
+spark-hive
+spark-Streaming
+spark-mllib
+
+spark 2.0 and above go with scala 2.11 and above
+spark 1.x go with scala 2.10
+
+
+Creating rdd in IDE:(ctl +Shift + o to import the packages)
+---------------------
+
+Create a package as rdd basics
+create object class
+
+package RDDbasic
+object createsparksession{
+  def main(args: Array[String]): Unit ={
+	val sparkconf = new SparkConf()
+	SparkConf.setappname("First spark application)
+	.setmaster("local")
+	val sc = new SparkContext(sparkconf)
+	val array = Array(1,2,3,4,5,6,7,8,9,0)
+	val arrayrdd = sc.parallelize(array,2)
+	println("number of elements in rdd", arrayrdd.count())
+	arrardd.foreach(println)	
+ }
+}
+
+right click and run the scala application
+
+when we run getting the error jackson lib not found and jars not available
+
+under lib we can add all the jars from the installation file and then click all and 
+right click and give add to buildpath
+
+
+package RDDbasic
+object createsparksession{
+  def main(args: Array[String]): Unit ={
+	val sparkconf = new SparkConf()
+	SparkConf.setappname("First spark application)
+	.setmaster("local")
+	val sc = new SparkContext(sparkconf)
+	val array = Array(1,2,3,4,5,6,7,8,9,0)
+	val arrayrdd = sc.parallelize(array,2)
+	println("number of elements in rdd", arrayrdd.count())
+	arrardd.foreach(println)
+	comment=> adding file for creating rdd	
+	val file = "/user/path/new.txt")
+	val filerdd = sc.textfile(file,5)
+	println("num of row in file", filerdd.count())
+	println(filerdd.first())
+ }
+}
+
+Spark 2- Sparksession:
+------------------------
+
+package sparksession
+object creatingsparkcontextsparksession{
+  def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appname("spark application")
+	.master("local")
+	.getorCreate()
+	val array = Array(1,2,3,4,5)
+	val arrayRDD = sparksession.sparkContext.parallelize(array,2)
+	arrayRdd.foreach(println)
+	val filerdd = sparkSession.sparkcontext.textfile("/user/text.txt")
+	println("file count" + filerdd.count())
+	filerdd.take(2).foreach(println)
+ }
+}
+
+
+
+Creating an maven project - refer eclipse with maven at top
+------------------------------------------------------------
+for compiling with maven
+
+keep thejre system as 1.8
+
+updating pom.xml entries 
+
+<dependencies>
+</dependencies>
+
+select => scr/main/scala
+	=> create package
+		=>create object
+
+
+
+if we want to read from the idea project then we need to select
+
+src/test/resources
+create folder as datasets(name can be anything) and add all our sample datasets
+
+package rddBasics
+object RDDwithCSVFiles{
+  def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appname("spark application")
+	.master("local")
+	.getorCreate()
+	
+	val filerdd = sparkSession.sparkcontext.textfile("/src/test/resources/dataset/sample.csv")
+	println(filerdd.count())
+
+ }
+}
+
+when we run with maven clean build or install we will get a jar file
+
+to remove the header
+
+package rddBasics
+object RDDwithCSVFiles{
+  def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appname("spark application")
+	.master("local")
+	.getorCreate()
+	
+	val csvrdd= sparkSession.sparkcontext.textfile("/src/test/resources/dataset/sample.csv")
+	csvrdd.take(10).foreach(println)
+	val header = csvrdd.first()
+	val withoutheader = filerdd.filter(line => line!=header)
+	or 
+	val withoutheader = filerdd.filter(_ !=header)
+
+ }
+}
+
+To extract the selected fields or columns
+---------------------------------------------
+
+package rddBasics
+object RDDwithCSVFiles{
+  def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appname("spark application")
+	.master("local")
+	.getorCreate()
+	
+	val csvrdd= sparkSession.sparkcontext.textfile("/src/test/resources/dataset/sample.csv")
+	csvrdd.take(10).foreach(println)
+	val header = csvrdd.first()
+	val withoutheader = filerdd.filter(line => line!=header)
+	or 
+	val withoutheader = filerdd.filter(_ !=header)
+	val csvarray = withoutheader.map(line => {
+	val colarray = line.split(",")
+	(colarray(0),colarray(1),colarray(16),colarray(17))==>tuples
+	or 
+	list(colarray(0),colarray(1),colarray(16),colarray(17)) ==>listoutput
+	or 
+	Array(colarray(0),colarray(1),colarray(16),colarray(17)).mkstring(" space or any symbol like :") ==>Array output. but it wont be printed correctly.to make it print we need touse mkstring
+ 	}).take(10).foreach(println)
+			
+	
+
+ }
+}
+
+
+saving rdd into a textfile in project directory:
+--------------------------------
+create an output in project under resources as destination
+
+
+package rddBasics
+object RDDwithCSVFiles{
+  def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appname("spark application")
+	.master("local")
+	.getorCreate()
+	
+	val csvrdd= sparkSession.sparkcontext.textfile("/src/test/resources/dataset/sample.csv")
+	csvrdd.take(10).foreach(println)
+	val header = csvrdd.first()
+	val withoutheader = filerdd.filter(line => line!=header)
+	or 
+	val withoutheader = filerdd.filter(_ !=header)
+	val csvarray = withoutheader.map(line => {
+	val colarray = line.split(",")
+	(colarray(0),colarray(1),colarray(16),colarray(17))==>tuples
+	or 
+	list(colarray(0),colarray(1),colarray(16),colarray(17)) ==>listoutput
+	or 
+	Array(colarray(0),colarray(1),colarray(16),colarray(17)).mkstring(" space or any symbol like :") ==>Array output. but it wont be printed correctly.to make it print we need touse mkstring
+ 	}).take(10).foreach(println)
+	csvarray.saveAsTextFile("destination/limited_column")
+	#we can only provide directory as output and cant give as a file name
+			
+	
+
+ }
+}
+
+Dataframe for spark:
+---------------------
+using catalyst optimizer for spark sql
+
+imposing structure to distributed data.
+
+csv,json,avro,parquet,
+from hive tables
+ext table via jdbc mysql,postgre
+from existing rdd
+
+any dataframe will have
+	column name,
+	column type,
+	nullable or not
+data in dataframe is respresented as collection of row objects
+
+prior to spark 2.0
+hierarchy to create dataframe prior 2.0
+spark conf, 
+	spark context , 
+		sqlcontext or hive context
+dataframe was created using sqlcontext or hive context
+
+after 2.0 we can directly create through sparksession.
+
+
+Creating dataframe using 1.x
+-------------------------------
+in spark 1.x df is created using SQL Context
+and SQL context is created using spark context.
+
+package dfbasics
+object DFwithSc {
+	def main(args: Array[Spring]): Unit = {
+	val sparkconf = new SparkConf()
+	.SetMaster("local")
+	.setappname("creating df in spark 1.x)
+	
+	val sc = new SparkContext(sparkconf
+	val sqlcontext = new SQLContext(sc)
+	val rdd = sc.parallelize(Array(1,2,3,4,5))
+	val schemas = StructType(
+		StructField("Numbers" Integer Type, false) :: Nil
+		)
+	val rowrdd = rdd.map(line => Row(line))
+	val df = sqlcontext.createDataFrame(rowrdd,schemas)
+	df.printSchema()
+	df.show()
+	}
+}
+
+Creating dataframe using 2.x
+-------------------------------
+in spark 2.x df is created using sparksession
+
+
+package dfbasic
+object DFwithSS{
+	def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appname("spark application")
+	.master("local")
+	.getorCreate()
+	val rdd = spark.sparkContext.Parallelize(Array(1,2,3,4,5))
+	val schema = StructType(
+		StructField("Numbers" Integer Type, false) :: Nil
+		)
+	val rowrdd = rdd.map(line => Row(line))
+	val df = spark.createDataFrame(rowrdd,schema)
+	df.printSchema()
+	df.show()
+	df.show(5)
+	
+	}
+}
+
+error faced: casting from string to integer schema. 
+how to fix:
+either change the input to string type or schemas as integer
+
+
+Creating DataFrame with CSV file in Spark 1 x Style
+----------------------------------------------------
+=>spark 1.x directly won't support csv so we need to databricks csv
+=>spark csv maven dependency
+=>download databricks dependencies
+=>update pom.xml
+=> we cant see .csv with 1.x version
+=>adding univocity parsers dependencies.
+
+
+package dfbasic
+object creatingDFWithCSVusingSC{
+	def main(args: Array[Spring]): Unit = {
+	val sparkconf = new SparkConf()
+	.setMaster("local")
+	.setAppName("Creating DF from csv using spark 1.x procedure")
+	
+	val sc = new SparkContext(sparkconf
+	val sqlcontext = new SQLContext(sc)
+	val df = sqlcontext.read
+	.options("header","true")
+	.options("inferSchema","true")
+	.format("com.databricks.spark.csv")
+	.load("src/test/resources/datasets/customer.csv")
+	
+	df.printSchema()
+	df.show()
+	}
+}
+
+
+
+error:
+no class def for univosity parsers are available
+how to fix:
+add univosity parsers dependencies
+
+Creating DataFrame with CSV file in Spark 2 x Style
+-------------------------------------------------------
+
+package dfbasic
+import org.apache.spark.sql.sparksession
+object DFwithSS{
+	def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appName("creating dataframe with csv in spark 2.x way")
+	.master("local")
+	.getorCreate()
+	val df = sparkession.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("src/test/resources/datasets/customer")
+	df.show()
+	df.show(5)
+	
+	}
+}
+
+we have added databricks dependencies and spark 2 has out of box
+implementation for csv. so it throws an error saying"multiple sources found for csv"
+How to fix:
+--------------------
+remove databricks csv and verosity parser dependency.
+
+two other way of mentioning options in dataframe
+
+method 1:
+
+package dfbasic
+import org.apache.spark.sql.sparksession
+object DFwithSS{
+	def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appName("creating dataframe with csv in spark 2.x way")
+	.master("local")
+	.getorCreate()
+	val df = sparkession.read
+	.options(Map("header" -> "true","inferschema" -> "true")
+	.csv("src/test/resources/datasets/customer")
+	df.show()
+	df.show(5)
+	
+	}
+}
+
+method 2:
+----------
+
+package dfbasic
+import org.apache.spark.sql.sparksession
+object DFwithSS{
+	def main(args: Array[String]): Unit ={
+	val sparksession = SparkSession.builder()
+	.appName("creating dataframe with csv in spark 2.x way")
+	.master("local")
+	.getorCreate()
+	val properties = Map("header" -> "true","inferschema" -> "true"
+	val df = sparkession.read
+	.options(properties)
+	.csv("src/test/resources/datasets/customer")
+	df.show()
+	df.show(5)
+	
+	}
+}
+
+Creating Multiple Spark Context in Spark 1.x
+----------------------------------------------
+we cant we multiple spark context in spark 1.x
+spark.driver.allowMultipleContext = true
+even if you set this property it will still fail.
+
+package dfbasics
+object mutliplesparkcontext{
+	def main(args: Array[String]): Unit = {
+	val sparkconf = new SparkConf()
+	.set("spark.driver.allowMultipleContext","true")
+	.setmaster("local")
+	.setAppName("creating multiple spark context")
+	.getorCreate()
+	
+	val sc = new SparkContext(sparkConf)
+	val sc1 = new SparkContext(sparkConf)
+	
+	val rdd = sc.parallelize(Array(1,2,3,4,5))
+	val rdd1 = sc1.parallelize(Array(1,2,3,4,5))
+	
+	rdd.collect()
+	rdd1.collect()
+	}
+}
+
+Creating Multiple Spark Sessions Spark 2 x
+-------------------------------------------
+=>two spark sessions are supported by spark 2.x
+
+package dfbasic
+import org.apache.spark.sql.sparksession
+object MultiplesparkSession{
+	def main(args: Array[String]): Unit ={
+	val sparksession1 = SparkSession.builder()
+	.appName("creating dataframe with csv in spark 2.x way")
+	.master("local")
+	.getorCreate()
+	val sparksession2 = SparkSession.builder()
+	.appName("creating dataframe with csv in spark 2.x way")
+	.master("local")
+	.getorCreate()
+	
+	val rdd1 = sparkession1.sparkContext.parallelize(Array(1,2,3,4,5))
+	val rdd2 = sparkession2.sparkContext.parallelize(Array(6,7,8,9,10))
+	rdd1.collect().foreach(println)
+	rdd2.collect().foreach(println)
+	}
+}
+
+Working with Different File Formats - textfile,ORC, JSON, Parquet
+---------------------------------------------------------
+=>without any jars we can load and process these files.
+
+//if working with spark 2.x higher supports
+csv,json,orc,parquet file format
+
+//if working with spark 1.x  supports
+=>orc,parquet,json
+csv is not supported. databricks depedencies are required.
+
+=> inferred schema by different file formats will be different. so beware.
+
+package dfbasics
+object DFFileFormat{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("DF file formats")
+	.master("local")
+	.getorCreate()
+//Creating json	
+	val jsondf = spark.read.json("/src/main/resource/file.json")
+	jsondf.printschema()
+	jsondf.show()
+	println("counting json" + jsondf.count)
+//Creating orc	
+	val orcdf = spark.read.orc("/src/main/resource/file.orc")
+	orcdf.printschema()
+//Creating parquet	
+	val parquetdf = spark.read.orc("/src/main/resource/file.parquet")
+	parquetdf.printschema()
+	}
+}
+
+parquet and orc is little similar. but different when compared to json
+
+
+
+Working with Avro Files - out of box not supported by spark 2.x
+------------------------------------------------------------------
+=> by default avro loading failed to find datasource for avro
+=> we need to add avro dependency
+
+=> either add depency in pom.xml or add in the buildpath
+
+=> ctl + shift + f for formatting
+package dfbasics
+object avrofileformat{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("DF file formats")
+	.master("local")
+	.getorCreate()
+	val avrodf = spark.read
+	.format("avro") ==> after adding depency use format as("com.databricks.spark.avro")
+	.load("/src/load/file.avro")
+	avrodf.printSchema()
+	avrodf.show(5)
+	println("avro count" + avrodf.count)
+	
+	avrodf.write.format("com.databricks.spark.avro").save("/outputdestination/customer_avro")
+	}
+}
+
+
+Applying Own Schema to the DataFrame
+--------------------------------------
+
+
+
