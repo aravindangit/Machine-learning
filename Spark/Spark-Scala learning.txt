@@ -623,7 +623,7 @@ object DFFileFormat{
 	val orcdf = spark.read.orc("/src/main/resource/file.orc")
 	orcdf.printschema()
 //Creating parquet	
-	val parquetdf = spark.read.orc("/src/main/resource/file.parquet")
+	val parquetdf = spark.read.parquet("/src/main/resource/file.parquet")
 	parquetdf.printschema()
 	}
 }
@@ -661,6 +661,853 @@ object avrofileformat{
 
 Applying Own Schema to the DataFrame
 --------------------------------------
+=> for non native file formats we have to use format & load to
+impose the schema.
+package dfbasics
+object ImposingownSchema{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	val nameDF = spark.read
+	.option("header","true"
+	.option("inferSchema","true")
+	.csv("/user/instructor/setup/dataset/sample.csv")
+	println("schema inferred by spark")
+	nameDF.printSchema()
+	
+	val ownschema = StructType(
+		StructField("year", LongType, true) ::
+		StructField("First name", StringType, true) ::
+		StructField("country", StringType, true) ::
+		StructField("sex", StringType, true) ::
+		StructField("count", LongType, true) :: Nil)
+	
+	
+	val namewithownschema = spark.read
+	.option("header","true")
+	.schema(ownschema)
+	.csv("/user/instructor/setup/dataset/sample.csv")
+	println("imposed schema")
+	namewithownschema.printSchema()
+	}
+}
+
+Basic Operations on DataFrame Part 1
+-------------------------------------
+
+--->printSChema
+--->describe
+--->schema
+--->columns
+--->dtypes
+
+package dfbasics
+object DFbasicoperations{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	val nameDF = spark.read
+	.option("header","true"
+	.option("inferSchema","true")
+	.orc("/user/instructor/setup/dataset/sample.orc")
+	
+	nameDF.printSchema()
+	val customerschema = nameDF.schema
+	println(customerschema)
+=> for array type sometimes it wont print properly
+=> we need to use mkstring to print it properly on console.	
+	val colname = nameDF.columns
+	println("column names")
+	print(colname.mkstring(","))
+	
+	val custdesc = nameDF.describe("customer_identifier")
+	custdesc.show()
+	
+	val colandtypes = nameDF.dtypes
+	println("column name and types")
+	colandtypes.foreach(println)
+	
+	nameDF.head(5).foreach(println) => it will just take first five files
+	nameDF.show(10) => it will show the lines
+	
+	}
+}
 
 
+Basic Operations on DataFrame Part 2
+------------------------------------------
+
+package dfbasics
+object DFbasicoperations2{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	val customerDF = spark.read
+	.option("header","true"
+	.option("inferSchema","true")
+	.orc("/user/instructor/setup/dataset/sample.orc")
+	
+	customerDF.head(10).foreach(println)
+	customerDF.show()
+	
+	customerDF.select("customer_identifier","cust_type","lob")
+	customerDF.select("customer_identifier","cust_type","lob").show(10)
+	//to fetch only org type fields
+	=> for where we use two equal
+	val filteredDF = customerDF.select("customer_identifier","cust_type","lob")
+	.where("customer_type"=='ORG')
+	filteredDF.show()
+	
+	=> for filter we use three equals
+	val filteredDF = customerDF.select("customer_identifier","cust_type","lob")
+	.filter(customerDF("customer_type"==='ORG')
+	filteredDF.show()
+	
+	=>groupby.applying count on groupby
+	
+	val filteredDF = customerDF.select("customer_identifier","cust_type","lob")
+	.groupBy("customer_type").count()
+
+	
+Temporary Tables Spark 1 x Style
+-----------------------------------
+
+
+package dfbasics
+object temptable{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	val customerDF = spark.read
+	.option("header","true"
+	.option("inferSchema","true")
+	.orc("/user/instructor/setup/dataset/sample.orc")
+	=> registerTempTable is spark 1.x method.
+	=> it is depreceated method.
+	customerDF.registerTempTable("Customer_table")
+	
+	val limitedrow = spark.sql("select * from Customer_table limit 10").show()
+	limitedrow.show()
+	
+	
+	}
+}
+
+package dfbasics
+object temptable{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	val customerDF = spark.read
+	.option("header","true"
+	.option("inferSchema","true")
+	.orc("/user/instructor/setup/dataset/sample.orc")
+	=> registerTempTable is spark 1.x method.
+	=> it is depreceated method.
+	customerDF.registerTempTable("Customer_table")
+	val sqlquery = "select col1,col2 from customer_table where customer_type='IND'"	
+	val limitedrow = spark.sql(sqlquery)
+	limitedrow.show()
+	}
+}
+
+
+
+Temporary Tables Spark 2 x Style
+----------------------------------
+---->createGlobalTempView
+---->createOrReplaceTempview
+---->CreateTempView
+
+
+package dfbasics
+object temptablespark2x{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	val customerDF = spark.read
+	.option("header","true"
+	.option("inferSchema","true")
+	.orc("/user/instructor/setup/dataset/sample.orc")
+	==> if we use createtempview we cant use the same table name twice
+	==>it will error out saying the table already existing
+	==> to overcome this this we have a new option createOrReplaceTempview
+	customerDF.createTempView("Customer_table")
+	val sqlquery = "select col1,col2 from customer_table where customer_type='IND'"	
+	val limitedrow = spark.sql(sqlquery)
+	limitedrow.show()
+	
+	customerDF.createTempView("Customer_table")
+	val sqlquery = "select col1,col2 from customer_table where customer_type='IND'"	
+	val limitedrow = spark.sql(sqlquery)
+	limitedrow.show()
+	
+	==>createOrReplaceTempview
+		customerDF.createOrReplaceTempview("Customer_table")
+	val sqlquery = "select col1,col2 from customer_table where customer_type='IND'"	
+	val limitedrow = spark.sql(sqlquery)
+	limitedrow.show()
+	}
+}
+
+
+Introduction to Datasets 
+-------------------------
+Strongly type and mapped to relational schema
+
+dataset uses serialization and deserialization for processing
+and transferring data over network
+
+encoders are highly optimized
+
+two api are used - strongly typed api and untype api
+
+dataset is of type Dataset[T]
+
+Dataset[Employee],Dataset[Students]
+
+
+optimized query execution
+	using catalyst and tungsten
+	
+analysis at compile time
+ds.filter(rec => rec.name == "Christine")
+
+Interconvertible
+	we can convert dataset to untyped dataframe.
+	
+less memory consumption
+
+
+Dataset provides:
+
+static typing and runtime type safety
+high level abstraction for semi structured and structured data
+ease of use of api with structure
+performance optimization
+
+
+when to use datasets
+
+1. when your code need high level abstraction, rich semantics and 
+domain specific apis
+2. if processing requires high level expressions filters, aggregations, sql queries
+and columnar access
+3.if high degree of compile time and run time safety is required
+4. to take advantage of performance optimizations from catalyst
+5. to take advantage of efficient dynamic code generations from tungsten
+
+Creating a Dataset:(using case class we can create a dataset
+-----------------------
+==> dataset performance is  more than the dataframe.
+right click and create a scala app
+==> we should be careful while casting the variable datatype.
+
+package dfbasics
+case class Rating(userid: Integer, movieid: Integer, rating: Double, timestamp: Integer)
+object dataset extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	
+	import sparkSession.implicits._
+	
+	val ratingDS = spark.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/users/talentorigin/")
+	.as[Ratings]
+	
+	ratingDS.show()
+	}
+}
+
+Basic Dataset Operations
+--------------------------------
+
+package dfbasics
+case class Rating(userid: Integer, movieid: Integer, rating: Double, timestamp: Integer)
+object Datasetbasics extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	
+	import sparkSession.implicits._
+	
+	val ratingDS = spark.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/users/talentorigin/")
+	.as[Ratings]
+	
+	val filterdemo = ratingDS.filter(ratingob => ratingob.rating == 4.0)
+	filterdemo.show()
+	println(filterdemo.count())
+	
+	val wheredemo = ratingDS.where(ratingDS("rating") === 4.0)
+	// ratingDS.where("rating == 4.0")
+	
+	wheredemo.show()
+	=> when we do select or aggregation on dataset we get a dataframe
+	=> as output
+	=> to keep the dataset intact we need to use as in all the step by
+	=> case class
+	case class movierating(movieid: Integer, rating: Double)
+	val selectedcol = ratingDS.select("movie id","rating").as[movierating]
+	selectedcol.show()
+	}
+}
+
+
+Dataset vs DataFrame Performance
+----------------------------------
+==> we may end up with casting errors
+==>
+
+package dfbasics
+
+id in case class is first integer ,then long and finally string
+
+case class credits(cast: String, crew: String, id: string)
+
+object Datasetbasics extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("local")
+	.getorCreate()
+	
+	var starttime: Long = 0
+	var endtime:Long = 0
+	
+	startime = system.currentTimeMillis()
+		
+	val creditDF = sparksession.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/users/talentorigin/")
+
+	val filteredrows = creditDF.filter("id > 10000")
+	println("no of ids greater than 10000" + filteredrows.count())
+	
+	endtime = system.currentTimeMillis()
+	
+	println("Time to calc with df" + (endtime - starttime) / 1000.0)
+	
+	import sparkSession.implicits._
+	
+	val startimeds = system.currentTimeMillis()
+	
+	val ratingDS = spark.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/users/talentorigin/")
+	.as[credits]
+	
+	val filteredrowds = ratingDS.filter("id > 10000")
+	println("filtered ds count"= filteredrowds.count())
+	
+	val endtimeDS = system.currentTimeMillis()
+	println("Time to calc with ds" + (endtimeds - starttimeds) / 1000)
+	
+	}
+}
+
+when we run this with huge day we can see an significant difference
+in the execting time between dataframe and dataset.
+
+
+Setting Up Spark 2 on Cloudera Quick Start VM
+------------------------------------------------
+download cloudera ovf file
+import in virtual box by assigning the memory and cloudera name
+
+should have java 1.8
+
+scala 2.11 requires java 1.8
+
+active cloudera express edition.after installing
+
+we need to download 
+
+sudo service cloudera-scm-agent status
+
+sudo service cloudera-scm-agent stop
+sudo service cloudera-scm-server status
+
+
+Running a Spark Job from IDE on Cloudera Cluster(Manually setting the spark parameters")
+-------------------------------------------------
+
+we need to change the network setting to bridged adaper
+
+ifconfig - to restart my service
+cat /etc/host --> update the ip address for quickstart.cloudera
+
+sudo reboot
+
+create package cloudera in eclipse
+
+scala app
+
+
+package cloudera
+
+
+===> when we submit job through yarn we need to mentioning
+===> hadoop cluster and yarn resource manager details
+object clouderabasicjob extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.hadoop.fs.defaultFS","hdfs://192.168.31.14:8020")
+	.config("spark.hadoop.yarn.resourcemanager.address","192.168.31.14:8032")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.config("spark.yarn.application.classpath","$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*")
+	.getorCreate()
+	
+	println("spark job in yarn mode")
+
+	}
+}
+
+Issues faced: 
+1.when we submit we get an error stating unable to access particular directory.
+we need to provide proper access and ownership 
+
+2.it will fail as it wont be able to find the jars in my local project directory
+copy the jars from cloudera package to our customised path/home directory and
+point using config in the spark session(jar path /user/talentorigin/jars
+
+while copying we might get some warnings.
+
+yarn application id is generated when the job is sucesfully submitted
+on yarn cluster.
+
+
+Running Spark Job in Yarn Mode From IDE - Approach 2
+-----------------------------------------------------
+Instead of setting the spark properties we can add the below files under
+
+src/main/resources
+-->core-site.xml
+-->hdfs-site.xml
+-->hive-site.xml
+-->mapred-site.xml
+-->yarn-site.xml
+
+if you are using hbase then we need to add hbase.site.xml
+similarly we have to add all the required configuration xml files.
+
+
+/etc/hadoop/conf - have all all *-site.xml files
+
+once you all the above files we dont have to mention below parameters manually
+
+.config("spark.hadoop.fs.defaultFS","hdfs://192.168.31.14:8020")
+	.config("spark.hadoop.yarn.resourcemanager.address","192.168.31.14:8032")
+	.config("spark.yarn.application.classpath",
+	
+	
+package cloudera
+
+object clouderabasicjob extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.getorCreate()
+	
+	val stockDF = sparksession.read
+	.option("header","true")
+	.csv("/user/instructor/setup/dataset/sample")
+	
+	stockDF.show()
+
+	}
+}
+
+Connecting To MySQL From Spark Job
+----------------------------------
+mysql commands:
+---------------
+mysql
+show databases
+use retail_db
+
+we need to add mysql connector java depedencies in pom.xml
+package cloudera
+import java.util.Properties
+object connectingtomysql extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.getorCreate()
+	
+	val url = "jdbc:mysql://192.168.31.14:3306"
+	val table = "retail_table.customers"
+	val properties = new properties()
+	properties.put("user","root")
+	properties.put("password","cloudera")
+	
+	Class.name("com.mysql.jdbc.Driver")
+	
+	val mysqlDF = sparksession.jdbc(url, table, properties)
+	
+	mysqlDF.show()
+
+	}
+}
+
+Error faced 1: access denied for the user
+How to fix it:
+grant all privileges on *.* to 'root'@'%' identified by 'cloudera' with grant option;
+
+flush privileges:
+
+Error faced 2:
+even after adding the depency it still fails with class not found as the system
+was not able to locate the driver.
+
+it is not creating an uber or fat jar.
+
+so go to maven dependency and download the jar of mysql connector and add it in the 
+common hdfs repository
+
+
+Transformations On MySQL Table - DataFrame API
+----------------------------------------------------
+
+=>after getting all data dataframe operations are performed
+package cloudera_jobs
+import java.util.Properties
+object connectingtomysql extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.getorCreate()
+	
+	val url = "jdbc:mysql://192.168.31.14:3306"
+	val table = "retail_table.customers"
+	val properties = new properties()
+	properties.put("user","root")
+	properties.put("password","cloudera")
+	
+	Class.name("com.mysql.jdbc.Driver")
+	
+	val customertable = sparksession.jdbc(url, table, properties)
+	
+	val statecust = customertable.select("customer_state").groubBy("customer_state").count()
+	statecust.show(10)
+	
+	mysqlDF.show()
+
+	}
+}
+
+Query Push Down to MySQL Database
+-----------------------------------
+
+package cloudera_jobs
+import java.util.Properties
+object QueryPushdown extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.getorCreate()
+	
+	val url = "jdbc:mysql://192.168.31.14:3306"
+	val table = "retail_table.customers"
+	val properties = new properties()
+	properties.put("user","root")
+	properties.put("password","cloudera")
+	
+	Class.name("com.mysql.jdbc.Driver")
+	val query = "select customer_state, count(*) as state_cust_count from retail)db.customers group by customer_state")
+	val queryresult = sparksession.read.jdbc(url, s"($query), properties)
+	
+	queryresult.show(10)
+
+	}
+}
+
+
+Writing Spark DataFrame to MySQL Table
+---------------------------------------
+
+package cloudera_jobs
+import java.util.Properties
+object writingtomysqlDB extends App{
+	def main(args: Array(String)): Unit = {
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.getorCreate()
+	
+	val url = "jdbc:mysql://192.168.31.14:3306"
+	val table = "spark_course.nsestocks"
+	val properties = new properties()
+	properties.put("user","root")
+	properties.put("password","cloudera")
+	
+	Class.name("com.mysql.jdbc.Driver")
+	val nsestocks = sparksession.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/user/cust/sample.csv")
+	
+	nsestock.write.mode(SaveMode.Append or overwrite or error if exist or ignore).jdbc(url, table, properties)
+	
+	println("record count" + nsestock.count())
+	
+	}
+}
+
+
+Writing DataFrame as a Hive Table
+-----------------------------------
+to enable hive connection from spark we need to add enablehivesupport()
+
+create database spark_course --> this will create the database in hive
+
+package cloudera_jobs
+import java.util.Properties
+object writingtomysqlDB extends App{
+
+	val sparksession = sparksession.
+		.appname("Creating own schema")
+		.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.enablehivesupport()
+	.getorCreate()
+	
+	val stockdf = sparksession.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/user/cust/sample.csv")
+	
+	
+	//database.table name
+	//if we want the file to be created in default database we can just use table name
+	stockdf.write
+	.mode(SaveMode.Overwrite)
+	.saveAsTable("spark_course.nse_stock")
+	stockdf.printSchema()
+	
+}
+
+in order to see the table in hive we can see through impala as well.
+error : table already exist.
+invalidate metadata; ==>is used in impala to merge the metadata of hive.
+
+
+Creating Partitioned Table with Spark:
+---------------------------------------------
+by default it will create a hive internal table and data will get stored in
+hive warehouse.
+
+
+show table stats nse_stock ==> to see the stats in hive
+package cloudera_jobs
+import java.util.Properties
+object writingtomysqlDB extends App{
+
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.enablehivesupport()
+	.getorCreate()
+	
+	val stockdf = sparksession.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/user/cust/sample.csv")
+	
+	stockdf.write
+	.mode(SaveMode.Overwrite)
+	.path("path","/user/talentorigin/external_table")
+	.partitionedBy("series")
+	.saveAsTable("spark_course.external_partitioned_stock")
+	
+	stockdf.printSchema()
+	
+}
+
+
+impala commands:
+*****************
+invalidate metadata;
+
+show table stats partitioned_stock
+
+compute stats partitioned_stock:
+
+compute incremental stats partioned_stock (calculate only the new partitions created)
+
+Creating External Table in hive with Spark
+--------------------------------------------
+
+package cloudera_jobs
+import java.util.Properties
+object writingtomysqlDB extends App{
+
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.enablehivesupport()
+	.getorCreate()
+	
+	val stockdf = sparksession.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/user/cust/sample.csv")
+	
+	stockdf.write
+	.partitionedby("series")
+	.mode(SaveMode.Overwrite)
+	.saveAsTable("spark_course.partitioned_stock")
+	stockdf.printSchema()
+	
+}
+
+
+Spark insertInto Method
+------------------------
+prerequisite:
+
+1.table should be created
+2.dataframe or data order should be aligned towards hive schema
+
+
+--> unlike saveastable method here the data gets loaded blindly without following
+the order. so before we load we have to make sure the data is aligned towards the schema
+
+--> we have to first create table and then we have to load the data
+create table movies(
+	movieid int,
+	title string,
+	genre string)
+	stored as parquet
+
+	
+show create table movies
+
+package cloudera_jobs
+import java.util.Properties
+object writinghivewithinsertinto extends App{
+
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.enablehivesupport()
+	.getorCreate()
+	
+	val movies = sparksession.read
+	.option("header","true")
+	.option("inferSchema","true")
+	.csv("/user/cust/movie.csv")
+	
+	movies.createorReplaceTempview("tempmovies")
+	
+	val tempdf = spark.sql("select movieid, genres,title from tempMovies")
+	tempdf.write.mode(saveMode.Overwrite).insertInto("spark_course.movies_table")
+	
+}
+
+Introduction to Catalog API
+---------------------------
+
+--> Another api from spark 2.x to interact with hive from spark
+ 
+
+package Catalog_api
+
+object catalog_api extends App{
+
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.enablehivesupport()
+	.getorCreate()
+	
+	val catalog = spark.catalog
+	
+	println(s"Current database name:" + catalog.currentDatabase)
+	catalog.setCurrentDatabase("Spark_course")
+	println(s"Current database name:" + catalog.currentDatabase)
+	val tables = catalog.listTables()
+	tables.show()
+	tables.select("name","TableType","isTemporary").show()
+	
+}
+Spark 2 Catalog API - How to create a Hive Table
+-------------------------------------------------
+
+
+tablename -> provide the table name you want to create
+source -> what file format you want to use(parquet or csv etc)
+schema -> providing the schema
+options -> passing the custom option
+package Catalog_api
+object catalog_api extends App{
+
+	val sparksession = sparksession.
+	.appname("Creating own schema")
+	.master("yarn")
+	.config("spark.yarn.jars","hdfs://192.168.31.14:8020/user/talentorigin/jars/*.jar*")
+	.enablehivesupport()
+	.getorCreate()
+	
+	val movies = sparksession.read
+	  .option("header","true")
+	  .option("inferSchema","true")
+	  .csv("/user/cust/movie.csv")
+	/*
+	1. name of columns
+	2. datatype of the column
+	3. nullable
+	*/
+	val schema = StructType(
+		StructField("movieid", IntegerType, false) ::
+		StructField("titile", StringType, true) ::
+		StructField("genres", StringType, true) :: Nil)
+	val catalog = spark.catalog
+	
+	//catalog.createTable(tablename,source,schema,options)
+	catalog.createTable("spark_course.movies","parquet",schema,Map("comments" -> "table created with catalog api"))
+	println("table successfully created" +catalog.tableExists("Spark_course.movies"))
+
+	movies.write.insertInto("spark_course.movies")
+	
+	sparkSession.table("spark_course.movies").show()
+}
 
