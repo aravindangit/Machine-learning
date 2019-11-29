@@ -1,0 +1,91 @@
+PATH.1 = 'LIBRARY(MEMBER)'
+ "ALLOC DDN(INFILE) SHR REUSE DSN("PATH.1""
+ "EXECIO * DISKR INFILE (STEM PARA. FINIS"
+   CALL FIND_SECTION 'WORKING-STORAGE SECTION'                           
+   N1 = RESULT                                                           
+   CALL FIND_SECTION 'PROCEDURE DIVISION'                               
+   N2 = RESULT                                                           
+   CALL UNUSED_VAR N1 N2   
+ 
+/*******************************************************************/   
+/* UNUSED_VAR:  UNUSED VARIABLES                                   */   
+/* USE:   CALL UNUSED_VAR NUM1 NUM2                                */   
+/* WHERE NUM1 IS THE FIRST LINE TO SEARCH                          */   
+/* AND   NUM2 IS THE LAST LINE TO SEARCH                           */   
+/*******************************************************************/   
+ UNUSED_VAR:                                                             
+  ARG NUM1 NUM2                                                         
+  FOUND = 0                                                             
+  NUM. = 0                                                               
+  J=1                                                                   
+  DO I = NUM1 TO NUM2                                                   
+    PARSE VAR PARA.I WITH 7 COL7 +1 STRING 73                           
+    IF COL7 = '*' | COL7 = '-' | COL7 = '/' THEN                         
+      NOP                                                               
+    ELSE                                                                 
+    DO                                                                   
+      NO_WORD = FIND(STRING,'PIC')                                       
+      IF NO_WORD <> 0 THEN                                               
+        DO                                                               
+          FSTRING.J = WORD(STRING,NO_WORD-1)                             
+          IF FSTRING.J <> "" THEN                                       
+           J = J+1                                                       
+          ELSE NOP                                                       
+        END                                                             
+      ELSE NOP                                                           
+    END                                                                 
+  END                                                                   
+  J = J-1                                                               
+  DO I = NUM2 TO PARA.0                                                 
+     DO K=1 TO J     
+       /*EXTRACT INFO FROM COLUMN 7 TO COLUMN 73*/
+       PARSE VAR PARA.I WITH 7 COL7 +1 STRINGTEMP 73
+       /* IN TRANSLATE I INCLUDE ":" FOR THIS CASE VAR(CTE-1:CTE2)*/
+       INCIDENCES = FIND(TRANSLATE(STRINGTEMP,' ','():'),FSTRING.K)
+       IF INCIDENCES <> 0 THEN                                           
+         NUM.FSTRING.K = 1                                               
+       ELSE NOP                                                         
+     END                                                                 
+  END                                                                   
+  SAY '< UNUSED VARIABLES >'                                             
+  DO I = 1 TO J                                                         
+    IF NUM.FSTRING.I <1 THEN DO                                         
+       SAY FSTRING.I                                                     
+       FOUND = 1                                                         
+       END                                                               
+    ELSE NOP                                                             
+  END                                                                   
+  IF FOUND <> 1 THEN                                                     
+     SAY '--NONE FOUND--'                                               
+  ELSE NOP                                                               
+  SAY '********************************************************'         
+ RETURN                                                                 
+/*********************************************************************/ 
+/* FIND_SECTION: FIND WORKING STORAGE SECTION AND PROCEDURE DIVISION */ 
+/* SECTION.                                                          */ 
+/* USE:    CALL FIND_SECTION PHRASE                                  */ 
+/* WHERE PHRASE = PHRASE TO BE FOUND                                 */ 
+/* AND   RESULT = NUMBER OF PHARAGRAPH WHERE IS FIRST FOUND          */ 
+/*********************************************************************/ 
+ FIND_SECTION:                                                           
+  ARG PHRASE                                                             
+  DO I = 1 TO PARA.0                                                     
+    PARSE VAR PARA.I WITH 7 COL7 +1 STRING 73                           
+    IF COL7 = '*' | COL7 = '-' | COL7 = '/' THEN                         
+      NOP                                                               
+    ELSE                                                                 
+    DO                                                                   
+      NO_WORD = FIND(TRANSLATE(STRING,,'.'),PHRASE)                     
+      IF NO_WORD <> 0 THEN                                               
+        LEAVE                                                           
+      ELSE NOP                                                           
+    END                                                                 
+  END                                                                   
+ RETURN I   
+/*EXTRACT INFO FROM COLUMN 7 TO COLUMN 73*/
+PARSE VAR PARA.I WITH 7 COL7 +1 STRINGTEMP 73
+/* IN TRANSLATE I INCLUDE ":" FOR THIS CASE VAR(CTE-1:CTE2)*/
+INCIDENCES = FIND(TRANSLATE(STRINGTEMP,' ','():'),FSTRING.K)
+
+Read more: http://ibmmainframes.com/viewtopic.php?t=35505&highlight=unused#ixzz66eCk7Qm9
+Read more: http://ibmmainframes.com/viewtopic.php?t=35505&highlight=unused#ixzz66eCZcZMu
