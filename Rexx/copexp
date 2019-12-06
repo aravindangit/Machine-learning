@@ -1,0 +1,90 @@
+/* REXX EDIT MACRO                                              */ 
+/* EXPAND ALL COPY STATEMENTS IN A COBOL PROGRAM                */ 
+ADDRESS ISREDIT                                                     
+"MACRO PROCESS"                                                     
+/* ============================================================ */ 
+                                                                   
+CPYLIB = "your.coybook.library"                               
+C_CNT = 0                                                           
+                                                                   
+/* ------------------------------------------------------------ */ 
+/* LOOP THROUGH PROGRAM SOURCE */                                   
+"(CURRLN) = LINENUM .ZCSR"            /* CURRENT LINE           */ 
+"(LASTLN) = LINENUM .ZLAST"           /* LAST LINE NUMBER       */ 
+I = 0                                                               
+DO FOREVER                                                         
+   I = I + 1                                                       
+   IF I > LASTLN THEN LEAVE                                         
+   "(LINE)  = LINE " I                                             
+   LINE = SUBSTR(LINE,7,64)                                         
+   CMD = SUBWORD(LINE,1,1)                                           
+   CPY = SUBWORD(LINE,2,1)                                           
+   UPPER CMD                                                         
+   if datatype(CMD) = 'NUM' then do                                   
+      CMD = SUBWORD(LINE,3,1)                                         
+      CPY = SUBWORD(LINE,4,1)                                         
+   end                                                               
+   IF CMD \= 'COPY' & CMD \= 'INCLUDE' THEN ITERATE                   
+   CPY = STRIP(CPY,'L','&')                                           
+   CPY = STRIP(CPY,'T','.')                                           
+   CALL EXPAND_COPYBOOK                                               
+END                                                                   
+                                                                     
+"UP MAX"                                                             
+"DOWN " CURRLN                                                       
+ZEDLMSG = 'Use the UNEC command to remove ' C_CNT ' expanded copybooks'
+ADDRESS ISPEXEC "SETMSG MSG(ISRZ000)"                                 
+                                                                     
+EXIT 0                                                               
+                                                                   
+/* ------------------------------------------------------------ */ 
+EXPAND_COPYBOOK:                                                   
+   /* CHECK IF COPYBOOK EXISTS */                                   
+   DSN = CPYLIB || "("CPY")"                                       
+   RC = SYSDSN("'"DSN"'")                                           
+   IF (RC \= 'OK') THEN DO                                         
+      MSG = "'COPYBOOK NOT FOUND:" CPY "'"                         
+      "ISREDIT LINE_AFTER " I "= NOTELINE" MSG                     
+      RETURN                                                       
+   END                                                             
+   C_CNT = C_CNT + 1                                               
+                                                                   
+   /* READ COPYBOOK */                                             
+   ADDRESS TSO                                                     
+   "ALLOC FI(IFILE) DA('" || DSN || "') SHR"                       
+   'EXECIO * DISKR IFILE (STEM BOOK.'                               
+   'EXECIO 0 DISKR IFILE (FINIS'                                   
+   'FREE F(IFILE)'                                                 
+   ADDRESS ISREDIT                                                   
+                                                                     
+   /* PASTE COPYBOOK INTO PROGRAM SOURCE */                           
+   IF I < CURRLN THEN CURRLN = CURRLN + BOOK.0   /* COUNT new LINES */
+   LN = I                                                             
+   P  = 1                                                             
+   D  = +1                                                           
+   DO J = 1 TO BOOK.0                                                 
+   /* P = P + D          */                                           
+   /* if P = 6 then do   */                                           
+   /*    D = -1          */                                           
+   /*    P = 4           */                                           
+   /* end                */                                           
+   /* if P = 1 then do   */                                           
+   /*    D = +1          */                                           
+   /*    P = 3           */                                           
+   /* end                */                                           
+      MARK = '|++++|'                                                 
+   /* MARK= overlay('+',MARK,P,1) */                                 
+   /* MARK= overlay('+',MARK,P,1) */                                   
+      TXT = SUBSTR(BOOK.J,7,66)                                       
+      TXT = TRANSLATE(TXT,"'",'"')   /* DOUBLE TO SINGLE QUOTE */     
+      MSG = '"' || MARK || TXT || CPY || '"'                           
+      "ISREDIT LINE_AFTER " LN "= DATALINE" MSG                       
+      LN = LN + 1                                                     
+   END                                                                 
+   LASTLN = LASTLN + BOOK.0    /* ADD COPYBOOK LINES */               
+RETURN                                                                 
+/* ------------------------------------------------------------ */     
+/* ============================================================ */   
+
+
+http://ibmmainframes.com/about43223.html
