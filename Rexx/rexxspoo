@@ -1,0 +1,23 @@
+/* REXX */                                                             
+Queue "//SUPERK# JOB (.....),'',CLASS=T,MSGCLASS=X,"                   
+Queue "//       MSGLEVEL=(1,1)"                                       
+Queue "//*"                                                           
+Queue "//STEP0001 EXEC PGM=IEFBR14"                                   
+Queue "//*"                                                           
+Queue Left("$$",80)                                                   
+o = OUTTRAP("output.",,"CONCAT")                                       
+"SUBMIT * END($$)" /* Submit JCL */                                   
+o = OUTTRAP(Off)                                                       
+msg = Strip(output.2)                                                 
+Parse Var msg msgid 'JOB' jobname '(' jobid ')' .                     
+Do Forever                                                             
+  o = OUTTRAP("output.",,"CONCAT")                                     
+  "STATUS "Strip(jobname)"("Strip(jobid)")"                           
+  o = OUTTRAP(Off)                                                     
+  Parse Var output.1 msgid 'JOB' jobname '(' jobid ')' msg             
+  If msg = "ON OUTPUT QUEUE" Then Leave                               
+End                                                                   
+dsname = Strip(jobname)||"."||Strip(jobid)||".OUTLIST"                 
+"OUTPUT "Strip(jobname)"("Strip(jobid)") PRINT("dsname")",     
+ "BEGIN HOLD KEEP"     
+Exit
