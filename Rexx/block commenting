@@ -1,0 +1,228 @@
+ADDRESS ISPEXEC
+  'ISREDIT MACRO (TYP) NOPROCESS'
+  'ISREDIT NUM ON'
+  'ISREDIT UNNUM'
+  'ISREDIT PROCESS RANGE C'
+  'ISREDIT REC ON'
+  TYP=TRANSLATE(STRIP(TYP))
+/*IDENTIFY FIRST LINE OF THE RANGE TO FIND WHETHER TO COMMENT OR      */
+/*UNCOMMENT                                                           */
+  'ISREDIT (FLINE)  = LINE .ZF'
+  'ISREDIT (LLINE)  = LINE .ZL'
+  'ISREDIT (RLINE1) = LINE .ZFRANGE'
+  'ISREDIT (CCNBR1) = LINENUM .ZFRANGE'
+  'ISREDIT (CCNBR2) = LINENUM .ZLRANGE'
+  'ISREDIT (CURNBR) = LINENUM .ZCSR'
+  'ISREDIT (CURLNE) = LINE .ZCSR'
+/*CHECK IF CC-CC IS GIVEN                                             */
+  'ISREDIT (FLINENBR) = LINENUM .ZF'
+  'ISREDIT (LLINENBR) = LINENUM .ZL'
+  'ISREDIT LABEL (CCNBR1) = .ERR'
+  NOLINES = CCNBR2 - CCNBR1
+  IF CCNBR1 = FLINENBR THEN
+  DO
+     IF CCNBR2 = LLINENBR THEN
+     DO
+           IF TYP='ALL' THEN
+           DO
+              NOP
+           END
+           ELSE
+           DO
+              IF CURNBR=1 THEN
+              DO
+               ZEDLMSG='PLEASE USE "CMT ALL" TO COMMENT/UNCOMMENT',
+               'ALL THE LINES'
+               'ISPEXEC SETMSG MSG(ISRZ001)'
+               EXIT
+              END
+              ELSE
+              DO
+                  CCNBR1=CURNBR
+                  CCNBR2=CURNBR
+                  RLINE1=CURLNE
+                  'ISREDIT LABEL (CURNBR) = .HERE'
+              END
+           END
+     END
+  END
+/*COMMENT COBOL*/
+  'ISREDIT F ALL " IDENTIFICATION DIVISION "'
+  RC1=RC
+  'ISREDIT F ALL " USING "'
+  RC2=RC
+  'ISREDIT F ALL " PIC "'
+  RC3=RC
+  'ISREDIT F ALL " COPY "'
+  RC4=RC
+  IF ((RC1=0 | RC2=0 | (RC3=0 & RC4=0)) & (TYP="ALL" | TYP ="")) ,
+  | TYP='CBL' THEN
+  DO
+      COMT=SUBSTR(RLINE1,7,1)
+      IF CCNBR1=CCNBR2 THEN
+      DO
+         IF COMT=" " THEN
+         'ISREDIT C ALL " " "*"   7 .HERE .HERE'
+         IF COMT="*" THEN
+         'ISREDIT C ALL "*" " "   7 .HERE .HERE'
+         CALL CMT_DEL_LAB
+      END
+      ELSE
+      DO
+         IF COMT=" " THEN
+         'ISREDIT C ALL " " "*"   7 .ZFRANGE .ZLRANGE'
+         IF COMT="*" THEN
+         'ISREDIT C ALL "*" " "   7 .ZFRANGE .ZLRANGE'
+      END
+      CALL CMT_RES
+  END
+/*COMMENT REXX*/
+  IF (POS('REXX',FLINE)>0 & (TYP="ALL" | TYP ="")) | TYP='REX' THEN
+  DO
+      IF POS('/*',RLINE1)>0 THEN
+      DO
+         IF CCNBR1=CCNBR2 THEN
+         DO
+            'ISREDIT C ALL "/*" "" .HERE .HERE'
+            'ISREDIT C ALL "*/" "" .HERE .HERE'
+            CALL CMT_DEL_LAB
+         END
+         ELSE
+         DO
+            'ISREDIT C ALL "/*" "" .ZFRANGE .ZLRANGE'
+            'ISREDIT C ALL "*/" "" .ZFRANGE .ZLRANGE'
+         END
+      END
+      ELSE
+      DO I = CCNBR1 TO CCNBR2
+         'ISREDIT (TEMPLINE) = LINE' I
+         IF POS('/*',TEMPLINE) = 0 THEN
+         DO
+            IF SUBSTR(TEMPLINE,1,2)="  " THEN
+            DO
+                TEMPLINE=OVERLAY('/*',TEMPLINE)
+            END
+            ELSE
+            DO
+                IF SUBSTR(TEMPLINE,71,2) = "  " THEN
+                DO
+                   TEMPLINE=SUBSTR(INSERT("/*",TEMPLINE,0,2),1,72)
+                END
+                ELSE
+                DO
+                   ITERATE
+                END
+            END
+            IF SUBSTR(TEMPLINE,71,2) = "  " THEN
+            DO
+                TEMPLINE=OVERLAY('*/',TEMPLINE,71,2)
+               'ISREDIT LINE_AFTER (I) = DATALINE (TEMPLINE)'
+               'ISREDIT DEL ALL ' I
+            END
+         END
+      END
+      CALL CMT_RES
+  END
+/*COMMENT JCL*/
+  IF POS('//',FLINE)=1 & (TYP="ALL" | TYP ="") | TYP='JCL' THEN
+  DO
+      IF POS('//*',RLINE1)>0 THEN
+      DO
+         IF CCNBR1=CCNBR2 THEN
+         DO
+            'ISREDIT C ALL "//*" "//" .HERE .HERE'
+            CALL CMT_DEL_LAB
+         END
+         ELSE
+         DO
+            'ISREDIT C ALL "//*" "//" .ZFRANGE .ZLRANGE'
+         END
+      END
+      ELSE
+      DO I = CCNBR1 TO CCNBR2
+         'ISREDIT (TEMPLINE) = LINE' I
+         IF POS('//*',TEMPLINE) = 0 THEN
+         DO
+            IF SUBSTR(TEMPLINE,3,1)=" " THEN
+            DO
+                TEMPLINE=OVERLAY('//*',TEMPLINE)
+            END
+            ELSE
+            DO
+                IF SUBSTR(TEMPLINE,72,1) = " " THEN
+                DO
+                   TEMPLINE=SUBSTR(INSERT("*",TEMPLINE,2,1),1,72)
+                END
+            END
+            'ISREDIT LINE_AFTER (I) = (TEMPLINE)'
+            'ISREDIT DEL ALL ' I
+         END
+      END
+      CALL CMT_RES
+  END
+/*SQL*/
+  SQL_CMT:
+     SQL_KEYWORD.0=8
+     SQL_KEYWORD.1="INSERT "
+     SQL_KEYWORD.2="DELETE "
+     SQL_KEYWORD.3="UPDATE "
+     SQL_KEYWORD.4="DROP "
+     SQL_KEYWORD.5="ALTER "
+     SQL_KEYWORD.6="SELECT "
+     SQL_KEYWORD.7="ROLLBACK "
+     SQL_KEYWORD.8="COMMIT "
+     DO I=1 TO SQL_KEYWORD.0
+        'ISREDIT F ALL ' SQL_KEYWORD.I
+        IF (RC=0 & (TYP="ALL" | TYP ="") | TYP='SQL') THEN
+        DO
+           IF POS('--',RLINE1)>0 THEN
+           DO
+              IF CCNBR1=CCNBR2 THEN
+              DO
+                 'ISREDIT C ALL "--" "" .HERE .HERE'
+                 CALL CMT_DEL_LAB
+              END
+              ELSE
+              DO
+                 'ISREDIT C ALL "--" "" .ZFRANGE .ZLRANGE'
+              END
+           END
+           ELSE
+           DO I = CCNBR1 TO CCNBR2
+              'ISREDIT (TEMPLINE) = LINE' I
+              IF POS('--',TEMPLINE) = 0 THEN
+              DO
+                 IF SUBSTR(TEMPLINE,1,2)="  " THEN
+                 DO
+                     TEMPLINE=OVERLAY('--',TEMPLINE)
+                 END
+                 ELSE
+                 DO
+                     IF SUBSTR(TEMPLINE,71,1) = "  " THEN
+                     DO
+                        TEMPLINE=SUBSTR(INSERT("--",TEMPLINE),1,72)
+                     END
+                 END
+                 'ISREDIT LINE_AFTER (I) = (TEMPLINE)'
+                 'ISREDIT DEL ALL ' I
+                 'ISREDIT L ' CURNBR
+              END
+           END
+           LEAVE
+        END
+     END
+  CMT_RES:
+     'ISREDIT RES'
+     CALL AUDIT_USAGE
+     EXIT
+  CMT_DEL_LAB:
+     'ISREDIT LABEL .HERE =" "'
+  RETURN
+  AUDIT_USAGE:
+   USEFILE = "USER.WGSCTS.CMT.USAGE"
+   ADDRESS TSO "ALLOC FI(USEFIL) DA('"USEFILE"') MOD REU "
+   JOBLIN.1 = USERID()||'|'||DATE(S)||'|'||NOLINES
+   ADDRESS TSO "EXECIO 1 DISKW USEFIL (STEM JOBLIN. FINIS"
+   ADDRESS TSO "FREE DDNAME(USEFIL)"
+   'ISREDIT RENUM'
+   RETURN
