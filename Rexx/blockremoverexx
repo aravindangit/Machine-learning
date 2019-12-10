@@ -1,0 +1,28 @@
+/* Rexx */                                                             
+/* Written Heisei 24.06.06 by Akatsukami-sama */                       
+  address isredit                                                       
+  MACRO                                                                 
+  "CHANGE 'STRATUS/32' 'IBM-371' ALL"                                   
+  "CHANGE '!UPPER-CASE' 'FUNCTION UPPER-CASE' ALL"                     
+  "CURSOR = 1"                                                         
+  "FIND DECLARATIVES"                                                   
+  "(L1) = CURSOR"                                                       
+  "FIND END-DECLARATIVES"                                               
+  "(L2) = CURSOR"                                                       
+  "DELETE &L1 &L2"                                                     
+  "CURSOR = 1"                                                         
+  "FIND 'CALL S$DATE_TIME'"                                             
+  "(L1) = CURSOR"                                                       
+  "FIND '.'"                                                           
+  "(L2) = CURSOR"                                                       
+  "DELETE &L1 &L2"                                                     
+  "LINE_BEFORE &L1 = 'COMPUTE DD = FUNCTION INTEGER-OF-DAY (JULIAN-DT).'"
+  "LINE_BEFORE &L1 = 'COMPUTE GREG-DATE = FUNCTION DATE-OF-INTEGER (DD)'"
+  "CURSOR = 1"                                                         
+  "FIND 'CALL S$STOP_PROGRAM'"                                         
+  "(L1) = CURSOR"                                                       
+  "FIND '.'"                                                           
+  "(L2) = CURSOR"                                                       
+  "DELETE &L1 &L2"                                                     
+  L1 = L1 - 1                                                           
+  "LINE_AFTER &L1 = 'GOBACK.'"                
