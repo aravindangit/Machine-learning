@@ -1,0 +1,35 @@
+
+PostPosted: Wed Jun 02, 2010 11:06 pm    Post subject: Reply to: GROUP BY Using DFSORT/ICETOOL
+Reply with quote
+rarvins,
+
+Assuming that your input is already sorted on date field, the following JCL will give you the desired results
+
+Code:
+
+//STEP0100 EXEC PGM=SORT                                 
+//SYSOUT   DD SYSOUT=*                                   
+//SORTIN   DD *                                         
+2009-05-31                                               
+2009-05-31                                               
+2009-05-31                                               
+2008-05-31                                               
+2008-05-31                                               
+2006-05-31                                               
+//SORTOUT  DD SYSOUT=*                                   
+//SYSIN    DD *                                         
+  SORT FIELDS=COPY                                       
+  OUTFIL REMOVECC,NODETAIL,BUILD=(15X),                           
+  SECTIONS=(1,10,TRAILER3=(1,10,X,COUNT=(M10,LENGTH=4)))
+//*
+
+
+the output from this is
+Code:
+
+2009-05-31    3
+2008-05-31    2
+2006-05-31    1
+
+
+Read more: http://ibmmainframes.com/about49182.html#ixzz6EBNMDB4f
