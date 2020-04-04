@@ -1,0 +1,86 @@
+Summary: 
+
+Do you have the need to manage dependencies across multiple systems in your z/OS or OS/390 environment? With the cross-platform scheduling interface, CA 7 gives you the ability to perform peer-to-peer scheduling from one CA 7 to another CA 7.
+
+Instructions:  
+
+Establishing this relationship requires you to use one CA 7 as the server and the other as the client. It is possible that you may want to manager your workload in both directions in which case you would perform the steps of setting up the server and client on both copies of CA 7. This document describes the setup process.
+
+  Setting Up CA 7 as the Server
+
+If not already defined, add an ARF trailer terminal to the CA-7 initialization file. Here is an example of an ARF trailer terminal definition.
+GROUP,NAME=TRXGRP,DEVICE=TRXDV,LNAME=TRXLN,OPEN=YES 
+LINE,NAME=TRXLN,BUFSIZE=1024,TNAME=TRXT1,OPEN=YES   
+TERM,NAME=TRXT1,DEVICE=TRXDV,NLINE=1,LINLEN=80      
+
+STATIONS,TRMID=TRXT1,STANIDS=(TRX)
+Add the keyword MONITOR with the value of YES to the SVCNO statement in the initialization file.
+SVCNO,SASSVC=YES,MONITOR=YES
+Add the keyword XPSSID to the SECURITY statement in the initialization file.
+SECURITY,NAME=SASSSECI,XPSSID=MASTER
+Add the CAXPSFBK event to the ENF database with JCL member L2DCM2 from the CA 7 SAMPJCL library. This should be run while ENF is down.
+
+Once CA 7 starts after adding the MONITOR keyword, the ROUTER subtask will start and you will see the following messages in the CA 7 message log:
+CA-7.ISVC - XPS SERVER INITIALIZED.  MONITOR VALUE: CA7XE44 
+CA-7.ISVC - XPS ROUTER WILL RUN IN THIS ADDRESS SPACE       
+
+CAXPS101I CROSS-PLATFORM SCHEDULING ROUTER (XPS) IS INITIALIZING (V1.0)
+CAXPS120I XPS PASSWORD REQUIREMENT TABLE BUILT.                         
+CAXPS102I CROSS-PLATFORM SCHEDULING SUB-TASK ACTIVE : SETUP MANAGER     
+CAXPS102I CROSS-PLATFORM SCHEDULING SUB-TASK ACTIVE : TRACKING SENDER   
+CAXPS102I CROSS-PLATFORM SCHEDULING SUB-TASK ACTIVE : SUBMITC SERVER    
+CAXPS103I CROSS-PLATFORM SCHEDULING ROUTER (XPS) IS ACTIV
+  Setting Up CA 7 as the Client
+
+The CA7XTRK (cross-platform tracker) task needs to be started. The task is used to track the feed back from the manager on the Server.
+//CA7XTRK EXEC PGM=CAL2XTRK,PARM='...parm...values...'
+//STEPLIB DD DISP=SHR,DSN=...ca-7..cailib...
+//XCKPT DD DISP=OLD,DSN=...xtrk..checkpoint...
+//XEVENTS DD DISP=SHR,DSN=...xtrk..xtracking(rules)...optional
+//XPRINT DD SYSOUT=
+//XSNAP DD SYSOUT=
+Define the cross-platform job to the CA 7 database. Note that these jobs use CA Driver to expand the CA7TOUNI procedure.
+#7UNI                                               
+//JOBNAME  JOB  (40100000,IGN),'CA7UNI SUB', 
+//             CLASS=C,MSGCLASS=X                   
+//SUBMIT   EXEC  CA7TOUNI                           
+//SNAP     DD  SYSOUT=*                             
+//SYSIN    DD  *                                    
+NODE=targetnode                               
+SUBFILE=jobtorun                    
+/*
+  Common Communications Interface (CCI) Setup
+
+CCI must be present on both systems and connected to one another. Here is a sample of the CCIPARMS definition defined to ENF.
+SYSID(A04IENF)
+PROTOCOL(TCPIPGW,7000,2,A04IENF)
+NODE(NODE(LU0,A04IENF,09,A04IENF,4072,START/SHUT)  
+CONNECT(A04IENF)
+Note: A04IENF is the CCI SYSID for the Client system. A44SENF is the CCI SYSID for the Server system. This example shows a VTAM connection between these systems. The coupling facility and TCP/IP can also be used to connect systems.
+When ENF starts you should see the following message to assure communication between CCI on each system:
+CAS9681I - CAICCI Sec A04IENF  in session with A44SENF
+Once CCI is up and running you can run job ZINQ from the CA 7 SAMPJCL library and it will show you what CCI is connected to. The output would look something like this:
+RECEIVER CCI-ID                TYPE   STATE 
+                                     
+#A04IENF  SUBMITC Server       LOCAL  ACTIVE
+#A04IENF  CA7TXE4 Job track    LOCAL  ACTIVE
+
+#A44SENF  SUBMITC Server       REMOTE ACTIVE  
+#A44SENF  CA7XE44 Job track    REMOTE ACTIVE                            
+                                            
+A04IENF SUBMITC Server - is the ROUTER task on the LOCAL system. 
+A04IENF CA7TXE4 Job track - is the CA7XTRK task on the LOCAL system. 
+A44SENF SUBMITC Server - is the ROUTER task on the REMOTE system.
+A44SENF CA7XE44 Job track - is the CA7XTRK task on the REMOTE system.
+Now that you have completed the setup steps you are ready to perform cross-platform scheduling between your two CA 7 systems. Here is a recap of how this works.
+
+A CA7TOUNI job is defined on the requesting (Client) CA 7 specifying the Server node and the job name to be tracked. This job, when executed, will send a request via CCI over to the Server where the XPS ROUTER will receive the request. The XPS ROUTER will then build a DEMAND command for the job name specified in the SUBFILE parameter in the CA7TOUNI job. Once the job starts to process on the on the Server an ENF feed back event (CAXPSFBK) JOBINITU record is recorded. The XPS ROUTER is listening for this event and sends the record back to the tracker (CA7XTRK) on the Client side. On the Client side, the CA7XTRK task will pass this record to CA-7 and the job moves to the ACTIVE QUEUE. Once the job completes or terminates, a JOBTERMU record is recorded in ENF and will be sent back to  CA 7 via the same path and the job will go through normal job completion on the Client CA 7.
+
+Additional Information:
+
+As always, please contact CA Technologies support for CA 7 if you have further questions.
+
+ 
+
+Please help us improve!
+Will this information enable you to resolve your issue?
